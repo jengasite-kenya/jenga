@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JengaSite - Buy Websites Instantly</title>
+    <title>SiteSawa - Buy Websites Instantly</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: #f8fafc; color: #1a1a1a; line-height: 1.6; }
@@ -26,11 +26,16 @@
         .badge-blue { background: #dbeafe; color: #1e40af; }
         .badge-green { background: #dcfce7; color: #166534; }
         .price { font-size: 32px; color: #059669; font-weight: 800; margin: 20px 0; }
+        .price-note { font-size: 12px; color: #6b7280; font-weight: 400; }
         .btn { width: 100%; padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; color: white; transition: all 0.2s; }
         .btn-blue { background: #2563eb; }
         .btn-blue:hover { background: #1d4ed8; }
         .btn-green { background: #059669; }
         .btn-green:hover { background: #047857; }
+        
+        .features { margin: 16px 0; list-style: none; font-size: 14px; }
+        .features li { padding: 8px 0; display: flex; align-items: center; gap: 8px; color: #4b5563; }
+        .features li::before { content: "✓"; color: #059669; font-weight: bold; }
         
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; position: relative; }
@@ -39,9 +44,16 @@
         
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; }
-        .form-group input { width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 16px; }
-        .form-group input:focus { outline: none; border-color: #059669; }
+        .form-group input, .form-group select { width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 16px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #059669; }
         .help-text { font-size: 12px; color: #6b7280; margin-top: 6px; }
+        
+        .domain-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .domain-option { padding: 16px; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .domain-option:hover { border-color: #059669; }
+        .domain-option.selected { border-color: #059669; background: #f0fdf4; }
+        .domain-option h4 { font-size: 14px; margin-bottom: 4px; }
+        .domain-option p { font-size: 12px; color: #6b7280; }
         
         .price-box { background: #f3f4f6; padding: 20px; border-radius: 12px; margin: 24px 0; display: flex; justify-content: space-between; align-items: center; }
         .price-box .amount { font-size: 28px; color: #059669; font-weight: 800; }
@@ -61,17 +73,13 @@
         .loading { display: none; text-align: center; padding: 20px; }
         .spinner { width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top-color: #059669; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        
-        .features { margin: 16px 0; list-style: none; }
-        .features li { padding: 8px 0; display: flex; align-items: center; gap: 8px; color: #4b5563; }
-        .features li::before { content: "✓"; color: #059669; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <div class="logo">🏗️ JengaSite</div>
+        <div class="logo">🏗️ SiteSawa</div>
         <div class="status">
             <span class="status-dot"></span>
             <span>Auto-Delivery Active</span>
@@ -88,12 +96,18 @@
                 <h3>Business Showcase</h3>
                 <p>Perfect for salons, restaurants, spas, and service businesses.</p>
                 <ul class="features">
-                    <li>Responsive design</li>
-                    <li>Contact form included</li>
+                    <li>Professional design</li>
                     <li>Google Maps integration</li>
+                    <li>Contact form with reCAPTCHA</li>
+                    <li>WhatsApp integration</li>
+                    <li>Social media links</li>
+                    <li>Domain + Hosting included</li>
                 </ul>
-                <div class="price">KES 6,000</div>
-                <button class="btn btn-blue" onclick="buy('Business Showcase', 6000, 'template')">Buy & Download</button>
+                <div class="price">
+                    KES 7,500
+                    <div class="price-note">One-time payment</div>
+                </div>
+                <button class="btn btn-blue" onclick="buy('Business Showcase', 7500, 'template')">Buy Now</button>
             </div>
         </div>
         
@@ -104,12 +118,18 @@
                 <h3>Professional Portfolio</h3>
                 <p>Ideal for photographers, designers, and consultants.</p>
                 <ul class="features">
-                    <li>Gallery layouts</li>
-                    <li>Project showcases</li>
-                    <li>Social media links</li>
+                    <li>Portfolio gallery</li>
+                    <li>Skills showcase</li>
+                    <li>Testimonials section</li>
+                    <li>About section</li>
+                    <li>Social media integration</li>
+                    <li>Domain + Hosting included</li>
                 </ul>
-                <div class="price">KES 6,000</div>
-                <button class="btn btn-blue" onclick="buy('Professional Portfolio', 6000, 'template')">Buy & Download</button>
+                <div class="price">
+                    KES 7,500
+                    <div class="price-note">One-time payment</div>
+                </div>
+                <button class="btn btn-blue" onclick="buy('Professional Portfolio', 7500, 'template')">Buy Now</button>
             </div>
         </div>
         
@@ -120,12 +140,18 @@
                 <h3>Online Store Pro</h3>
                 <p>Complete e-commerce with M-Pesa payments included.</p>
                 <ul class="features">
-                    <li>M-Pesa integration</li>
-                    <li>Inventory system</li>
+                    <li>Up to 30 products</li>
+                    <li>M-Pesa checkout</li>
                     <li>Admin dashboard</li>
+                    <li>Order management</li>
+                    <li>Customer receives payments</li>
+                    <li>Domain + Hosting included</li>
                 </ul>
-                <div class="price">KES 8,000</div>
-                <button class="btn btn-blue" onclick="buy('Online Store Pro', 8000, 'template')">Buy & Download</button>
+                <div class="price">
+                    KES 9,500
+                    <div class="price-note">One-time payment</div>
+                </div>
+                <button class="btn btn-blue" onclick="buy('Online Store Pro', 9500, 'template')">Buy Now</button>
             </div>
         </div>
     </div>
@@ -138,13 +164,18 @@
             <div class="content">
                 <span class="badge badge-green">STARTER</span>
                 <h3>Starter Package</h3>
+                <p>Everything you need to get online quickly.</p>
                 <ul class="features">
                     <li>Business Showcase template</li>
                     <li>.co.ke Domain (1 year)</li>
-                    <li>Hosting + Email</li>
+                    <li>1 Business Email</li>
                     <li>SSL Certificate</li>
+                    <li>Free Hosting</li>
                 </ul>
-                <div class="price">KES 9,999</div>
+                <div class="price">
+                    KES 9,999
+                    <div class="price-note">One-time payment</div>
+                </div>
                 <button class="btn btn-green" onclick="buy('Starter Package', 9999, 'package')">Get Started</button>
             </div>
         </div>
@@ -154,13 +185,18 @@
             <div class="content">
                 <span class="badge badge-green">BUSINESS</span>
                 <h3>Business Package</h3>
+                <p>Full-featured solution for growing businesses.</p>
                 <ul class="features">
-                    <li>Online Store Pro + M-Pesa</li>
-                    <li>Domain + Premium Hosting</li>
+                    <li>Online Store Pro template</li>
+                    <li>.co.ke Domain (1 year)</li>
                     <li>5 Business Emails</li>
-                    <li>SEO Ready</li>
+                    <li>SSL Certificate</li>
+                    <li>Free Hosting</li>
                 </ul>
-                <div class="price">KES 14,999</div>
+                <div class="price">
+                    KES 14,999
+                    <div class="price-note">One-time payment</div>
+                </div>
                 <button class="btn btn-green" onclick="buy('Business Package', 14999, 'package')">Get Business</button>
             </div>
         </div>
@@ -181,12 +217,29 @@
             <div class="form-group">
                 <label>Email Address *</label>
                 <input type="email" id="email" placeholder="john@example.com">
-                <p class="help-text">We'll send your download link here</p>
+                <p class="help-text">We'll send your website access here</p>
             </div>
-            <div class="form-group" id="domainField" style="display: none;">
-                <label>Preferred Domain (e.g., mybusiness.co.ke) *</label>
-                <input type="text" id="domain" placeholder="mybusiness.co.ke">
+            
+            <div class="form-group">
+                <label>Domain Option *</label>
+                <div class="domain-options">
+                    <div class="domain-option selected" onclick="selectDomainOption('auto')" id="optionAuto">
+                        <h4>Get Free .co.ke</h4>
+                        <p>We register for you</p>
+                    </div>
+                    <div class="domain-option" onclick="selectDomainOption('custom')" id="optionCustom">
+                        <h4>I Have My Own</h4>
+                        <p>Use existing domain</p>
+                    </div>
+                </div>
             </div>
+            
+            <div class="form-group" id="customDomainField" style="display: none;">
+                <label>Your Domain (e.g., mybusiness.com) *</label>
+                <input type="text" id="customDomain" placeholder="mybusiness.com">
+                <p class="help-text">Make sure you own this domain</p>
+            </div>
+            
             <div class="form-group">
                 <label>M-Pesa Phone Number *</label>
                 <input type="tel" id="phone" placeholder="254712345678 or 0712345678">
@@ -225,16 +278,17 @@
             <div class="step">
                 <div class="step-icon waiting" id="s2">3</div>
                 <div>
-                    <div style="font-weight: 700;" id="t2">Processing Order</div>
-                    <div style="color: #6b7280; font-size: 13px;" id="d2">Preparing your files...</div>
+                    <div style="font-weight: 700;" id="t2">Setting Up Your Website</div>
+                    <div style="color: #6b7280; font-size: 13px;" id="d2">Registering domain, deploying...</div>
                 </div>
             </div>
         </div>
 
         <div class="success" id="successSection">
             <h3>✓ Order Complete!</h3>
-            <p id="successLine1">Check your email for details.</p>
-            <a href="#" id="actionBtn" target="_blank">Download Now</a>
+            <p id="successLine1">Check your email for website access details.</p>
+            <p id="successLine2" style="color: #6b7280; margin-top: 8px;">Domain: <span id="successDomain"></span></p>
+            <a href="#" id="actionBtn" target="_blank">Visit Website</a>
         </div>
     </div>
 </div>
@@ -244,19 +298,20 @@
         ? 'http://localhost:3000/api' 
         : '/api';
     
-    let currentOrder = { item: '', price: 0, type: '' };
+    let currentOrder = { item: '', price: 0, type: '', domainOption: 'auto' };
     let orderId = null;
     let checkInterval = null;
 
     function buy(item, price, type) {
-        currentOrder = { item, price, type };
+        currentOrder = { item, price, type, domainOption: 'auto' };
         orderId = null;
         
         if (checkInterval) clearInterval(checkInterval);
         
         document.getElementById('modalTitle').textContent = 'Buy ' + item;
         document.getElementById('modalPrice').textContent = 'KES ' + price.toLocaleString();
-        document.getElementById('domainField').style.display = type === 'package' ? 'block' : 'none';
+        
+        selectDomainOption('auto');
         
         document.getElementById('formSection').style.display = 'block';
         document.getElementById('progressSection').style.display = 'none';
@@ -273,9 +328,16 @@
         document.getElementById('name').value = '';
         document.getElementById('email').value = '';
         document.getElementById('phone').value = '';
-        document.getElementById('domain').value = '';
+        document.getElementById('customDomain').value = '';
         
         document.getElementById('modal').style.display = 'flex';
+    }
+
+    function selectDomainOption(option) {
+        currentOrder.domainOption = option;
+        document.getElementById('optionAuto').classList.toggle('selected', option === 'auto');
+        document.getElementById('optionCustom').classList.toggle('selected', option === 'custom');
+        document.getElementById('customDomainField').style.display = option === 'custom' ? 'block' : 'none';
     }
 
     function showError(msg) {
@@ -296,7 +358,7 @@
         const name = document.getElementById('name').value.trim();
         const email = document.getElementById('email').value.trim().toLowerCase();
         const phone = document.getElementById('phone').value.trim();
-        const domain = document.getElementById('domain').value.trim().toLowerCase();
+        const customDomain = document.getElementById('customDomain').value.trim().toLowerCase();
         
         if (!name || !email || !phone) {
             showError('Please fill all required fields');
@@ -314,8 +376,8 @@
             return;
         }
         
-        if (currentOrder.type === 'package' && !domain) {
-            showError('Please enter your preferred domain');
+        if (currentOrder.domainOption === 'custom' && !customDomain) {
+            showError('Please enter your domain');
             return;
         }
         
@@ -328,7 +390,8 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name, email, phone: formattedPhone,
-                    domain: domain || null,
+                    domain: customDomain || null,
+                    domainOption: currentOrder.domainOption,
                     item: currentOrder.item,
                     price: currentOrder.price,
                     type: currentOrder.type
@@ -404,14 +467,13 @@
         document.getElementById('progressSection').style.display = 'none';
         document.getElementById('successSection').style.display = 'block';
         
-        if (currentOrder.type === 'template') {
-            document.getElementById('successLine1').textContent = 'Your template is ready! Check your email.';
-            document.getElementById('actionBtn').href = status.downloadUrl || '#';
-            document.getElementById('actionBtn').textContent = 'Download Now';
-        } else {
-            document.getElementById('successLine1').textContent = 'Your website ' + status.domain + ' is being set up!';
-            document.getElementById('actionBtn').href = 'https://' + status.domain;
+        document.getElementById('successDomain').textContent = status.domain;
+        
+        if (status.deployedUrl) {
+            document.getElementById('actionBtn').href = status.deployedUrl;
             document.getElementById('actionBtn').textContent = 'Visit Website';
+        } else {
+            document.getElementById('actionBtn').style.display = 'none';
         }
     }
 
