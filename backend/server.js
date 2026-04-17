@@ -777,8 +777,8 @@ const MPESA_SHORTCODE = process.env.MPESA_SHORTCODE;
 const MPESA_PASSKEY = process.env.MPESA_PASSKEY;
 const FROM_EMAIL = process.env.FROM_EMAIL || 'orders@sitesawa.co.ke';
 const FROM_NAME = process.env.FROM_NAME || 'SiteSawa';
-const GMAIL_USER = process.env.GMAIL_USER;
-const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
+const WORKSPACE_EMAIL = process.env.WORKSPACE_EMAIL;
+const WORKSPACE_APP_PASSWORD = process.env.WORKSPACE_APP_PASSWORD;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const MPESA_ENVIRONMENT = process.env.MPESA_ENVIRONMENT || 'sandbox';
 const AT_USERNAME = process.env.AT_USERNAME;
@@ -817,8 +817,8 @@ function validateConfig() {
     if (missing.length > 0) {
         console.warn(`Missing M-Pesa config: ${missing.join(', ')}`);
     }
-    if (!GMAIL_USER || !GMAIL_APP_PASSWORD) {
-        console.warn('Gmail not configured - emails will be logged only');
+    if (!WORKSPACE_EMAIL || !WORKSPACE_APP_PASSWORD) {
+        console.warn('Google Workspace not configured - emails will be logged only');
     }
     if (!AT_USERNAME || !AT_APIKEY) {
         console.warn('Africa\'s Talking not configured - SMS will be logged only');
@@ -847,7 +847,7 @@ async function getMpesaToken() {
 }
 
 async function sendEmail(to, subject, html) {
-    if (!GMAIL_USER || !GMAIL_APP_PASSWORD) {
+    if (!WORKSPACE_EMAIL || !WORKSPACE_APP_PASSWORD) {
         console.log('📧 [EMAIL LOG] To:', to, 'Subject:', subject);
         return;
     }
@@ -859,15 +859,15 @@ async function sendEmail(to, subject, html) {
             secure: false,
             requireTLS: true,
             auth: {
-                user: GMAIL_USER,
-                pass: GMAIL_APP_PASSWORD
+                user: WORKSPACE_EMAIL,
+                pass: WORKSPACE_APP_PASSWORD
             }
         });
 
         await transporter.verify();
 
         const info = await transporter.sendMail({
-            from: `\"${FROM_NAME}\" <${GMAIL_USER}>`,
+            from: `\"${FROM_NAME}\" <${WORKSPACE_EMAIL}>`,
             to: to,
             subject: subject,
             html: html,
@@ -914,7 +914,7 @@ app.get('/health', (req, res) => {
         orders: orders.size,
         products: products.size,
         uptime: process.uptime(),
-        email_configured: !!(GMAIL_USER && GMAIL_APP_PASSWORD),
+        email_configured: !!(WORKSPACE_EMAIL && WORKSPACE_APP_PASSWORD),
         sms_configured: !!(AT_USERNAME && AT_APIKEY),
         domain_configured: !!HOSTPINNACLE_API_KEY,
         render_configured: !!RENDER_API_KEY
@@ -1267,7 +1267,7 @@ app.delete('/api/products/:id', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 SiteSawa Server running on port ${PORT}`);
-    console.log(`📧 Email: ${GMAIL_USER ? 'Configured' : 'Not configured'}`);
+    console.log(`📧 Email: ${WORKSPACE_EMAIL ? 'Google Workspace ready' : 'Not configured'}`);
     console.log(`📱 SMS: ${AT_USERNAME ? 'Africa\'s Talking ready' : 'Not configured'}`);
     console.log(`🌐 Domain: ${HOSTPINNACLE_API_KEY ? 'Host Pinnacle ready' : 'Not configured'}`);
     console.log(`🚀 Render: ${RENDER_API_KEY ? 'Deployment ready' : 'Not configured'}`);
