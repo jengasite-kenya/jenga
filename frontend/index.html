@@ -4,488 +4,453 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SiteSawa - Buy Websites Instantly</title>
+    <meta name="description" content="Get a professional website with domain and hosting in minutes. Pay via M-Pesa.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#059669',
+                        secondary: '#F97316',
+                        accent: '#FACC15'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f8fafc; color: #1a1a1a; line-height: 1.6; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        
-        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 2px solid #e5e7eb; margin-bottom: 40px; flex-wrap: wrap; gap: 16px; }
-        .logo { font-size: 32px; font-weight: 800; color: #059669; }
-        .status { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #059669; background: #f0fdf4; padding: 8px 16px; border-radius: 20px; }
-        .status-dot { width: 8px; height: 8px; background: #059669; border-radius: 50%; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        
-        h2 { font-size: 36px; margin: 50px 0 30px; text-align: center; }
-        
-        .templates { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin: 40px 0; }
-        .card { background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: transform 0.2s; }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        .card img { width: 100%; height: 220px; object-fit: cover; }
-        .card .content { padding: 28px; }
-        .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; }
-        .badge-blue { background: #dbeafe; color: #1e40af; }
-        .badge-green { background: #dcfce7; color: #166534; }
-        .price { font-size: 32px; color: #059669; font-weight: 800; margin: 20px 0; }
-        .price-note { font-size: 12px; color: #6b7280; font-weight: 400; }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; color: white; transition: all 0.2s; }
-        .btn-blue { background: #2563eb; }
-        .btn-blue:hover { background: #1d4ed8; }
-        .btn-green { background: #059669; }
-        .btn-green:hover { background: #047857; }
-        
-        .features { margin: 16px 0; list-style: none; font-size: 14px; }
-        .features li { padding: 8px 0; display: flex; align-items: center; gap: 8px; color: #4b5563; }
-        .features li::before { content: "✓"; color: #059669; font-weight: bold; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; position: relative; }
-        .close-btn { position: absolute; top: 20px; right: 24px; font-size: 32px; cursor: pointer; color: #9ca3af; }
-        .close-btn:hover { color: #4b5563; }
-        
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; }
-        .form-group input, .form-group select { width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 16px; }
-        .form-group input:focus, .form-group select:focus { outline: none; border-color: #059669; }
-        .help-text { font-size: 12px; color: #6b7280; margin-top: 6px; }
-        
-        .domain-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-        .domain-option { padding: 16px; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s; }
-        .domain-option:hover { border-color: #059669; }
-        .domain-option.selected { border-color: #059669; background: #f0fdf4; }
-        .domain-option h4 { font-size: 14px; margin-bottom: 4px; }
-        .domain-option p { font-size: 12px; color: #6b7280; }
-        
-        .price-box { background: #f3f4f6; padding: 20px; border-radius: 12px; margin: 24px 0; display: flex; justify-content: space-between; align-items: center; }
-        .price-box .amount { font-size: 28px; color: #059669; font-weight: 800; }
-        
-        .progress { margin-top: 24px; display: none; }
-        .step { display: flex; align-items: center; padding: 16px; margin: 8px 0; background: #f9fafb; border-radius: 12px; }
-        .step-icon { width: 32px; height: 32px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; margin-right: 16px; font-weight: 600; font-size: 14px; }
-        .step-icon.done { background: #059669; color: white; }
-        .step-icon.active { background: #fbbf24; animation: blink 1.5s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-        
-        .success { display: none; text-align: center; padding: 32px; background: #f0fdf4; border: 2px solid #22c55e; border-radius: 16px; margin-top: 24px; }
-        .success h3 { color: #059669; margin-bottom: 16px; }
-        .success a { display: inline-block; margin-top: 16px; padding: 14px 32px; background: #059669; color: white; text-decoration: none; border-radius: 10px; font-weight: 700; }
-        
-        .error { color: #dc2626; font-size: 14px; margin-top: 12px; display: none; text-align: center; padding: 12px; background: #fef2f2; border-radius: 8px; }
-        .loading { display: none; text-align: center; padding: 20px; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top-color: #059669; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .gradient-text {
+            background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(5, 150, 105, 0.15);
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
+<base target="_blank">
 </head>
-<body>
-
-<div class="container">
-    <header>
-        <div class="logo">🏗️ SiteSawa</div>
-        <div class="status">
-            <span class="status-dot"></span>
-            <span>Auto-Delivery Active</span>
+<body class="bg-gray-50 font-sans text-gray-800">
+    <!-- Header -->
+    <header class="fixed w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-2">
+                    <span class="text-3xl">🏗️</span>
+                    <span class="text-2xl font-bold gradient-text">SiteSawa</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-full text-sm font-medium">
+                        <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+                        Auto-Delivery Active
+                    </div>
+                    
+                </div>
+            </div>
         </div>
     </header>
 
-    <h2>Website Templates</h2>
-    
-    <div class="templates">
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400" alt="Business">
-            <div class="content">
-                <span class="badge badge-blue">BASIC</span>
-                <h3>Business Showcase</h3>
-                <p>Perfect for salons, restaurants, spas, and service businesses.</p>
-                <ul class="features">
-                    <li>Professional design</li>
-                    <li>Google Maps integration</li>
-                    <li>Contact form with reCAPTCHA</li>
-                    <li>WhatsApp integration</li>
-                    <li>Social media links</li>
-                    <li>Domain + Hosting included</li>
-                </ul>
-                <div class="price">
-                    KES 7,500
-                    <div class="price-note">One-time payment</div>
-                </div>
-                <button class="btn btn-blue" onclick="buy('Business Showcase', 7500, 'template')">Buy Now</button>
+    <!-- Hero -->
+    <section class="pt-32 pb-20 bg-gradient-to-br from-green-50 to-orange-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                Get Your Website <span class="gradient-text">Today</span>
+            </h1>
+            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                Professional websites with custom domain and hosting. 
+                Pay once via M-Pesa, get online in minutes.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#templates" class="px-8 py-4 bg-primary text-white rounded-full font-semibold hover:bg-green-700 transition shadow-lg hover:shadow-xl">
+                    View Templates
+                </a>
+                
             </div>
         </div>
-        
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400" alt="Portfolio">
-            <div class="content">
-                <span class="badge badge-blue">BASIC</span>
-                <h3>Professional Portfolio</h3>
-                <p>Ideal for photographers, designers, and consultants.</p>
-                <ul class="features">
-                    <li>Portfolio gallery</li>
-                    <li>Skills showcase</li>
-                    <li>Testimonials section</li>
-                    <li>About section</li>
-                    <li>Social media integration</li>
-                    <li>Domain + Hosting included</li>
-                </ul>
-                <div class="price">
-                    KES 7,500
-                    <div class="price-note">One-time payment</div>
-                </div>
-                <button class="btn btn-blue" onclick="buy('Professional Portfolio', 7500, 'template')">Buy Now</button>
-            </div>
-        </div>
-        
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400" alt="Shop">
-            <div class="content">
-                <span class="badge badge-green">PRO + M-PESA</span>
-                <h3>Online Store Pro</h3>
-                <p>Complete e-commerce with M-Pesa payments included.</p>
-                <ul class="features">
-                    <li>Up to 30 products</li>
-                    <li>M-Pesa checkout</li>
-                    <li>Admin dashboard</li>
-                    <li>Order management</li>
-                    <li>Customer receives payments</li>
-                    <li>Domain + Hosting included</li>
-                </ul>
-                <div class="price">
-                    KES 9,500
-                    <div class="price-note">One-time payment</div>
-                </div>
-                <button class="btn btn-blue" onclick="buy('Online Store Pro', 9500, 'template')">Buy Now</button>
-            </div>
-        </div>
-    </div>
+    </section>
 
-    <h2 style="margin-top: 60px;">Complete Website Packages</h2>
-    
-    <div class="templates">
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400" alt="Starter">
-            <div class="content">
-                <span class="badge badge-green">STARTER</span>
-                <h3>Starter Package</h3>
-                <p>Everything you need to get online quickly.</p>
-                <ul class="features">
-                    <li>Business Showcase template</li>
-                    <li>.co.ke Domain (1 year)</li>
-                    <li>1 Business Email</li>
-                    <li>SSL Certificate</li>
-                    <li>Free Hosting</li>
-                </ul>
-                <div class="price">
-                    KES 9,999
-                    <div class="price-note">One-time payment</div>
-                </div>
-                <button class="btn btn-green" onclick="buy('Starter Package', 9999, 'package')">Get Started</button>
+    <!-- Templates Section -->
+    <section id="templates" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-primary font-semibold text-sm uppercase tracking-wide">Choose Your Template</span>
+                <h2 class="text-4xl font-bold mt-2 mb-4">Website Templates</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    All templates include domain registration, hosting, and instant delivery. 
+                    Choose the one that fits your business.
+                </p>
             </div>
-        </div>
-        
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400" alt="Business">
-            <div class="content">
-                <span class="badge badge-green">BUSINESS</span>
-                <h3>Business Package</h3>
-                <p>Full-featured solution for growing businesses.</p>
-                <ul class="features">
-                    <li>Online Store Pro template</li>
-                    <li>.co.ke Domain (1 year)</li>
-                    <li>5 Business Emails</li>
-                    <li>SSL Certificate</li>
-                    <li>Free Hosting</li>
-                </ul>
-                <div class="price">
-                    KES 14,999
-                    <div class="price-note">One-time payment</div>
-                </div>
-                <button class="btn btn-green" onclick="buy('Business Package', 14999, 'package')">Get Business</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="modal" id="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle" style="margin-bottom: 8px;">Buy</h2>
-        <p id="modalDesc" style="color: #6b7280; font-size: 14px; margin-bottom: 24px;">Complete your purchase securely with M-Pesa</p>
-        
-        <div id="formSection">
-            <div class="form-group">
-                <label>Full Name *</label>
-                <input type="text" id="name" placeholder="John Doe">
-            </div>
-            <div class="form-group">
-                <label>Email Address *</label>
-                <input type="email" id="email" placeholder="john@example.com">
-                <p class="help-text">We'll send your website access here</p>
-            </div>
-            
-            <div class="form-group">
-                <label>Domain Option *</label>
-                <div class="domain-options">
-                    <div class="domain-option selected" onclick="selectDomainOption('auto')" id="optionAuto">
-                        <h4>Get Free .co.ke</h4>
-                        <p>We register for you</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Business Showcase -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover transition-all duration-300">
+                    <div class="h-48 bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center">
+                        <i class="fas fa-store text-6xl text-white/80"></i>
                     </div>
-                    <div class="domain-option" onclick="selectDomainOption('custom')" id="optionCustom">
-                        <h4>I Have My Own</h4>
-                        <p>Use existing domain</p>
+                    <div class="p-8">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-semibold">POPULAR</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Business Showcase</h3>
+                        <p class="text-gray-600 mb-6">Perfect for salons, restaurants, spas, and service businesses.</p>
+
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Professional design</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Contact form with WhatsApp</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Google Maps integration</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Custom domain (.co.ke)</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Free hosting</span>
+                            </li>
+                        </ul>
+
+                        <div class="mb-6">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-4xl font-bold text-primary">KES 7,500</span>
+                                <span class="text-gray-500">one-time</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">Includes .co.ke domain</p>
+                        </div>
+
+                        <button onclick="buy('Business Showcase', 7500)" class="w-full py-4 bg-primary text-white rounded-xl font-semibold hover:bg-green-700 transition shadow-lg">
+                            Buy Now
+                        </button>
                     </div>
                 </div>
-            </div>
-            
-            <div class="form-group" id="customDomainField" style="display: none;">
-                <label>Your Domain (e.g., mybusiness.com) *</label>
-                <input type="text" id="customDomain" placeholder="mybusiness.com">
-                <p class="help-text">Make sure you own this domain</p>
-            </div>
-            
-            <div class="form-group">
-                <label>M-Pesa Phone Number *</label>
-                <input type="tel" id="phone" placeholder="254712345678 or 0712345678">
-                <p class="help-text">Enter 2547XXXXXXXX or 07XXXXXXXX format</p>
-            </div>
-            
-            <div class="price-box">
-                <span style="color: #6b7280; font-weight: 600;">Total:</span>
-                <span class="amount" id="modalPrice">KES 0</span>
-            </div>
-            
-            <button class="btn btn-green" id="payBtn" onclick="submitOrder()">Pay with M-Pesa</button>
-            <div class="error" id="errorMsg"></div>
-            
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p style="color: #6b7280;">Sending payment request to your phone...</p>
+
+                <!-- Professional Portfolio -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover transition-all duration-300">
+                    <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                        <i class="fas fa-camera text-6xl text-white/80"></i>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">CREATIVE</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Professional Portfolio</h3>
+                        <p class="text-gray-600 mb-6">Ideal for photographers, designers, and consultants.</p>
+
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Portfolio gallery</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Skills showcase</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Testimonials section</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Custom domain (.co.ke)</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Free hosting</span>
+                            </li>
+                        </ul>
+
+                        <div class="mb-6">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-4xl font-bold text-primary">KES 7,500</span>
+                                <span class="text-gray-500">one-time</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">Includes .co.ke domain</p>
+                        </div>
+
+                        <button onclick="buy('Professional Portfolio', 7500)" class="w-full py-4 bg-primary text-white rounded-xl font-semibold hover:bg-green-700 transition shadow-lg">
+                            Buy Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Online Store Pro -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover transition-all duration-300 border-2 border-orange-200">
+                    <div class="h-48 bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-6xl text-white/80"></i>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold">E-COMMERCE</span>
+                            <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">PRO</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Online Store Pro</h3>
+                        <p class="text-gray-600 mb-6">Complete e-commerce with M-Pesa payments and admin dashboard.</p>
+
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Up to 30 products</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>M-Pesa checkout</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Admin dashboard</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Order management</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Custom domain (.co.ke)</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm">
+                                <i class="fas fa-check text-green-500"></i>
+                                <span>Free hosting</span>
+                            </li>
+                        </ul>
+
+                        <div class="mb-6">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-4xl font-bold text-secondary">KES 9,500</span>
+                                <span class="text-gray-500">one-time</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">Includes .co.ke domain</p>
+                        </div>
+
+                        <button onclick="buy('Online Store Pro', 9500)" class="w-full py-4 bg-secondary text-white rounded-xl font-semibold hover:bg-orange-600 transition shadow-lg">
+                            Buy Now
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="progress" id="progressSection">
-            <div class="step">
-                <div class="step-icon waiting" id="s0">1</div>
-                <div>
-                    <div style="font-weight: 700;">Payment Request Sent</div>
-                    <div style="color: #6b7280; font-size: 13px;" id="d0">Check your phone for STK push</div>
-                </div>
+    <!-- How It Works -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">How It Works</h2>
+                <p class="text-gray-600">Get online in 3 simple steps</p>
             </div>
-            <div class="step">
-                <div class="step-icon waiting" id="s1">2</div>
-                <div>
-                    <div style="font-weight: 700;" id="t1">Waiting for Payment</div>
-                    <div style="color: #6b7280; font-size: 13px;" id="d1">Enter your M-Pesa PIN</div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
+                    <h3 class="text-xl font-bold mb-2">Choose Template</h3>
+                    <p class="text-gray-600">Pick the template that fits your business and complete your details.</p>
                 </div>
-            </div>
-            <div class="step">
-                <div class="step-icon waiting" id="s2">3</div>
-                <div>
-                    <div style="font-weight: 700;" id="t2">Setting Up Your Website</div>
-                    <div style="color: #6b7280; font-size: 13px;" id="d2">Registering domain, deploying...</div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
+                    <h3 class="text-xl font-bold mb-2">Pay via M-Pesa</h3>
+                    <p class="text-gray-600">Enter your M-Pesa number and confirm payment on your phone.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">3</div>
+                    <h3 class="text-xl font-bold mb-2">Get Your Website</h3>
+                    <p class="text-gray-600">Everything happens automatically. Your domain is registered, site deployed, and details sent to your email instantly.</p>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="success" id="successSection">
-            <h3>✓ Order Complete!</h3>
-            <p id="successLine1">Check your email for website access details.</p>
-            <p id="successLine2" style="color: #6b7280; margin-top: 8px;">Domain: <span id="successDomain"></span></p>
-            <a href="#" id="actionBtn" target="_blank">Visit Website</a>
+    <!-- CTA -->
+    <section class="py-20 bg-gradient-to-r from-green-600 to-teal-600 text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold mb-4">Ready to Get Online?</h2>
+            <p class="text-xl mb-8 opacity-90">Join hundreds of Kenyan businesses with professional websites.</p>
+            <a href="#templates" class="inline-block px-8 py-4 bg-white text-green-600 rounded-full font-semibold hover:bg-gray-100 transition shadow-lg">
+                Choose Your Template
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="col-span-2">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-2xl">🏗️</span>
+                        <span class="text-xl font-bold">SiteSawa</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">Professional websites for Kenyan businesses. Pay once, own forever.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Templates</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#templates" class="hover:text-white transition">Business Showcase</a></li>
+                        <li><a href="#templates" class="hover:text-white transition">Professional Portfolio</a></li>
+                        <li><a href="#templates" class="hover:text-white transition">Online Store Pro</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><i class="fas fa-envelope mr-2"></i>info@sitesawa.co.ke</li>
+                        <li><i class="fas fa-phone mr-2"></i>+254 712 345 678</li>
+                        
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 SiteSawa. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Buy Modal -->
+    <div id="buyModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold" id="modalTitle">Complete Order</h3>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="orderForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                        <input type="text" id="name" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="John Doe">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                        <input type="email" id="email" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="john@example.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Desired Domain *</label>
+                        <input type="text" id="domain" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="yourbusiness.co.ke">
+                        <p class="text-xs text-gray-500 mt-1">.co.ke included, .com/.org available</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Business Name *</label>
+                        <input type="text" id="businessName" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="Your Business Name">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">M-Pesa Phone Number *</label>
+                        <input type="tel" id="phone" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="254712345678">
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium" id="summaryItem">Template</span>
+                            <span class="text-xl font-bold text-primary" id="summaryPrice">KES 0</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-primary text-white rounded-xl font-semibold hover:bg-green-700 transition">
+                        Pay with M-Pesa
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    const API_URL = window.location.hostname === 'localhost' 
-        ? 'http://localhost:3000/api' 
-        : '/api';
-    
-    let currentOrder = { item: '', price: 0, type: '', domainOption: 'auto' };
-    let orderId = null;
-    let checkInterval = null;
+    <script>
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000/api' 
+            : 'https://jenga-vh5z.onrender.com/api';
 
-    function buy(item, price, type) {
-        currentOrder = { item, price, type, domainOption: 'auto' };
-        orderId = null;
-        
-        if (checkInterval) clearInterval(checkInterval);
-        
-        document.getElementById('modalTitle').textContent = 'Buy ' + item;
-        document.getElementById('modalPrice').textContent = 'KES ' + price.toLocaleString();
-        
-        selectDomainOption('auto');
-        
-        document.getElementById('formSection').style.display = 'block';
-        document.getElementById('progressSection').style.display = 'none';
-        document.getElementById('successSection').style.display = 'none';
-        document.getElementById('payBtn').style.display = 'block';
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('errorMsg').style.display = 'none';
-        
-        ['s0', 's1', 's2'].forEach(id => {
-            document.getElementById(id).className = 'step-icon waiting';
-            document.getElementById(id).textContent = parseInt(id[1]) + 1;
-        });
-        
-        document.getElementById('name').value = '';
-        document.getElementById('email').value = '';
-        document.getElementById('phone').value = '';
-        document.getElementById('customDomain').value = '';
-        
-        document.getElementById('modal').style.display = 'flex';
-    }
+        let currentOrder = { item: '', price: 0 };
 
-    function selectDomainOption(option) {
-        currentOrder.domainOption = option;
-        document.getElementById('optionAuto').classList.toggle('selected', option === 'auto');
-        document.getElementById('optionCustom').classList.toggle('selected', option === 'custom');
-        document.getElementById('customDomainField').style.display = option === 'custom' ? 'block' : 'none';
-    }
-
-    function showError(msg) {
-        const err = document.getElementById('errorMsg');
-        err.textContent = msg;
-        err.style.display = 'block';
-    }
-
-    function formatPhone(phone) {
-        let cleaned = phone.replace(/\s/g, '');
-        if (cleaned.startsWith('0') && cleaned.length === 10) {
-            cleaned = '254' + cleaned.substring(1);
+        function buy(item, price) {
+            currentOrder = { item, price };
+            document.getElementById('modalTitle').textContent = 'Buy ' + item;
+            document.getElementById('summaryItem').textContent = item;
+            document.getElementById('summaryPrice').textContent = 'KES ' + price.toLocaleString();
+            document.getElementById('buyModal').classList.remove('hidden');
         }
-        return /^254[710][0-9]{8}$/.test(cleaned) ? cleaned : null;
-    }
 
-    async function submitOrder() {
-        const name = document.getElementById('name').value.trim();
-        const email = document.getElementById('email').value.trim().toLowerCase();
-        const phone = document.getElementById('phone').value.trim();
-        const customDomain = document.getElementById('customDomain').value.trim().toLowerCase();
-        
-        if (!name || !email || !phone) {
-            showError('Please fill all required fields');
-            return;
+        function closeModal() {
+            document.getElementById('buyModal').classList.add('hidden');
         }
-        
-        if (!email.includes('@') || !email.includes('.')) {
-            showError('Please enter a valid email');
-            return;
-        }
-        
-        const formattedPhone = formatPhone(phone);
-        if (!formattedPhone) {
-            showError('Invalid phone. Use 2547XXXXXXXX or 07XXXXXXXX');
-            return;
-        }
-        
-        if (currentOrder.domainOption === 'custom' && !customDomain) {
-            showError('Please enter your domain');
-            return;
-        }
-        
-        document.getElementById('payBtn').style.display = 'none';
-        document.getElementById('loading').style.display = 'block';
-        
-        try {
-            const response = await fetch(API_URL + '/create-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name, email, phone: formattedPhone,
-                    domain: customDomain || null,
-                    domainOption: currentOrder.domainOption,
-                    item: currentOrder.item,
-                    price: currentOrder.price,
-                    type: currentOrder.type
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (!result.success) {
-                throw new Error(result.message);
-            }
-            
-            orderId = result.orderId;
-            
-            document.getElementById('formSection').style.display = 'none';
-            document.getElementById('progressSection').style.display = 'block';
-            document.getElementById('s0').className = 'step-icon done';
-            document.getElementById('s0').textContent = '✓';
-            document.getElementById('d0').textContent = 'STK push sent to ' + formattedPhone;
-            document.getElementById('s1').className = 'step-icon active';
-            
-            checkPayment();
-            
-        } catch (error) {
-            showError(error.message || 'Network error. Please try again.');
-            document.getElementById('payBtn').style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
-        }
-    }
 
-    function checkPayment() {
-        let attempts = 0;
-        const maxAttempts = 120;
-        
-        checkInterval = setInterval(async () => {
-            attempts++;
-            
-            if (attempts >= maxAttempts) {
-                clearInterval(checkInterval);
-                showError('Payment timeout. Contact support if you paid.');
+        document.getElementById('orderForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const domain = document.getElementById('domain').value;
+            const businessName = document.getElementById('businessName').value;
+            const phone = document.getElementById('phone').value;
+
+            // Basic validation
+            if (!name || !email || !domain || !businessName || !phone) {
+                alert('Please fill all fields');
                 return;
             }
-            
+
             try {
-                const response = await fetch(API_URL + '/check-status?orderId=' + orderId);
-                const status = await response.json();
-                
-                if (status.paid) {
-                    clearInterval(checkInterval);
-                    handleSuccess(status);
-                } else if (status.status === 'failed') {
-                    clearInterval(checkInterval);
-                    showError('Payment failed: ' + (status.failureReason || 'Please try again'));
+                const response = await fetch(API_URL + '/create-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        phone,
+                        domain,
+                        businessName,
+                        item: currentOrder.item,
+                        price: currentOrder.price
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Payment request sent! Check your phone and enter M-Pesa PIN.');
+                    closeModal();
+                    this.reset();
+                } else {
+                    alert('Error: ' + result.message);
                 }
-            } catch (e) {
-                console.log('Check error:', e);
+            } catch (error) {
+                alert('Network error. Please try again.');
             }
-        }, 5000);
-    }
+        });
 
-    async function handleSuccess(status) {
-        document.getElementById('s1').className = 'step-icon done';
-        document.getElementById('s1').textContent = '✓';
-        document.getElementById('t1').textContent = 'Payment Confirmed';
-        document.getElementById('d1').textContent = 'Receipt: ' + (status.mpesaReceipt || 'N/A');
-        
-        document.getElementById('s2').className = 'step-icon active';
-        await new Promise(r => setTimeout(r, 1500));
-        document.getElementById('s2').className = 'step-icon done';
-        document.getElementById('s2').textContent = '✓';
-        
-        await new Promise(r => setTimeout(r, 500));
-        document.getElementById('progressSection').style.display = 'none';
-        document.getElementById('successSection').style.display = 'block';
-        
-        document.getElementById('successDomain').textContent = status.domain;
-        
-        if (status.deployedUrl) {
-            document.getElementById('actionBtn').href = status.deployedUrl;
-            document.getElementById('actionBtn').textContent = 'Visit Website';
-        } else {
-            document.getElementById('actionBtn').style.display = 'none';
+        // Close modal on outside click
+        window.onclick = function(e) {
+            if (e.target.id === 'buyModal') closeModal();
         }
-    }
-
-    function closeModal() {
-        document.getElementById('modal').style.display = 'none';
-        if (checkInterval) clearInterval(checkInterval);
-    }
-
-    window.onclick = function(e) {
-        if (e.target.id === 'modal') closeModal();
-    };
-</script>
-
+    </script>
 </body>
 </html>
