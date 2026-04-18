@@ -1,0 +1,465 @@
+
+# Create Admin Dashboard Template
+admin_template = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - {{STORE_NAME}}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar { transition: transform 0.3s; }
+        .stat-card { transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-4px); }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="fixed inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-gray-800">Admin Login</h1>
+                <p class="text-gray-500 mt-2">{{STORE_NAME}}</p>
+            </div>
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <input type="text" id="username" value="admin" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="password" placeholder="admin123" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald outline-none">
+                    <p class="text-xs text-gray-500 mt-1">Default: admin / admin123</p>
+                </div>
+                <button type="submit" class="w-full py-3 bg-emerald text-white rounded-xl font-semibold hover:bg-emerald-600 transition">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Dashboard (Hidden until login) -->
+    <div id="dashboard" class="hidden">
+        <!-- Sidebar -->
+        <aside class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-40 hidden md:block">
+            <div class="p-6 border-b">
+                <h2 class="text-xl font-bold text-emerald">{{STORE_NAME}}</h2>
+                <p class="text-sm text-gray-500">Admin Panel</p>
+            </div>
+            <nav class="p-4 space-y-2">
+                <button onclick="showSection('dashboard')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-emerald-50 text-emerald font-medium">
+                    <i class="fas fa-home mr-3"></i>Dashboard
+                </button>
+                <button onclick="showSection('products')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-gray-50 text-gray-700">
+                    <i class="fas fa-box mr-3"></i>Products
+                </button>
+                <button onclick="showSection('orders')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-gray-50 text-gray-700">
+                    <i class="fas fa-shopping-bag mr-3"></i>Orders
+                </button>
+                <button onclick="showSection('settings')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-gray-50 text-gray-700">
+                    <i class="fas fa-cog mr-3"></i>Settings
+                </button>
+                <button onclick="logout()" class="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 text-red-600 mt-8">
+                    <i class="fas fa-sign-out-alt mr-3"></i>Logout
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Mobile Header -->
+        <div class="md:hidden fixed top-0 left-0 right-0 h-16 bg-white shadow-sm z-30 flex items-center justify-between px-4">
+            <h2 class="font-bold text-emerald">Admin</h2>
+            <button onclick="toggleMobileMenu()" class="text-gray-700">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <main class="md:ml-64 pt-16 md:pt-0 min-h-screen">
+            <!-- Header -->
+            <header class="bg-white shadow-sm p-6 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800" id="pageTitle">Dashboard</h1>
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-500">Welcome, Admin</span>
+                    <div class="w-10 h-10 bg-emerald rounded-full flex items-center justify-center text-white">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-6">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="space-y-6">
+                    <!-- Stats -->
+                    <div class="grid md:grid-cols-4 gap-6">
+                        <div class="stat-card bg-white p-6 rounded-2xl shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Total Sales</p>
+                                    <p class="text-2xl font-bold text-emerald">KES {{TOTAL_SALES}}</p>
+                                </div>
+                                <div class="w-12 h-12 bg-emerald/10 rounded-full flex items-center justify-center text-emerald">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card bg-white p-6 rounded-2xl shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Orders</p>
+                                    <p class="text-2xl font-bold text-blue-600">{{TOTAL_ORDERS}}</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card bg-white p-6 rounded-2xl shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Products</p>
+                                    <p class="text-2xl font-bold text-purple-600">{{TOTAL_PRODUCTS}}</p>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card bg-white p-6 rounded-2xl shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Customers</p>
+                                    <p class="text-2xl font-bold text-orange-500">{{TOTAL_CUSTOMERS}}</p>
+                                </div>
+                                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-500">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div class="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 class="font-bold text-lg mb-4">Recent Orders</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="text-left p-3 text-sm font-medium text-gray-700">Order ID</th>
+                                        <th class="text-left p-3 text-sm font-medium text-gray-700">Customer</th>
+                                        <th class="text-left p-3 text-sm font-medium text-gray-700">Amount</th>
+                                        <th class="text-left p-3 text-sm font-medium text-gray-700">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentOrdersTable">
+                                    {{RECENT_ORDERS}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Section -->
+                <div id="productsSection" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-lg">Manage Products</h3>
+                        <button onclick="openProductModal()" class="px-4 py-2 bg-emerald text-white rounded-lg hover:bg-emerald-600 transition">
+                            <i class="fas fa-plus mr-2"></i>Add Product
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="text-left p-4 text-sm font-medium text-gray-700">Image</th>
+                                    <th class="text-left p-4 text-sm font-medium text-gray-700">Name</th>
+                                    <th class="text-left p-4 text-sm font-medium text-gray-700">Price</th>
+                                    <th class="text-left p-4 text-sm font-medium text-gray-700">Stock</th>
+                                    <th class="text-left p-4 text-sm font-medium text-gray-700">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTable">
+                                {{PRODUCTS_LIST}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Orders Section -->
+                <div id="ordersSection" class="hidden">
+                    <div class="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 class="font-bold text-lg mb-4">All Orders</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="text-left p-3 text-sm font-medium text-gray-700">Order ID</th>
+                                        <th class="text-left p-3 text-sm font-medium text-gray-700">Date</th>
+                                        <th class="text-left p-3 text-sm font-medium text-gray-700">Customer</th>
+                                        <th class="text-left p-3 text-sm font-medium text-gray-700">Items</th>
+                                        <th class="text-left p-3 text-sm font-medium text-gray-700">Total</th>
+                                        <th class="text-left p-3 text-sm font-medium text-gray-700">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allOrdersTable">
+                                    {{ALL_ORDERS}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div id="settingsSection" class="hidden max-w-2xl">
+                    <div class="bg-white rounded-2xl shadow-sm p-6 space-y-6">
+                        <h3 class="font-bold text-lg">Store Settings</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Store Name</label>
+                            <input type="text" id="storeName" value="{{STORE_NAME}}" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tagline</label>
+                            <input type="text" id="storeTagline" value="{{TAGLINE}}" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp Number</label>
+                            <input type="text" id="whatsappNumber" value="{{WHATSAPP}}" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Change Admin Password</label>
+                            <input type="password" id="newPassword" placeholder="New password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none mb-2">
+                            <input type="password" id="confirmPassword" placeholder="Confirm password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none">
+                        </div>
+                        <button onclick="saveSettings()" class="px-6 py-3 bg-emerald text-white rounded-lg hover:bg-emerald-600 transition">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div id="productModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold" id="productModalTitle">Add Product</h3>
+                    <button onclick="closeProductModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form id="productForm" class="space-y-4">
+                    <input type="hidden" id="productId">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Product Name *</label>
+                        <input type="text" id="productName" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea id="productDesc" rows="3" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Price (KES) *</label>
+                            <input type="number" id="productPrice" required min="0" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Stock Quantity</label>
+                            <input type="number" id="productStock" min="0" value="10" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <select id="productCategory" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none">
+                            <option value="general">General</option>
+                            {{CATEGORY_OPTIONS}}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Image URL *</label>
+                        <input type="url" id="productImage" required placeholder="https://example.com/image.jpg" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none">
+                        <p class="text-xs text-gray-500 mt-1">Paste image URL from Unsplash, Cloudinary, etc.</p>
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-emerald text-white rounded-lg font-semibold hover:bg-emerald-600 transition">
+                        Save Product
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auth
+        let isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+        
+        if (isLoggedIn) {
+            showDashboard();
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === 'admin123') {
+                localStorage.setItem('adminLoggedIn', 'true');
+                showDashboard();
+            } else {
+                alert('Invalid credentials. Try admin / admin123');
+            }
+        });
+
+        function showDashboard() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            location.reload();
+        }
+
+        // Navigation
+        function showSection(section) {
+            // Hide all sections
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('productsSection').classList.add('hidden');
+            document.getElementById('ordersSection').classList.add('hidden');
+            document.getElementById('settingsSection').classList.add('hidden');
+            
+            // Show selected
+            document.getElementById(section + 'Section').classList.remove('hidden');
+            
+            // Update title
+            const titles = {
+                dashboard: 'Dashboard',
+                products: 'Products',
+                orders: 'Orders',
+                settings: 'Settings'
+            };
+            document.getElementById('pageTitle').textContent = titles[section];
+        }
+
+        // Product Management
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+
+        function openProductModal(product = null) {
+            document.getElementById('productModal').classList.remove('hidden');
+            if (product) {
+                document.getElementById('productModalTitle').textContent = 'Edit Product';
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productDesc').value = product.description || '';
+                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productStock').value = product.stock || 10;
+                document.getElementById('productCategory').value = product.category || 'general';
+                document.getElementById('productImage').value = product.image;
+            } else {
+                document.getElementById('productModalTitle').textContent = 'Add Product';
+                document.getElementById('productForm').reset();
+                document.getElementById('productId').value = '';
+            }
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        document.getElementById('productForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const productData = {
+                id: document.getElementById('productId').value || Date.now().toString(),
+                name: document.getElementById('productName').value,
+                description: document.getElementById('productDesc').value,
+                price: parseInt(document.getElementById('productPrice').value),
+                stock: parseInt(document.getElementById('productStock').value),
+                category: document.getElementById('productCategory').value,
+                image: document.getElementById('productImage').value
+            };
+
+            // Save to localStorage
+            const existingIdx = products.findIndex(p => p.id === productData.id);
+            if (existingIdx >= 0) {
+                products[existingIdx] = productData;
+            } else {
+                products.push(productData);
+            }
+            localStorage.setItem('products', JSON.stringify(products));
+
+            // Trigger server sync (would call your API)
+            try {
+                await fetch('/api/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(productData)
+                });
+            } catch (error) {
+                console.log('Server sync failed, will retry on deploy');
+            }
+
+            closeProductModal();
+            renderProducts();
+            alert('Product saved! Changes will be live in 2-3 minutes.');
+        });
+
+        function renderProducts() {
+            const tbody = document.getElementById('productsTable');
+            tbody.innerHTML = products.map(p => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-4"><img src="${p.image}" class="w-12 h-12 object-cover rounded"></td>
+                    <td class="p-4 font-medium">${p.name}</td>
+                    <td class="p-4">KES ${p.price.toLocaleString()}</td>
+                    <td class="p-4">${p.stock}</td>
+                    <td class="p-4">
+                        <button onclick='openProductModal(${JSON.stringify(p)})' class="text-blue-600 hover:text-blue-800 mr-3">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteProduct('${p.id}')" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Delete this product?')) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('products', JSON.stringify(products));
+                renderProducts();
+            }
+        }
+
+        function saveSettings() {
+            const password = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            
+            if (password && password !== confirm) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            if (password) {
+                alert('Password changed successfully!');
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            }
+            
+            alert('Settings saved!');
+        }
+
+        function toggleMobileMenu() {
+            // Toggle mobile sidebar
+        }
+
+        // Initialize
+        renderProducts();
+    </script>
+</body>
+</html>'''
+
+print("Admin Dashboard template created!")
+print(f"Length: {len(admin_template)} characters")

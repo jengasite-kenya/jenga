@@ -1,0 +1,392 @@
+
+# Create Online Store Pro Template with Admin
+store_template = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{STORE_NAME}} - {{TAGLINE}}</title>
+    <meta name="description" content="{{DESCRIPTION}}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: '#10B981',
+                        orange: '#F97316',
+                        sky: '#0EA5E9',
+                        softgray: '#F9FAFB'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .cart-badge {
+            animation: bounce 0.5s;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .category-pill.active {
+            background: #10B981;
+            color: white;
+        }
+    </style>
+</head>
+<body class="font-sans bg-softgray text-gray-800">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="text-2xl font-bold text-emerald">{{STORE_NAME}}</a>
+                <div class="flex items-center gap-6">
+                    <a href="/admin" class="text-gray-600 hover:text-emerald transition">Admin</a>
+                    <button onclick="toggleCart()" class="relative">
+                        <i class="fas fa-shopping-cart text-xl text-gray-700"></i>
+                        <span id="cartCount" class="absolute -top-2 -right-2 bg-orange text-white text-xs w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="pt-24 pb-12 bg-gradient-to-r from-emerald/10 to-orange/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">{{TAGLINE}}</h1>
+            <p class="text-gray-600 text-lg mb-8">{{DESCRIPTION}}</p>
+            <div class="flex justify-center gap-4">
+                <a href="#products" class="px-8 py-3 bg-emerald text-white rounded-full font-semibold hover:bg-emerald-600 transition">Shop Now</a>
+                <a href="https://wa.me/{{WHATSAPP}}" class="px-8 py-3 border-2 border-emerald text-emerald rounded-full font-semibold hover:bg-emerald hover:text-white transition">
+                    <i class="fab fa-whatsapp mr-2"></i>Chat with Us
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="py-8 bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex gap-3 overflow-x-auto pb-2" id="categories">
+                <button class="category-pill active px-6 py-2 rounded-full border border-gray-200 whitespace-nowrap transition" onclick="filterCategory('all')">All Products</button>
+                {{CATEGORIES}}
+            </div>
+        </div>
+    </section>
+
+    <!-- Products -->
+    <section id="products" class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold">Our Products</h2>
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Search products..." class="pl-10 pr-4 py-2 border rounded-full focus:ring-2 focus:ring-emerald outline-none">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+            </div>
+            <div id="productGrid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {{PRODUCTS}}
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50">
+        <div class="p-6 h-full flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold">Your Cart</h3>
+                <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="cartItems" class="flex-1 overflow-y-auto space-y-4">
+                <!-- Cart items injected here -->
+            </div>
+            <div class="border-t pt-4 mt-4">
+                <div class="flex justify-between mb-4">
+                    <span class="font-semibold">Total:</span>
+                    <span id="cartTotal" class="text-xl font-bold text-emerald">KES 0</span>
+                </div>
+                <button onclick="checkout()" class="w-full py-3 bg-emerald text-white rounded-full font-semibold hover:bg-emerald-600 transition">
+                    Checkout with M-Pesa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 id="modalTitle" class="text-2xl font-bold"></h3>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <img id="modalImage" src="" alt="" class="w-full h-64 object-cover rounded-xl mb-4">
+                <p id="modalDesc" class="text-gray-600 mb-4"></p>
+                <div class="flex justify-between items-center">
+                    <span id="modalPrice" class="text-2xl font-bold text-emerald"></span>
+                    <button id="modalAddBtn" class="px-6 py-2 bg-emerald text-white rounded-full hover:bg-emerald-600 transition">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6">
+            <h3 class="text-xl font-bold mb-4">Complete Your Order</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Full Name</label>
+                    <input type="text" id="checkoutName" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Phone Number</label>
+                    <input type="tel" id="checkoutPhone" placeholder="254712345678" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Delivery Address</label>
+                    <textarea id="checkoutAddress" rows="2" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></textarea>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex justify-between mb-2">
+                        <span>Subtotal:</span>
+                        <span id="checkoutSubtotal">KES 0</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span>Delivery:</span>
+                        <span>KES 200</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-lg">
+                        <span>Total:</span>
+                        <span id="checkoutTotal">KES 0</span>
+                    </div>
+                </div>
+                <button onclick="processPayment()" class="w-full py-3 bg-emerald text-white rounded-full font-semibold hover:bg-emerald-600 transition">
+                    Pay with M-Pesa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="text-xl font-bold text-emerald mb-4">{{STORE_NAME}}</h4>
+                    <p class="text-gray-400">{{DESCRIPTION}}</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact</h4>
+                    <p class="text-gray-400"><i class="fas fa-phone mr-2"></i>{{PHONE}}</p>
+                    <p class="text-gray-400"><i class="fas fa-envelope mr-2"></i>{{EMAIL}}</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Follow Us</h4>
+                    <div class="flex gap-4">
+                        <a href="{{INSTAGRAM}}" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-emerald transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="{{FACEBOOK}}" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-emerald transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 {{STORE_NAME}}. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Cart functionality
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        function updateCart() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            const badge = document.getElementById('cartCount');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove('hidden');
+                badge.classList.add('cart-badge');
+            } else {
+                badge.classList.add('hidden');
+            }
+            renderCart();
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItems');
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center">Your cart is empty</p>';
+                document.getElementById('cartTotal').textContent = 'KES 0';
+                return;
+            }
+            
+            let total = 0;
+            container.innerHTML = cart.map((item, idx) => {
+                total += item.price * item.qty;
+                return `
+                    <div class="flex gap-4 bg-gray-50 p-4 rounded-lg">
+                        <img src="${item.image}" class="w-20 h-20 object-cover rounded">
+                        <div class="flex-1">
+                            <h4 class="font-semibold">${item.name}</h4>
+                            <p class="text-emerald font-bold">KES ${item.price.toLocaleString()}</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <button onclick="updateQty(${idx}, -1)" class="w-6 h-6 bg-gray-200 rounded">-</button>
+                                <span>${item.qty}</span>
+                                <button onclick="updateQty(${idx}, 1)" class="w-6 h-6 bg-gray-200 rounded">+</button>
+                            </div>
+                        </div>
+                        <button onclick="removeItem(${idx})" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('cartTotal').textContent = 'KES ' + total.toLocaleString();
+        }
+
+        function addToCart(id, name, price, image) {
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ id, name, price, image, qty: 1 });
+            }
+            updateCart();
+            toggleCart();
+        }
+
+        function updateQty(idx, change) {
+            cart[idx].qty += change;
+            if (cart[idx].qty <= 0) cart.splice(idx, 1);
+            updateCart();
+        }
+
+        function removeItem(idx) {
+            cart.splice(idx, 1);
+            updateCart();
+        }
+
+        function toggleCart() {
+            const sidebar = document.getElementById('cartSidebar');
+            sidebar.classList.toggle('translate-x-full');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+            document.getElementById('checkoutSubtotal').textContent = 'KES ' + subtotal.toLocaleString();
+            document.getElementById('checkoutTotal').textContent = 'KES ' + (subtotal + 200).toLocaleString();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        async function processPayment() {
+            const name = document.getElementById('checkoutName').value;
+            const phone = document.getElementById('checkoutPhone').value;
+            const address = document.getElementById('checkoutAddress').value;
+            
+            if (!name || !phone || !address) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            const items = cart.map(item => `${item.qty}x ${item.name}`).join(', ');
+            const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0) + 200;
+            
+            try {
+                const response = await fetch('/api/create-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        phone,
+                        email: 'customer@example.com',
+                        item: items,
+                        price: total,
+                        type: 'store'
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('Payment request sent to your phone. Please enter M-Pesa PIN.');
+                    cart = [];
+                    updateCart();
+                    document.getElementById('checkoutModal').classList.add('hidden');
+                    toggleCart();
+                } else {
+                    alert('Payment failed: ' + result.message);
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        function openProduct(id, name, price, image, desc) {
+            document.getElementById('modalTitle').textContent = name;
+            document.getElementById('modalPrice').textContent = 'KES ' + price.toLocaleString();
+            document.getElementById('modalImage').src = image;
+            document.getElementById('modalDesc').textContent = desc;
+            document.getElementById('modalAddBtn').onclick = () => {
+                addToCart(id, name, price, image);
+                closeModal();
+            };
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.add('hidden');
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.category-pill').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter products (simplified - would connect to actual data)
+            console.log('Filter by:', cat);
+        }
+
+        // Search functionality
+        document.getElementById('searchInput')?.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            // Filter products by search term
+            console.log('Search:', term);
+        });
+
+        // Initialize
+        updateCart();
+    </script>
+</body>
+</html>'''
+
+print("Online Store Pro template created!")
+print(f"Length: {len(store_template)} characters")
