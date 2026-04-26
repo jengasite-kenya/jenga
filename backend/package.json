@@ -1,6 +1,4 @@
-
-# Create the complete updated package.json
-package_json = '''{
+{
   "name": "sitesawa",
   "version": "2.0.0",
   "description": "Website template store with M-Pesa payments and Render hosting. Customers bring their own domain.",
@@ -23,9 +21,3 @@ package_json = '''{
     "dotenv": "^16.4.0"
   }
 }
-'''
-
-with open('/mnt/agents/output/package.json', 'w') as f:
-    f.write(package_json)
-
-print("package.json created")
