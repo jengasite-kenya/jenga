@@ -64,99 +64,6 @@ async function sendSMS(phone, message) {
     }
 }
 
-// ==================== HOST PINNACLE DOMAIN MANAGER ====================
-class HostPinnacleManager {
-    constructor(apiKey, username) {
-        this.apiKey = apiKey;
-        this.username = username;
-        this.baseUrl = 'https://clients.hostpinnacle.co.ke/includes/api.php';
-    }
-
-    async checkDomain(domain) {
-        try {
-            const response = await axios.post(this.baseUrl, {
-                action: 'DomainWhois',
-                identifier: this.apiKey,
-                secret: this.username,
-                domain: domain,
-                responsetype: 'json'
-            }, {
-                timeout: 10000
-            });
-
-            return {
-                available: response.data.result === 'available',
-                price: this.getDomainPrice(domain),
-                message: response.data.result === 'available' ? 'Domain available' : 'Domain taken'
-            };
-        } catch (error) {
-            console.error('Domain check error:', error.message);
-            return { available: false, error: error.message };
-        }
-    }
-
-    getDomainPrice(domain) {
-        if (domain.endsWith('.co.ke')) return 900;
-        if (domain.endsWith('.com')) return 1700;
-        if (domain.endsWith('.org')) return 1700;
-        if (domain.endsWith('.net')) return 1700;
-        return 1700; // default
-    }
-
-    async registerDomain(domain, contactInfo) {
-        try {
-            const response = await axios.post(this.baseUrl, {
-                action: 'OrderDomain',
-                identifier: this.apiKey,
-                secret: this.username,
-                domain: domain,
-                years: 1,
-                nameserver1: 'ns1.hostpinnacle.co.ke',
-                nameserver2: 'ns2.hostpinnacle.co.ke',
-                contactfirstname: contactInfo.name.split(' ')[0],
-                contactlastname: contactInfo.name.split(' ').slice(1).join(' ') || 'Customer',
-                contactemail: contactInfo.email,
-                contactphonenumber: contactInfo.phone,
-                contactaddress1: contactInfo.address || 'Nairobi, Kenya',
-                contactcity: 'Nairobi',
-                contactcountry: 'KE',
-                responsetype: 'json'
-            }, {
-                timeout: 30000
-            });
-
-            return {
-                success: response.data.result === 'success',
-                domainId: response.data.orderid,
-                nameservers: ['ns1.hostpinnacle.co.ke', 'ns2.hostpinnacle.co.ke'],
-                message: 'Domain registered successfully'
-            };
-        } catch (error) {
-            console.error('Domain registration failed:', error.response?.data || error.message);
-            return {
-                success: false,
-                error: error.response?.data?.message || error.message
-            };
-        }
-    }
-
-    async configureDNS(domain) {
-        // Point domain to Render hosting
-        const records = [
-            { type: 'A', name: '@', value: '216.24.57.1', ttl: 3600 },
-            { type: 'CNAME', name: 'www', value: domain, ttl: 3600 }
-        ];
-
-        try {
-            // HostPinnacle manages DNS automatically via nameservers
-            return { success: true, message: 'DNS configured for Render hosting' };
-        } catch (error) {
-            console.error('DNS config failed:', error.message);
-            return { success: false, error: error.message };
-        }
-    }
-}
-
 // ==================== RENDER DEPLOYER ====================
 class RenderDeployer {
     constructor(apiKey) {
@@ -185,8 +92,6 @@ class RenderDeployer {
     }
 
     async createTemplateRepo(orderData, templateType) {
-        // In production, this would create a GitHub repo and push files
-        // For now, return the expected repo URL format
         const repoName = orderData.domain.replace(/\./g, '-');
         return `https://github.com/sitesawa/${repoName}`;
     }
@@ -785,8 +690,6 @@ const AT_USERNAME = process.env.AT_USERNAME;
 const AT_APIKEY = process.env.AT_APIKEY;
 const RENDER_API_KEY = process.env.RENDER_API_KEY;
 const RENDER_OWNER_ID = process.env.RENDER_OWNER_ID;
-const HOSTPINNACLE_API_KEY = process.env.HOSTPINNACLE_API_KEY;
-const HOSTPINNACLE_USERNAME = process.env.HOSTPINNACLE_USERNAME;
 
 const VALID_ITEMS = [
     'Business Showcase',
@@ -795,20 +698,12 @@ const VALID_ITEMS = [
 ];
 
 const VALID_PRICES = {
-    'Business Showcase': 7500,
-    'Professional Portfolio': 7500,
-    'Online Store Pro': 9500
-};
-
-const DOMAIN_PRICES = {
-    '.co.ke': 900,
-    '.com': 1700,
-    '.org': 1700,
-    '.net': 1700
+    'Business Showcase': 6000,
+    'Professional Portfolio': 6000,
+    'Online Store Pro': 8000
 };
 
 // Initialize managers
-const hostpinnacle = new HostPinnacleManager(HOSTPINNACLE_API_KEY, HOSTPINNACLE_USERNAME);
 const render = new RenderDeployer(RENDER_API_KEY);
 
 function validateConfig() {
@@ -821,10 +716,7 @@ function validateConfig() {
         console.warn('Google Workspace not configured - emails will be logged only');
     }
     if (!AT_USERNAME || !AT_APIKEY) {
-        console.warn('Africa\'s Talking not configured - SMS will be logged only');
-    }
-    if (!HOSTPINNACLE_API_KEY) {
-        console.warn('Host Pinnacle not configured - domain registration disabled');
+        console.warn('Africa's Talking not configured - SMS will be logged only');
     }
     if (!RENDER_API_KEY) {
         console.warn('Render not configured - auto-deployment disabled');
@@ -899,13 +791,6 @@ function generateMpesaPassword(timestamp) {
     return Buffer.from(str).toString('base64');
 }
 
-function getDomainPrice(domain) {
-    for (const [tld, price] of Object.entries(DOMAIN_PRICES)) {
-        if (domain.endsWith(tld)) return price;
-    }
-    return 1700; // default
-}
-
 // ==================== ROUTES ====================
 app.get('/health', (req, res) => {
     res.json({
@@ -916,43 +801,8 @@ app.get('/health', (req, res) => {
         uptime: process.uptime(),
         email_configured: !!(WORKSPACE_EMAIL && WORKSPACE_APP_PASSWORD),
         sms_configured: !!(AT_USERNAME && AT_APIKEY),
-        domain_configured: !!HOSTPINNACLE_API_KEY,
         render_configured: !!RENDER_API_KEY
     });
-});
-
-// Check domain availability and price
-app.get('/api/check-domain', async (req, res) => {
-    try {
-        const { domain } = req.query;
-        if (!domain) {
-            return res.status(400).json({ success: false, message: 'Domain required' });
-        }
-
-        const price = getDomainPrice(domain);
-
-        if (!HOSTPINNACLE_API_KEY) {
-            // Return estimated price without checking
-            return res.json({
-                success: true,
-                domain,
-                available: true, // assume available
-                price,
-                message: 'Domain price estimate'
-            });
-        }
-
-        const result = await hostpinnacle.checkDomain(domain);
-        res.json({
-            success: true,
-            domain,
-            available: result.available,
-            price: result.price || price,
-            message: result.message
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
 });
 
 // Create order
@@ -1087,20 +937,6 @@ app.post('/mpesa-callback', express.raw({ type: 'application/json' }), async (re
 
             // AUTO-PROVISIONING
             try {
-                // Register domain
-                if (HOSTPINNACLE_API_KEY) {
-                    const domainResult = await hostpinnacle.registerDomain(order.domain, {
-                        name: order.name,
-                        email: order.email,
-                        phone: order.phone
-                    });
-
-                    if (domainResult.success) {
-                        order.domainRegistered = true;
-                        await hostpinnacle.configureDNS(order.domain);
-                    }
-                }
-
                 // Deploy to Render
                 if (RENDER_API_KEY) {
                     let templateType;
@@ -1266,10 +1102,10 @@ app.delete('/api/products/:id', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 SiteSawa Server running on port ${PORT}`);
+    console.log(`🚀 SiteSawa Server v2.0 running on port ${PORT}`);
     console.log(`📧 Email: ${WORKSPACE_EMAIL ? 'Google Workspace ready' : 'Not configured'}`);
-    console.log(`📱 SMS: ${AT_USERNAME ? 'Africa\'s Talking ready' : 'Not configured'}`);
-    console.log(`🌐 Domain: ${HOSTPINNACLE_API_KEY ? 'Host Pinnacle ready' : 'Not configured'}`);
+    console.log(`📱 SMS: ${AT_USERNAME ? 'Africa's Talking ready' : 'Not configured'}`);
     console.log(`🚀 Render: ${RENDER_API_KEY ? 'Deployment ready' : 'Not configured'}`);
     console.log(`📦 Templates: ${VALID_ITEMS.join(', ')}`);
+    console.log(`💰 Prices: Business/Portfolio KES 6,000 | Store KES 8,000`);
 });
