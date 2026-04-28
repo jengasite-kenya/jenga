@@ -1,198 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>~name~ - ~title~</title>
-<meta name="description" content="~description~">
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=r+"?sdkid="+e+"&lib="+t;var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(a,s)};ttq.load('D7NO7LBC77UDO1RDP8TG');ttq.page();}(window,document,'ttq');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>John Doe - Creative Professional</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-section { background: #f8f9fa; padding: 100px 0; }
+        .portfolio-card { border: none; overflow: hidden; }
+        .portfolio-card img { transition: transform 0.3s; }
+        .portfolio-card:hover img { transform: scale(1.05); }
+        .social-icon { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: white; text-decoration: none; margin-right: 8px; transition: opacity 0.3s; }
+        .social-icon:hover { opacity: 0.8; color: white; }
+        .bg-facebook { background: #1877f2; }
+        .bg-instagram { background: #e4405f; }
+        .bg-twitter { background: #1da1f2; }
+        .bg-linkedin { background: #0a66c2; }
+        .bg-whatsapp { background: #25d366; }
+        .mpesa-btn { background: #00a650; color: white; border: none; }
+        .mpesa-btn:hover { background: #008f44; color: white; }
+    </style>
+
+<!-- TikTok Pixel Code Start -->
 <script>
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: { electric: '#3B82F6', hotpink: '#EC4899', lime: '#84CC16', softgray: '#F8FAFC' },
-      fontFamily: { display: ['Outfit','sans-serif'], body: ['Plus Jakarta Sans','sans-serif'] }
-    }
-  }
-};
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+  ttq.load('[[TIKTOK_PIXEL_ID]]');
+  ttq.page();
+}(window, document, 'ttq');
 </script>
-<style>
-.gradient-bg { background: linear-gradient(135deg,#3B82F6 0%,#EC4899 50%,#84CC16 100%); }
-.text-gradient { background: linear-gradient(135deg,#3B82F6 0%,#EC4899 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.blob { position:absolute; filter:blur(40px); opacity:0.4; animation:move 20s infinite alternate; }
-@keyframes move { from{transform:translate(0,0)scale(1)} to{transform:translate(20px,-20px)scale(1.1)} }
-.portfolio-item:hover .portfolio-overlay { opacity:1; }
-.skill-bar { animation:fillBar 2s ease-out forwards; }
-@keyframes fillBar { from{width:0} }
-</style>
+<!-- TikTok Pixel Code End -->
+
+<base target="_blank">
 </head>
-<body class="font-body bg-softgray text-gray-800 overflow-x-hidden">
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top border-bottom">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">John Doe</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#work">Work</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-<nav class="fixed w-full bg-white/80 backdrop-blur-lg z-50 border-b border-gray-100">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="flex justify-between items-center h-20">
-<span class="font-display text-2xl font-bold text-gradient">~name~</span>
-<div class="hidden md:flex space-x-8">
-<a href="#work" class="text-gray-600 hover:text-electric transition font-medium">Work</a>
-<a href="#about" class="text-gray-600 hover:text-electric transition font-medium">About</a>
-<a href="#skills" class="text-gray-600 hover:text-electric transition font-medium">Skills</a>
-<a href="#contact" class="px-6 py-2 bg-electric text-white rounded-full hover:bg-blue-600 transition font-medium">Let's Talk</a>
-</div>
-<button class="md:hidden text-2xl text-electric" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')"><i class="fas fa-bars"></i></button>
-</div>
-</div>
-<div id="mobileMenu" class="hidden md:hidden bg-white border-t">
-<div class="px-4 py-4 space-y-3">
-<a href="#work" class="block text-gray-600 hover:text-electric">Work</a>
-<a href="#about" class="block text-gray-600 hover:text-electric">About</a>
-<a href="#skills" class="block text-gray-600 hover:text-electric">Skills</a>
-<a href="#contact" class="block text-electric font-medium">Let's Talk</a>
-</div>
-</div>
-</nav>
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <p class="text-muted fw-medium">Photographer & Designer</p>
+                    <h1 class="display-4 fw-bold mb-4">Creating Visual Stories That Inspire</h1>
+                    <p class="lead text-muted mb-4">I am a creative professional based in Nairobi, specializing in photography and brand design for businesses across Kenya.</p>
+                    <a href="#work" class="btn btn-dark btn-lg">View My Work</a>
+                    <div class="mt-4">
+                        <a href="https://facebook.com/johndoe" target="_blank" class="social-icon bg-facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/johndoe" target="_blank" class="social-icon bg-instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://twitter.com/johndoe" target="_blank" class="social-icon bg-twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="https://linkedin.com/in/johndoe" target="_blank" class="social-icon bg-linkedin"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800" alt="Work" class="img-fluid rounded-4">
+                </div>
+            </div>
+        </div>
+    </section>
 
-<section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-<div class="blob bg-electric w-96 h-96 rounded-full top-0 left-0 -translate-x-1/2 -translate-y-1/2"></div>
-<div class="blob bg-hotpink w-96 h-96 rounded-full bottom-0 right-0 translate-x-1/2 translate-y-1/2"></div>
-<div class="blob bg-lime w-64 h-64 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-<div class="grid lg:grid-cols-2 gap-12 items-center">
-<div class="text-center lg:text-left">
-<p class="text-electric font-semibold mb-4">~greeting~</p>
-<h1 class="font-display text-5xl lg:text-7xl font-bold leading-tight mb-6">~title~<br><span class="text-gradient">& Creative</span></h1>
-<p class="text-xl text-gray-600 mb-8 leading-relaxed">~description~</p>
-<div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-<a href="#work" class="px-8 py-4 bg-electric text-white rounded-full font-semibold hover:bg-blue-600 transition shadow-lg hover:shadow-electric/50">View My Work</a>
-<a href="~resume_url~" class="px-8 py-4 border-2 border-electric text-electric rounded-full font-semibold hover:bg-electric hover:text-white transition">Download CV</a>
-</div>
-<div class="flex gap-4 mt-8 justify-center lg:justify-start">
-<a href="~instagram_url~" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-hotpink shadow-lg hover:scale-110 transition"><i class="fab fa-instagram text-xl"></i></a>
-<a href="~behance_url~" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-electric shadow-lg hover:scale-110 transition"><i class="fab fa-behance text-xl"></i></a>
-<a href="~linkedin_url~" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-blue-700 shadow-lg hover:scale-110 transition"><i class="fab fa-linkedin-in text-xl"></i></a>
-<a href="~dribbble_url~" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-pink-500 shadow-lg hover:scale-110 transition"><i class="fab fa-dribbble text-xl"></i></a>
-</div>
-</div>
-<div class="relative">
-<div class="absolute inset-0 gradient-bg rounded-3xl transform rotate-6 opacity-20"></div>
-<img src="~profile_image~" alt="~name~" class="relative rounded-3xl shadow-2xl w-full object-cover h-96 lg:h-[600px]" onerror="this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%23999'%3EProfile Photo%3C/text%3E%3C/svg%3E'">
-</div>
-</div>
-</div>
-</section>
+    <section id="work" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Selected Work</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card portfolio-card">
+                        <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600" class="card-img-top" alt="Project">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Project One</h5>
+                            <p class="card-text text-muted">Brand identity for a Nairobi startup.</p>
+                            <p class="fw-bold text-primary">KES 15,000</p>
+                            <button class="btn mpesa-btn btn-sm" onclick="openMpesaModal('Project One - Brand Identity', 15000)">
+                                <i class="fas fa-mobile-alt me-1"></i>Book & Pay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card portfolio-card">
+                        <img src="https://images.unsplash.com/photo-1558655146-364adaf1fcc9?w=600" class="card-img-top" alt="Project">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Project Two</h5>
+                            <p class="card-text text-muted">Product photography for e-commerce.</p>
+                            <p class="fw-bold text-primary">KES 8,000</p>
+                            <button class="btn mpesa-btn btn-sm" onclick="openMpesaModal('Project Two - Photography', 8000)">
+                                <i class="fas fa-mobile-alt me-1"></i>Book & Pay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card portfolio-card">
+                        <img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=600" class="card-img-top" alt="Project">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Project Three</h5>
+                            <p class="card-text text-muted">Website design for a local business.</p>
+                            <p class="fw-bold text-primary">KES 25,000</p>
+                            <button class="btn mpesa-btn btn-sm" onclick="openMpesaModal('Project Three - Web Design', 25000)">
+                                <i class="fas fa-mobile-alt me-1"></i>Book & Pay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<section class="py-12 bg-white">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-<div class="text-center"><div class="text-4xl font-display font-bold text-electric">~stat_years~+</div><div class="text-gray-600 mt-2">Years Experience</div></div>
-<div class="text-center"><div class="text-4xl font-display font-bold text-hotpink">~stat_projects~+</div><div class="text-gray-600 mt-2">Projects Done</div></div>
-<div class="text-center"><div class="text-4xl font-display font-bold text-lime">~stat_clients~+</div><div class="text-gray-600 mt-2">Happy Clients</div></div>
-<div class="text-center"><div class="text-4xl font-display font-bold text-electric">~stat_awards~</div><div class="text-gray-600 mt-2">Awards Won</div></div>
-</div>
-</div>
-</section>
+    <section id="about" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="mb-4">About Me</h2>
+            <p class="text-muted max-w-2xl">I am a creative professional based in Nairobi, specializing in photography and brand design for businesses across Kenya. With over 5 years of experience, I help brands tell their stories through compelling visuals.</p>
+        </div>
+    </section>
 
-<section id="work" class="py-20 bg-white">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="text-center mb-16">
-<span class="text-hotpink font-semibold">Portfolio</span>
-<h2 class="font-display text-4xl font-bold mt-2">Selected Works</h2>
-</div>
-<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-~portfolio_items~
-</div>
-</div>
-</section>
+    <section id="contact" class="py-5">
+        <div class="container text-center">
+            <h2 class="mb-4">Let's Work Together</h2>
+            <p class="text-muted mb-2">john@example.com</p>
+            <p class="text-muted mb-4">+254 712 345 678</p>
+            <div class="mb-4">
+                <a href="https://facebook.com/johndoe" target="_blank" class="social-icon bg-facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com/johndoe" target="_blank" class="social-icon bg-instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/johndoe" target="_blank" class="social-icon bg-twitter"><i class="fab fa-twitter"></i></a>
+                <a href="https://linkedin.com/in/johndoe" target="_blank" class="social-icon bg-linkedin"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://wa.me/254712345678" target="_blank" class="social-icon bg-whatsapp"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <a href="mailto:john@example.com" class="btn btn-dark btn-lg">Get in Touch</a>
+        </div>
+    </section>
 
-<section id="about" class="py-20 bg-softgray">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="grid lg:grid-cols-2 gap-12 items-center">
-<div>
-<span class="text-hotpink font-semibold">About Me</span>
-<h2 class="font-display text-4xl font-bold mt-2 mb-6">~about_title~</h2>
-<p class="text-gray-600 mb-6 leading-relaxed">~about_text~</p>
-<div class="space-y-4">
-~experience_items~
-</div>
-</div>
-<div class="grid grid-cols-2 gap-4">
-<img src="~about_image_1~" class="rounded-2xl shadow-lg w-full h-48 object-cover" onerror="this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%23999'%3EPhoto 1%3C/text%3E%3C/svg%3E'">
-<img src="~about_image_2~" class="rounded-2xl shadow-lg w-full h-48 object-cover mt-8" onerror="this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%23999'%3EPhoto 2%3C/text%3E%3C/svg%3E'">
-</div>
-</div>
-</div>
-</section>
+    <footer class="py-4 bg-dark text-white text-center">
+        <div class="container">
+            <div class="mb-3">
+                <a href="https://facebook.com/johndoe" target="_blank" class="social-icon bg-facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com/johndoe" target="_blank" class="social-icon bg-instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/johndoe" target="_blank" class="social-icon bg-twitter"><i class="fab fa-twitter"></i></a>
+                <a href="https://linkedin.com/in/johndoe" target="_blank" class="social-icon bg-linkedin"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://wa.me/254712345678" target="_blank" class="social-icon bg-whatsapp"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <small>John Doe. All rights reserved.</small>
+        </div>
+    </footer>
 
-<section id="skills" class="py-20 bg-white">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="text-center mb-16">
-<span class="text-lime font-semibold">Expertise</span>
-<h2 class="font-display text-4xl font-bold mt-2">Skills & Tools</h2>
-</div>
-<div class="grid md:grid-cols-2 gap-12">
-<div>
-<h3 class="font-display text-2xl font-bold mb-6">Technical Skills</h3>
-<div class="space-y-6">
-~skill_bars~
-</div>
-</div>
-<div>
-<h3 class="font-display text-2xl font-bold mb-6">Tools I Use</h3>
-<div class="grid grid-cols-3 gap-4">
-~tool_icons~
-</div>
-</div>
-</div>
-</div>
-</section>
+    <!-- M-Pesa Modal -->
+    <div class="modal fade" id="mpesaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Book Service - M-Pesa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="mpesaForm">
+                        <div class="mb-3">
+                            <label class="form-label">Service</label>
+                            <input type="text" id="serviceName" class="form-control" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Amount</label>
+                            <input type="text" id="serviceAmount" class="form-control" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Your Name *</label>
+                            <input type="text" id="customerName" class="form-control" placeholder="John Doe" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" id="customerPhone" class="form-control" placeholder="254712345678" required>
+                            <div class="form-text">Format: 2547XXXXXXXX</div>
+                        </div>
+                        <button type="submit" class="btn mpesa-btn w-100">
+                            <i class="fas fa-mobile-alt me-2"></i>Pay Now
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<section class="py-20 bg-gradient-to-r from-electric/5 to-hotpink/5">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="text-center mb-16">
-<span class="text-electric font-semibold">Testimonials</span>
-<h2 class="font-display text-4xl font-bold mt-2">What Clients Say</h2>
-</div>
-<div class="grid md:grid-cols-3 gap-8">
-~testimonials~
-</div>
-</div>
-</section>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const mpesaModal = new bootstrap.Modal(document.getElementById('mpesaModal'));
+        const API_BASE = window.location.origin;
 
-<section id="contact" class="py-20 bg-white">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="grid lg:grid-cols-2 gap-12">
-<div>
-<span class="text-lime font-semibold">Get In Touch</span>
-<h2 class="font-display text-4xl font-bold mt-2 mb-6">Let's Work Together</h2>
-<p class="text-gray-600 mb-8">Have a project in mind? I'd love to hear about it. Send me a message and let's create something amazing.</p>
-<div class="space-y-4">
-<div class="flex items-center gap-4"><div class="w-12 h-12 bg-electric/10 rounded-full flex items-center justify-center text-electric"><i class="fas fa-envelope"></i></div><span>~email~</span></div>
-<div class="flex items-center gap-4"><div class="w-12 h-12 bg-hotpink/10 rounded-full flex items-center justify-center text-hotpink"><i class="fas fa-phone"></i></div><span>~phone~</span></div>
-<div class="flex items-center gap-4"><div class="w-12 h-12 bg-lime/10 rounded-full flex items-center justify-center text-lime"><i class="fas fa-map-marker-alt"></i></div><span>~location~</span></div>
-</div>
-</div>
-<form onsubmit="event.preventDefault(); alert('Message sent! I will get back to you soon.'); this.reset();" class="bg-softgray p-8 rounded-3xl">
-<div class="space-y-6">
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Your Name</label><input type="text" class="w-full px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-electric" placeholder="John Doe"></div>
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label><input type="email" class="w-full px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-electric" placeholder="john@example.com"></div>
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Project Details</label><textarea rows="4" class="w-full px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-electric" placeholder="Tell me about your project..."></textarea></div>
-<button type="submit" class="w-full py-4 bg-gradient-to-r from-electric to-hotpink text-white rounded-xl font-semibold hover:shadow-lg transition">Send Message</button>
-</div>
-</form>
-</div>
-</div>
-</section>
+        function openMpesaModal(service, amount) {
+            document.getElementById('serviceName').value = service;
+            document.getElementById('serviceAmount').value = 'KES ' + amount.toLocaleString();
+            mpesaModal.show();
+        }
 
-<footer class="bg-gray-900 text-white py-12">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-<p class="text-gray-400">&copy; 2024 ~name~. All rights reserved.</p>
-</div>
-</footer>
+        document.getElementById('mpesaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
+            const item = document.getElementById('serviceName').value;
+            const amount = parseInt(document.getElementById('serviceAmount').value.replace(/[^0-9]/g, ''));
 
-<script>
-document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));t&&t.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('mobileMenu').classList.add('hidden')})});
-</script>
+            try {
+                const response = await fetch(API_BASE + '/api/create-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name, email: 'john@example.com', phone,
+                        domain: window.location.hostname, item, price: amount, type: 'service'
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Payment request sent! Check your phone and enter M-Pesa PIN.');
+                    mpesaModal.hide();
+                    this.reset();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        });
+    </script>
 </body>
 </html>
