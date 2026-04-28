@@ -1,182 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>~store_name~ - ~tagline~</title>
-<meta name="description" content="~description~">
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=r+"?sdkid="+e+"&lib="+t;var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(a,s)};ttq.load('D7NO7LBC77UDO1RDP8TG');ttq.page();}(window,document,'ttq');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-section { background: #f8f9fa; padding: 80px 0; }
+        .product-card { border: 1px solid #e9ecef; transition: box-shadow 0.3s; }
+        .product-card:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .social-icon { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: white; text-decoration: none; margin-right: 8px; transition: opacity 0.3s; }
+        .social-icon:hover { opacity: 0.8; color: white; }
+        .bg-facebook { background: #1877f2; }
+        .bg-instagram { background: #e4405f; }
+        .bg-twitter { background: #1da1f2; }
+        .bg-whatsapp { background: #25d366; }
+        .mpesa-btn { background: #00a650; color: white; border: none; }
+        .mpesa-btn:hover { background: #008f44; color: white; }
+        .cart-badge { position: absolute; top: -5px; right: -5px; background: #dc3545; color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100vh; background: white; box-shadow: -2px 0 10px rgba(0,0,0,0.1); transition: right 0.3s; z-index: 1050; }
+        .cart-sidebar.open { right: 0; }
+        .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1040; display: none; }
+        .cart-overlay.show { display: block; }
+    </style>
+
+<!-- TikTok Pixel Code Start -->
 <script>
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: { emerald: '#10B981', orange: '#F97316', sky: '#0EA5E9', softgray: '#F9FAFB' },
-      fontFamily: { sans: ['Inter', 'sans-serif'] }
-    }
-  }
-};
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+  ttq.load('[[TIKTOK_PIXEL_ID]]');
+  ttq.page();
+}(window, document, 'ttq');
 </script>
-<style>
-.product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-.cart-badge { animation: bounce 0.5s; }
-@keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
-.category-pill.active { background: #10B981; color: white; }
-.spinner { border: 3px solid #f3f3f3; border-top: 3px solid #10B981; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: none; }
-@keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
-</style>
+<!-- TikTok Pixel Code End -->
+
+<base target="_blank">
 </head>
-<body class="font-sans bg-softgray text-gray-800">
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top border-bottom">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">My Store</a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted d-none d-md-block">Quality products for you</span>
+                <button class="btn btn-outline-dark btn-sm position-relative" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartCount" class="cart-badge d-none">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
 
-<nav class="fixed w-full bg-white shadow-sm z-50">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="flex justify-between items-center h-16">
-<a href="/" class="text-2xl font-bold text-emerald">~store_name~</a>
-<div class="flex items-center gap-6">
-<a href="/admin" class="text-gray-600 hover:text-emerald transition">Admin</a>
-<button onclick="toggleCart()" class="relative">
-<i class="fas fa-shopping-cart text-xl text-gray-700"></i>
-<span id="cartCount" class="absolute -top-2 -right-2 bg-orange text-white text-xs w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
-</button>
-</div>
-</div>
-</div>
-</nav>
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-5 fw-bold mb-3">Welcome to My Store</h1>
+            <p class="lead text-muted">We sell quality products at affordable prices. Browse our collection below.</p>
+        </div>
+    </section>
 
-<section class="pt-24 pb-12 bg-gradient-to-r from-emerald/10 to-orange/10">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-<h1 class="text-4xl md:text-5xl font-bold mb-4">~tagline~</h1>
-<p class="text-gray-600 text-lg mb-8">~description~</p>
-<div class="flex justify-center gap-4">
-<a href="#products" class="px-8 py-3 bg-emerald text-white rounded-full font-semibold hover:bg-emerald-600 transition">Shop Now</a>
-<a href="https://wa.me/~whatsapp~" class="px-8 py-3 border-2 border-emerald text-emerald rounded-full font-semibold hover:bg-emerald hover:text-white transition"><i class="fab fa-whatsapp mr-2"></i>Chat with Us</a>
-</div>
-</div>
-</section>
+    <section class="py-5">
+        <div class="container">
+            <h2 class="mb-4">Products</h2>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="card product-card h-100">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400" class="card-img-top" alt="Product">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Product One</h5>
+                            <p class="card-text text-muted small">High quality item</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">KES 1,500</span>
+                                <button class="btn btn-dark btn-sm" onclick="addToCart('1', 'Product One', 1500, 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400')">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card product-card h-100">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400" class="card-img-top" alt="Product">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Product Two</h5>
+                            <p class="card-text text-muted small">Premium quality</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">KES 2,000</span>
+                                <button class="btn btn-dark btn-sm" onclick="addToCart('2', 'Product Two', 2000, 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400')">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card product-card h-100">
+                        <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400" class="card-img-top" alt="Product">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Product Three</h5>
+                            <p class="card-text text-muted small">Best seller</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">KES 1,200</span>
+                                <button class="btn btn-dark btn-sm" onclick="addToCart('3', 'Product Three', 1200, 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400')">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card product-card h-100">
+                        <img src="https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400" class="card-img-top" alt="Product">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Product Four</h5>
+                            <p class="card-text text-muted small">New arrival</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">KES 3,500</span>
+                                <button class="btn btn-dark btn-sm" onclick="addToCart('4', 'Product Four', 3500, 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400')">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<section class="py-8 bg-white border-b">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="flex gap-3 overflow-x-auto pb-2" id="categories">
-<button class="category-pill active px-6 py-2 rounded-full border border-gray-200 whitespace-nowrap transition" onclick="filterCategory('all')">All Products</button>
-~categories~
-</div>
-</div>
-</section>
+    <section class="py-5 bg-light">
+        <div class="container text-center">
+            <h2 class="mb-4">Connect With Us</h2>
+            <div class="mb-4">
+                <a href="https://facebook.com/mystore" target="_blank" class="social-icon bg-facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com/mystore" target="_blank" class="social-icon bg-instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/mystore" target="_blank" class="social-icon bg-twitter"><i class="fab fa-twitter"></i></a>
+                <a href="https://wa.me/254712345678" target="_blank" class="social-icon bg-whatsapp"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <p class="text-muted">Follow us for updates, promotions, and new arrivals!</p>
+        </div>
+    </section>
 
-<section id="products" class="py-12">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="flex justify-between items-center mb-8">
-<h2 class="text-2xl font-bold">Our Products</h2>
-<div class="relative">
-<input type="text" id="searchInput" placeholder="Search products..." class="pl-10 pr-4 py-2 border rounded-full focus:ring-2 focus:ring-emerald outline-none">
-<i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-</div>
-</div>
-<div id="productGrid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-~products~
-</div>
-</div>
-</section>
+    <section class="py-5">
+        <div class="container text-center">
+            <h2 class="mb-4">Contact</h2>
+            <p class="text-muted">store@example.com</p>
+            <p class="text-muted">+254 712 345 678</p>
+        </div>
+    </section>
 
-<div id="cartSidebar" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50">
-<div class="p-6 h-full flex flex-col">
-<div class="flex justify-between items-center mb-6">
-<h3 class="text-xl font-bold">Your Cart</h3>
-<button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
-</div>
-<div id="cartItems" class="flex-1 overflow-y-auto space-y-4">
-<p class="text-gray-500 text-center">Your cart is empty</p>
-</div>
-<div class="border-t pt-4 mt-4">
-<div class="flex justify-between mb-4">
-<span class="font-semibold">Total:</span>
-<span id="cartTotal" class="text-xl font-bold text-emerald">KES 0</span>
-</div>
-<button onclick="checkout()" class="w-full py-3 bg-emerald text-white rounded-full font-semibold hover:bg-emerald-600 transition">Checkout with M-Pesa</button>
-</div>
-</div>
-</div>
+    <footer class="py-4 bg-dark text-white text-center">
+        <div class="container">
+            <div class="mb-3">
+                <a href="https://facebook.com/mystore" target="_blank" class="social-icon bg-facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com/mystore" target="_blank" class="social-icon bg-instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/mystore" target="_blank" class="social-icon bg-twitter"><i class="fab fa-twitter"></i></a>
+                <a href="https://wa.me/254712345678" target="_blank" class="social-icon bg-whatsapp"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <small>My Store. All rights reserved.</small>
+        </div>
+    </footer>
 
-<div id="productModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-<div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-<div class="p-6">
-<div class="flex justify-between items-start mb-4">
-<h3 id="modalTitle" class="text-2xl font-bold"></h3>
-<button onclick="closeModal()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
-</div>
-<img id="modalImage" src="" alt="" class="w-full h-64 object-cover rounded-xl mb-4" onerror="this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%23999'%3EProduct Image%3C/text%3E%3C/svg%3E'">
-<p id="modalDesc" class="text-gray-600 mb-4"></p>
-<div class="flex justify-between items-center">
-<span id="modalPrice" class="text-2xl font-bold text-emerald"></span>
-<button id="modalAddBtn" class="px-6 py-2 bg-emerald text-white rounded-full hover:bg-emerald-600 transition">Add to Cart</button>
-</div>
-</div>
-</div>
-</div>
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="p-4 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="m-0 fw-bold">Your Cart</h5>
+                <button class="btn btn-sm btn-outline-secondary" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="cartItems" class="flex-grow-1 overflow-auto"></div>
+            <div class="border-top pt-3 mt-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal" class="fw-bold">KES 0</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Delivery:</span>
+                    <span class="fw-bold">KES 200</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="fw-bold">Total:</span>
+                    <span id="cartTotal" class="fw-bold text-primary">KES 0</span>
+                </div>
+                <button class="btn mpesa-btn w-100" onclick="checkout()">
+                    <i class="fas fa-mobile-alt me-2"></i>Checkout with M-Pesa
+                </button>
+            </div>
+        </div>
+    </div>
 
-<div id="checkoutModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-<div class="bg-white rounded-2xl max-w-md w-full p-6">
-<h3 class="text-xl font-bold mb-4">Complete Your Order</h3>
-<div class="space-y-4">
-<div><label class="block text-sm font-medium mb-1">Full Name</label><input type="text" id="checkoutName" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></div>
-<div><label class="block text-sm font-medium mb-1">Phone Number</label><input type="tel" id="checkoutPhone" placeholder="254712345678" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></div>
-<div><label class="block text-sm font-medium mb-1">Delivery Address</label><textarea id="checkoutAddress" rows="2" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></textarea></div>
-<div class="bg-gray-50 p-4 rounded-lg">
-<div class="flex justify-between mb-2"><span>Subtotal:</span><span id="checkoutSubtotal">KES 0</span></div>
-<div class="flex justify-between mb-2"><span>Delivery:</span><span>KES 200</span></div>
-<div class="flex justify-between font-bold text-lg"><span>Total:</span><span id="checkoutTotal">KES 0</span></div>
-</div>
-<div class="flex items-center gap-3">
-<div id="mpesaSpinner" class="spinner"></div>
-<button id="mpesaBtn" onclick="processPayment()" class="w-full py-3 bg-emerald text-white rounded-full font-semibold hover:bg-emerald-600 transition">Pay with M-Pesa</button>
-</div>
-</div>
-</div>
-</div>
+    <!-- M-Pesa Checkout Modal -->
+    <div class="modal fade" id="mpesaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Complete Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-light border mb-4">
+                        <div class="d-flex justify-content-between">
+                            <span>Order Total:</span>
+                            <span id="checkoutTotal" class="fw-bold text-primary">KES 0</span>
+                        </div>
+                        <small class="text-muted">Delivery fee included</small>
+                    </div>
+                    <form id="mpesaForm">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" id="customerName" class="form-control" placeholder="John Doe" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" id="customerPhone" class="form-control" placeholder="254712345678" required>
+                            <div class="form-text">Format: 2547XXXXXXXX</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Delivery Address</label>
+                            <textarea id="deliveryAddress" class="form-control" rows="2" placeholder="Nairobi, Kenya"></textarea>
+                        </div>
+                        <button type="submit" class="btn mpesa-btn w-100">
+                            <i class="fas fa-mobile-alt me-2"></i>Pay with M-Pesa
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<footer class="bg-gray-900 text-white py-12">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="grid md:grid-cols-3 gap-8">
-<div>
-<h4 class="text-xl font-bold text-emerald mb-4">~store_name~</h4>
-<p class="text-gray-400">~description~</p>
-</div>
-<div>
-<h4 class="font-bold mb-4">Contact</h4>
-<p class="text-gray-400"><i class="fas fa-phone mr-2"></i>~phone~</p>
-<p class="text-gray-400"><i class="fas fa-envelope mr-2"></i>~email~</p>
-</div>
-<div>
-<h4 class="font-bold mb-4">Follow Us</h4>
-<div class="flex gap-4">
-<a href="~instagram~" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-emerald transition"><i class="fab fa-instagram"></i></a>
-<a href="~facebook~" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-emerald transition"><i class="fab fa-facebook-f"></i></a>
-</div>
-</div>
-</div>
-<div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-<p>&copy; 2024 ~store_name~. All rights reserved.</p>
-</div>
-</div>
-</footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const API_BASE = window.location.origin;
+        const mpesaModal = new bootstrap.Modal(document.getElementById('mpesaModal'));
 
-<script>
-let cart=JSON.parse(localStorage.getItem('cart'))||[];
-function updateCart(){const count=cart.reduce((s,i)=>s+i.qty,0);const badge=document.getElementById('cartCount');if(count>0){badge.textContent=count;badge.classList.remove('hidden');badge.classList.add('cart-badge');}else{badge.classList.add('hidden');}renderCart();localStorage.setItem('cart',JSON.stringify(cart));}
-function renderCart(){const c=document.getElementById('cartItems');if(cart.length===0){c.innerHTML='<p class="text-gray-500 text-center">Your cart is empty</p>';document.getElementById('cartTotal').textContent='KES 0';return;}let total=0;c.innerHTML=cart.map((item,idx)=>{total+=item.price*item.qty;return`<div class="flex gap-4 bg-gray-50 p-4 rounded-lg"><img src="${item.image}" class="w-20 h-20 object-cover rounded" onerror="this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%23999'%3EProduct%3C/text%3E%3C/svg%3E'"><div class="flex-1"><h4 class="font-semibold">${item.name}</h4><p class="text-emerald font-bold">KES ${item.price.toLocaleString()}</p><div class="flex items-center gap-2 mt-2"><button onclick="updateQty(${idx},-1)" class="w-6 h-6 bg-gray-200 rounded">-</button><span>${item.qty}</span><button onclick="updateQty(${idx},1)" class="w-6 h-6 bg-gray-200 rounded">+</button></div></div><button onclick="removeItem(${idx})" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button></div>`;}).join('');document.getElementById('cartTotal').textContent='KES '+total.toLocaleString();}
-function addToCart(id,name,price,image){const existing=cart.find(i=>i.id===id);if(existing){existing.qty++;}else{cart.push({id,name,price,image,qty:1});}updateCart();toggleCart();}
-function updateQty(idx,change){cart[idx].qty+=change;if(cart[idx].qty<=0)cart.splice(idx,1);updateCart();}
-function removeItem(idx){cart.splice(idx,1);updateCart();}
-function toggleCart(){document.getElementById('cartSidebar').classList.toggle('translate-x-full');}
-function checkout(){if(cart.length===0){alert('Your cart is empty!');return;}const subtotal=cart.reduce((s,i)=>s+i.price*i.qty,0);document.getElementById('checkoutSubtotal').textContent='KES '+subtotal.toLocaleString();document.getElementById('checkoutTotal').textContent='KES '+(subtotal+200).toLocaleString();document.getElementById('checkoutModal').classList.remove('hidden');}
-function processPayment(){const name=document.getElementById('checkoutName').value;const phone=document.getElementById('checkoutPhone').value;const address=document.getElementById('checkoutAddress').value;if(!name||!phone||!address){alert('Please fill all fields');return;}const btn=document.getElementById('mpesaBtn');const spinner=document.getElementById('mpesaSpinner');btn.disabled=true;btn.textContent='Processing...';spinner.style.display='block';const items=cart.map(i=>`${i.qty}x ${i.name}`).join(', ');const total=cart.reduce((s,i)=>s+i.price*i.qty,0)+200;fetch('/api/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,email:'customer@example.com',item:items,price:total,type:'store'})}).then(r=>r.json()).then(result=>{spinner.style.display='none';btn.disabled=false;btn.textContent='Pay with M-Pesa';if(result.success){alert('Payment request sent to your phone. Please enter M-Pesa PIN.');cart=[];updateCart();document.getElementById('checkoutModal').classList.add('hidden');toggleCart();}else{alert('Payment failed: '+result.message);}}).catch(err=>{spinner.style.display='none';btn.disabled=false;btn.textContent='Pay with M-Pesa';alert('Network error. Please try again.');});}
-function openProduct(id,name,price,image,desc){document.getElementById('modalTitle').textContent=name;document.getElementById('modalPrice').textContent='KES '+price.toLocaleString();document.getElementById('modalImage').src=image;document.getElementById('modalDesc').textContent=desc;document.getElementById('modalAddBtn').onclick=()=>{addToCart(id,name,price,image);closeModal();};document.getElementById('productModal').classList.remove('hidden');}
-function closeModal(){document.getElementById('productModal').classList.add('hidden');document.getElementById('checkoutModal').classList.add('hidden');}
-function filterCategory(cat){document.querySelectorAll('.category-pill').forEach(btn=>btn.classList.remove('active'));event.target.classList.add('active');}
-document.getElementById('searchInput')?.addEventListener('input',e=>{const term=e.target.value.toLowerCase();});
-updateCart();
-</script>
+        function updateCart() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            const badge = document.getElementById('cartCount');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove('d-none');
+            } else {
+                badge.classList.add('d-none');
+            }
+            renderCart();
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItems');
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted py-5"><i class="fas fa-shopping-cart fa-3x mb-3"></i><p>Your cart is empty</p></div>';
+                document.getElementById('cartSubtotal').textContent = 'KES 0';
+                document.getElementById('cartTotal').textContent = 'KES 0';
+                return;
+            }
+            let subtotal = 0;
+            container.innerHTML = cart.map((item, idx) => {
+                subtotal += item.price * item.qty;
+                return `<div class="d-flex gap-3 mb-3 pb-3 border-bottom">
+                    <img src="${item.image}" class="rounded" style="width:60px;height:60px;object-fit:cover;">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">${item.name}</h6>
+                        <p class="text-primary fw-bold mb-1">KES ${item.price.toLocaleString()}</p>
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="updateQty(${idx}, -1)">-</button>
+                            <span>${item.qty}</span>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="updateQty(${idx}, 1)">+</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-link text-danger" onclick="removeItem(${idx})"><i class="fas fa-trash"></i></button>
+                </div>`;
+            }).join('');
+            document.getElementById('cartSubtotal').textContent = 'KES ' + subtotal.toLocaleString();
+            document.getElementById('cartTotal').textContent = 'KES ' + (subtotal + 200).toLocaleString();
+        }
+
+        function addToCart(id, name, price, image) {
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ id, name, price, image, qty: 1 });
+            }
+            updateCart();
+            toggleCart();
+        }
+
+        function updateQty(idx, change) {
+            cart[idx].qty += change;
+            if (cart[idx].qty <= 0) cart.splice(idx, 1);
+            updateCart();
+        }
+
+        function removeItem(idx) {
+            cart.splice(idx, 1);
+            updateCart();
+        }
+
+        function toggleCart() {
+            document.getElementById('cartSidebar').classList.toggle('open');
+            document.getElementById('cartOverlay').classList.toggle('show');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0) + 200;
+            document.getElementById('checkoutTotal').textContent = 'KES ' + total.toLocaleString();
+            mpesaModal.show();
+        }
+
+        document.getElementById('mpesaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
+            const address = document.getElementById('deliveryAddress').value;
+            const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0) + 200;
+
+            try {
+                const response = await fetch(API_BASE + '/api/create-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name, email: 'store@example.com', phone,
+                        domain: window.location.hostname,
+                        item: 'Store Order - ' + cart.map(i => i.name).join(', '),
+                        price: total, type: 'store', address, cart
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Payment request sent! Check your phone and enter M-Pesa PIN.');
+                    cart = [];
+                    updateCart();
+                    toggleCart();
+                    mpesaModal.hide();
+                    this.reset();
+                } else {
+                    alert('Payment failed: ' + result.message);
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        });
+
+        updateCart();
+    </script>
 </body>
 </html>
