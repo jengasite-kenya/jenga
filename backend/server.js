@@ -16,6 +16,7 @@ const app = express();
 app.use(helmet());
 app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
 app.use(express.json({ limit: '10mb' }));
+app.use(express.raw({ type: 'application/json' }));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -133,7 +134,7 @@ class RenderDeployer {
     }
 }
 
-// ==================== TEMPLATE MANAGER ====================
+// ==================== TEMPLATE MANAGER (FILE-BASED) ====================
 class TemplateManager {
     constructor() {
         this.templatesDir = path.join(__dirname, 'templates');
@@ -145,493 +146,205 @@ class TemplateManager {
             fs.mkdirSync(this.templatesDir, { recursive: true });
         }
 
-        const templates = {
-            'business-showcase': this.getBusinessShowcaseTemplate(),
-            'professional-portfolio': this.getPortfolioTemplate(),
-            'online-store-pro': this.getStoreTemplate(),
-            'admin-dashboard': this.getAdminTemplate()
+        const templateFiles = [
+            'business-showcase.html',
+            'professional-portfolio.html',
+            'online-store-pro.html',
+            'admin-dashboard.html'
+        ];
+
+        for (const file of templateFiles) {
+            const filePath = path.join(this.templatesDir, file);
+            if (!fs.existsSync(filePath)) {
+                console.warn(`⚠️ Template missing: ${file}. Please add template files to /templates/`);
+            }
+        }
+    }
+
+    loadTemplate(templateName) {
+        const filePath = path.join(this.templatesDir, `${templateName}.html`);
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`Template not found: ${templateName}`);
+        }
+        return fs.readFileSync(filePath, 'utf8');
+    }
+
+    // Inject customer data into template using regex replacement
+    renderTemplate(templateName, data) {
+        let template = this.loadTemplate(templateName);
+
+        // Replace all data placeholders like <!--DATA:KEY-->value<!--/DATA:KEY-->
+        // or simple comments that mark editable regions
+        for (const [key, value] of Object.entries(data)) {
+            // Replace HTML comments: <!-- KEY --> ... <!-- /KEY -->
+            const regex = new RegExp(`<!--\s*${key}\s*-->.*?<!--\s*/${key}\s*-->`, 'gs');
+            template = template.replace(regex, `<!-- ${key} -->${value}<!-- /${key} -->`);
+
+            // Also replace simple text placeholders if they exist
+            const simpleRegex = new RegExp(`\[\[${key}\]\]`, 'g');
+            template = template.replace(simpleRegex, value);
+        }
+
+        return template;
+    }
+
+    // Generate a complete site package for a customer
+    generateSitePackage(orderData, templateType) {
+        const template = this.loadTemplate(templateType);
+        const adminTemplate = templateType === 'online-store-pro' ? this.loadTemplate('admin-dashboard') : null;
+
+        // Build customer data injection
+        const customerData = this.buildCustomerData(orderData, templateType);
+
+        // Render main site
+        let mainHtml = template;
+        for (const [key, value] of Object.entries(customerData)) {
+            mainHtml = mainHtml.replace(new RegExp(`\[\[${key}\]\]`, 'g'), value);
+        }
+
+        // Render admin if store
+        let adminHtml = null;
+        if (adminTemplate) {
+            adminHtml = adminTemplate;
+            for (const [key, value] of Object.entries(customerData)) {
+                adminHtml = adminHtml.replace(new RegExp(`\[\[${key}\]\]`, 'g'), value);
+            }
+        }
+
+        return {
+            mainHtml,
+            adminHtml,
+            templateType
+        };
+    }
+
+    buildCustomerData(orderData, templateType) {
+        const baseData = {
+            TIKTOK_PIXEL_ID: orderData.tiktokPixelId || process.env.DEFAULT_TIKTOK_PIXEL || '',
+            BUSINESS_NAME: orderData.businessName || orderData.name || 'My Business',
+            NAME: orderData.name || 'John Doe',
+            STORE_NAME: orderData.businessName || orderData.name || 'My Store',
+            TAGLINE: orderData.tagline || 'Quality Service You Can Trust',
+            DESCRIPTION: orderData.description || 'We provide excellent services to our customers.',
+            EMAIL: orderData.email || 'info@example.com',
+            PHONE: orderData.phone || '+254 712 345 678',
+            WHATSAPP_NUMBER: orderData.whatsapp || orderData.phone || '254712345678',
+            ADDRESS: orderData.address || 'Nairobi, Kenya',
+            HERO_IMAGE: orderData.heroImage || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800',
+            ABOUT_IMAGE: orderData.aboutImage || 'https://images.unsplash.com/photo-1497215842964-222b430dc094?w=800',
+            PROFILE_IMAGE: orderData.profileImage || 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800',
+            API_BASE: process.env.SERVER_URL || '',
+            ADMIN_PASSWORD: orderData.adminPassword || this.generatePassword(),
+            FACEBOOK_URL: orderData.facebook || 'https://facebook.com',
+            INSTAGRAM_URL: orderData.instagram || 'https://instagram.com',
+            TWITTER_URL: orderData.twitter || 'https://twitter.com',
+            LINKEDIN_URL: orderData.linkedin || 'https://linkedin.com',
+            DOMAIN: orderData.domain || 'example.co.ke'
         };
 
-        for (const [name, content] of Object.entries(templates)) {
-            const filePath = path.join(this.templatesDir, `${name}.html`);
-            if (!fs.existsSync(filePath)) {
-                fs.writeFileSync(filePath, content);
-                console.log(`✅ Created template: ${name}`);
-            }
+        // Template-specific data
+        if (templateType === 'business-showcase') {
+            baseData.SERVICES = this.buildServicesHtml(orderData.services);
         }
+
+        if (templateType === 'professional-portfolio') {
+            baseData.TITLE = orderData.title || 'Creative Professional';
+            baseData.PORTFOLIO_ITEMS = this.buildPortfolioHtml(orderData.portfolio);
+            baseData.RESUME_URL = orderData.resumeUrl || '#';
+        }
+
+        if (templateType === 'online-store-pro') {
+            baseData.PRODUCTS = this.buildProductsHtml(orderData.products);
+        }
+
+        return baseData;
     }
 
-    getBusinessShowcaseTemplate() {
-        return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{BUSINESS_NAME}}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#14B8A6',
-                        secondary: '#F97316',
-                        accent: '#FACC15',
-                        cream: '#FEFCE8'
-                    },
-                    fontFamily: { sans: ['Poppins', 'sans-serif'] }
-                }
-            }
+    buildServicesHtml(services) {
+        if (!services || services.length === 0) {
+            return `<div class="col-md-4"><div class="card service-card h-100 p-4"><div class="card-body"><h5 class="card-title fw-bold">Service One</h5><p class="card-text text-muted">Description here.</p><p class="fw-bold text-primary">KES 2,000</p><button class="btn mpesa-btn btn-sm"><i class="fas fa-mobile-alt me-1"></i>Pay with M-Pesa</button></div></div></div>`;
         }
-    </script>
-    <style>
-        .gradient-text { background: linear-gradient(135deg, #14B8A6 0%, #F97316 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero-pattern { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2314B8A6' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
-        .float-animation { animation: float 6s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
-    </style>
-</head>
-<body class="bg-cream font-sans text-gray-800">
-    <nav class="fixed w-full bg-white/90 backdrop-blur-md shadow-sm z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <span class="text-3xl font-bold gradient-text">{{BUSINESS_NAME}}</span>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#home" class="text-gray-700 hover:text-primary transition font-medium">Home</a>
-                    <a href="#services" class="text-gray-700 hover:text-primary transition font-medium">Services</a>
-                    <a href="#about" class="text-gray-700 hover:text-primary transition font-medium">About</a>
-                    <a href="#contact" class="px-6 py-2 bg-primary text-white rounded-full hover:bg-teal-600 transition font-medium">Contact Us</a>
-                </div>
-                <button class="md:hidden text-2xl text-primary" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </div>
-        <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
-            <div class="px-4 py-4 space-y-3">
-                <a href="#home" class="block text-gray-700 hover:text-primary">Home</a>
-                <a href="#services" class="block text-gray-700 hover:text-primary">Services</a>
-                <a href="#about" class="block text-gray-700 hover:text-primary">About</a>
-                <a href="#contact" class="block text-primary font-medium">Contact Us</a>
-            </div>
-        </div>
-    </nav>
-
-    <section id="home" class="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
-        <div class="absolute inset-0 hero-pattern opacity-50"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="text-center lg:text-left">
-                    <div class="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-6">✨ Welcome to {{BUSINESS_NAME}}</div>
-                    <h1 class="text-5xl lg:text-6xl font-bold leading-tight mb-6">{{TAGLINE}} <span class="gradient-text">Excellence</span></h1>
-                    <p class="text-xl text-gray-600 mb-8 leading-relaxed">{{DESCRIPTION}}</p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <a href="#contact" class="px-8 py-4 bg-primary text-white rounded-full font-semibold hover:bg-teal-600 transition shadow-lg">Book Now</a>
-                        <a href="https://wa.me/{{WHATSAPP_NUMBER}}" class="px-8 py-4 bg-green-500 text-white rounded-full font-semibold hover:bg-green-600 transition flex items-center justify-center gap-2">
-                            <i class="fab fa-whatsapp text-xl"></i>WhatsApp Us
-                        </a>
+        return services.map((s, i) => `
+            <div class="col-md-4">
+                <div class="card service-card h-100 p-4">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">${s.name || 'Service ' + (i+1)}</h5>
+                        <p class="card-text text-muted">${s.description || ''}</p>
+                        <p class="fw-bold text-primary">KES ${(s.price || 2000).toLocaleString()}</p>
+                        <button class="btn mpesa-btn btn-sm" onclick="openMpesaModal('${s.name}', ${s.price || 2000})">
+                            <i class="fas fa-mobile-alt me-1"></i>Pay with M-Pesa
+                        </button>
                     </div>
                 </div>
-                <div class="relative">
-                    <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-3xl transform rotate-3"></div>
-                    <img src="{{HERO_IMAGE}}" alt="{{BUSINESS_NAME}}" class="relative rounded-3xl shadow-2xl float-animation w-full object-cover h-96 lg:h-[500px]">
+            </div>
+        `).join('');
+    }
+
+    buildPortfolioHtml(items) {
+        if (!items || items.length === 0) {
+            return `<div class="col-md-4"><div class="card portfolio-card"><img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600" class="card-img-top"><div class="card-body"><h5 class="card-title fw-bold">Project One</h5><p class="card-text text-muted">Description here.</p></div></div></div>`;
+        }
+        return items.map((item, i) => `
+            <div class="col-md-4">
+                <div class="card portfolio-card">
+                    <img src="${item.image || 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600'}" class="card-img-top" alt="${item.title}">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">${item.title || 'Project ' + (i+1)}</h5>
+                        <p class="card-text text-muted">${item.description || ''}</p>
+                        ${item.price ? `<p class="fw-bold text-primary">KES ${item.price.toLocaleString()}</p><button class="btn mpesa-btn btn-sm" onclick="openMpesaModal('${item.title}', ${item.price})"><i class="fas fa-mobile-alt me-1"></i>Book & Pay</button>` : ''}
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        `).join('');
+    }
 
-    <section id="services" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="text-secondary font-semibold text-sm uppercase tracking-wide">What We Offer</span>
-                <h2 class="text-4xl font-bold mt-2 mb-4">Our Services</h2>
-                <div class="w-24 h-1 bg-primary mx-auto rounded-full"></div>
-            </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {{SERVICES}}
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="text-secondary font-semibold text-sm uppercase tracking-wide">Get In Touch</span>
-                <h2 class="text-4xl font-bold mt-2 mb-4">Contact Us</h2>
-                <div class="w-24 h-1 bg-primary mx-auto rounded-full"></div>
-            </div>
-            <div class="grid lg:grid-cols-2 gap-12">
-                <div class="space-y-8">
-                    <div class="bg-white p-8 rounded-2xl shadow-lg">
-                        <h3 class="text-2xl font-bold mb-6">Visit Us</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary shrink-0"><i class="fas fa-map-marker-alt text-xl"></i></div>
-                                <div><h4 class="font-semibold mb-1">Address</h4><p class="text-gray-600">{{ADDRESS}}</p></div>
-                            </div>
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary shrink-0"><i class="fas fa-phone text-xl"></i></div>
-                                <div><h4 class="font-semibold mb-1">Phone</h4><p class="text-gray-600">{{PHONE}}</p></div>
-                            </div>
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary shrink-0"><i class="fas fa-envelope text-xl"></i></div>
-                                <div><h4 class="font-semibold mb-1">Email</h4><p class="text-gray-600">{{EMAIL}}</p></div>
-                            </div>
+    buildProductsHtml(products) {
+        if (!products || products.length === 0) {
+            return this.getDefaultProductsHtml();
+        }
+        return products.map((p, i) => `
+            <div class="col-md-3">
+                <div class="card product-card h-100">
+                    <img src="${p.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400'}" class="card-img-top" alt="${p.name}">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">${p.name || 'Product ' + (i+1)}</h5>
+                        <p class="card-text text-muted small">${p.description || ''}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">KES ${(p.price || 1500).toLocaleString()}</span>
+                            <button class="btn btn-dark btn-sm" onclick="addToCart('${p.id || i}', '${p.name}', ${p.price || 1500}, '${p.image || ''}')">Add</button>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white p-8 rounded-2xl shadow-lg">
-                    <h3 class="text-2xl font-bold mb-6">Send us a Message</h3>
-                    <form id="contactForm" class="space-y-6">
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
-                                <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="John Doe">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                <input type="tel" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="0712345678">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                            <input type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="john@example.com">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                            <textarea rows="4" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary outline-none" placeholder="Tell us what you need..."></textarea>
-                        </div>
-                        <button type="submit" class="w-full py-4 bg-primary text-white rounded-xl font-semibold hover:bg-teal-600 transition">Send Message</button>
-                    </form>
-                </div>
             </div>
-        </div>
-    </section>
-
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-gray-400">&copy; 2024 {{BUSINESS_NAME}}. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        document.getElementById('contactForm')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your message! We will get back to you soon.');
-            this.reset();
-        });
-    </script>
-</body>
-</html>`;
+        `).join('');
     }
 
-    getPortfolioTemplate() {
-        return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{NAME}} - {{TITLE}}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        electric: '#3B82F6',
-                        hotpink: '#EC4899',
-                        lime: '#84CC16'
-                    },
-                    fontFamily: { display: ['Outfit', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-    <style>
-        .text-gradient { background: linear-gradient(135deg, #3B82F6 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .blob { position: absolute; filter: blur(40px); opacity: 0.4; animation: move 20s infinite alternate; }
-        @keyframes move { from { transform: translate(0, 0) scale(1); } to { transform: translate(20px, -20px) scale(1.1); } }
-    </style>
-</head>
-<body class="font-sans bg-gray-50 text-gray-800 overflow-x-hidden">
-    <nav class="fixed w-full bg-white/80 backdrop-blur-lg z-50 border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <span class="font-display text-2xl font-bold text-gradient">{{NAME}}</span>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#work" class="text-gray-600 hover:text-electric transition font-medium">Work</a>
-                    <a href="#about" class="text-gray-600 hover:text-electric transition font-medium">About</a>
-                    <a href="#contact" class="px-6 py-2 bg-electric text-white rounded-full hover:bg-blue-600 transition font-medium">Let's Talk</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        <div class="blob bg-electric w-96 h-96 rounded-full top-0 left-0 -translate-x-1/2 -translate-y-1/2"></div>
-        <div class="blob bg-hotpink w-96 h-96 rounded-full bottom-0 right-0 translate-x-1/2 translate-y-1/2"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="text-center lg:text-left">
-                    <p class="text-electric font-semibold mb-4">👋 Hello, I'm {{NAME}}</p>
-                    <h1 class="font-display text-5xl lg:text-7xl font-bold leading-tight mb-6">{{TITLE}}<br><span class="text-gradient">& Creative</span></h1>
-                    <p class="text-xl text-gray-600 mb-8 leading-relaxed">{{DESCRIPTION}}</p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <a href="#work" class="px-8 py-4 bg-electric text-white rounded-full font-semibold hover:bg-blue-600 transition shadow-lg">View My Work</a>
-                        <a href="{{RESUME_URL}}" class="px-8 py-4 border-2 border-electric text-electric rounded-full font-semibold hover:bg-electric hover:text-white transition">Download CV</a>
+    getDefaultProductsHtml() {
+        const defaults = [
+            { id: '1', name: 'Product One', price: 1500, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400', desc: 'High quality item' },
+            { id: '2', name: 'Product Two', price: 2000, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400', desc: 'Premium quality' },
+            { id: '3', name: 'Product Three', price: 1200, image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400', desc: 'Best seller' },
+            { id: '4', name: 'Product Four', price: 3500, image: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400', desc: 'New arrival' }
+        ];
+        return defaults.map(p => `
+            <div class="col-md-3">
+                <div class="card product-card h-100">
+                    <img src="${p.image}" class="card-img-top" alt="${p.name}">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">${p.name}</h5>
+                        <p class="card-text text-muted small">${p.desc}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">KES ${p.price.toLocaleString()}</span>
+                            <button class="btn btn-dark btn-sm" onclick="addToCart('${p.id}', '${p.name}', ${p.price}, '${p.image}')">Add</button>
+                        </div>
                     </div>
                 </div>
-                <div class="relative">
-                    <div class="absolute inset-0 bg-gradient-to-r from-electric to-hotpink rounded-3xl transform rotate-6 opacity-20"></div>
-                    <img src="{{PROFILE_IMAGE}}" alt="{{NAME}}" class="relative rounded-3xl shadow-2xl w-full object-cover h-96 lg:h-[600px]">
-                </div>
             </div>
-        </div>
-    </section>
-
-    <section id="work" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="text-hotpink font-semibold">Portfolio</span>
-                <h2 class="font-display text-4xl font-bold mt-2">Selected Works</h2>
-            </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {{PORTFOLIO_ITEMS}}
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="font-display text-4xl font-bold mb-6">Let's Work Together</h2>
-            <p class="text-gray-600 mb-8">Have a project in mind? I'd love to hear about it.</p>
-            <a href="mailto:{{EMAIL}}" class="px-8 py-4 bg-gradient-to-r from-electric to-hotpink text-white rounded-full font-semibold hover:shadow-lg transition">Get In Touch</a>
-        </div>
-    </section>
-
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-gray-400">&copy; 2024 {{NAME}}. All rights reserved.</p>
-        </div>
-    </footer>
-</body>
-</html>`;
+        `).join('');
     }
 
-    getStoreTemplate() {
-        return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{STORE_NAME}} - {{TAGLINE}}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        emerald: '#10B981',
-                        orange: '#F97316',
-                        sky: '#0EA5E9'
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-    </style>
-</head>
-<body class="font-sans bg-gray-50 text-gray-800">
-    <nav class="fixed w-full bg-white shadow-sm z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="/" class="text-2xl font-bold text-emerald">{{STORE_NAME}}</a>
-                <div class="flex items-center gap-6">
-                    <a href="/admin" class="text-gray-600 hover:text-emerald transition">Admin</a>
-                    <button onclick="toggleCart()" class="relative">
-                        <i class="fas fa-shopping-cart text-xl text-gray-700"></i>
-                        <span id="cartCount" class="absolute -top-2 -right-2 bg-orange text-white text-xs w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <section class="pt-24 pb-12 bg-gradient-to-r from-emerald/10 to-orange/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">{{TAGLINE}}</h1>
-            <p class="text-gray-600 text-lg mb-8">{{DESCRIPTION}}</p>
-            <a href="#products" class="px-8 py-3 bg-emerald text-white rounded-full font-semibold hover:bg-emerald-600 transition">Shop Now</a>
-        </div>
-    </section>
-
-    <section id="products" class="py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-bold mb-8">Our Products</h2>
-            <div id="productGrid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {{PRODUCTS}}
-            </div>
-        </div>
-    </section>
-
-    <div id="cartSidebar" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50">
-        <div class="p-6 h-full flex flex-col">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold">Your Cart</h3>
-                <button onclick="toggleCart()" class="text-gray-500"><i class="fas fa-times text-xl"></i></button>
-            </div>
-            <div id="cartItems" class="flex-1 overflow-y-auto space-y-4"></div>
-            <div class="border-t pt-4 mt-4">
-                <div class="flex justify-between mb-4">
-                    <span class="font-semibold">Total:</span>
-                    <span id="cartTotal" class="text-xl font-bold text-emerald">KES 0</span>
-                </div>
-                <button onclick="checkout()" class="w-full py-3 bg-emerald text-white rounded-full font-semibold hover:bg-emerald-600 transition">Checkout with M-Pesa</button>
-            </div>
-        </div>
-    </div>
-
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 {{STORE_NAME}}. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-        function updateCart() {
-            const count = cart.reduce((sum, item) => sum + item.qty, 0);
-            const badge = document.getElementById('cartCount');
-            if (count > 0) { badge.textContent = count; badge.classList.remove('hidden'); }
-            else { badge.classList.add('hidden'); }
-            renderCart(); localStorage.setItem('cart', JSON.stringify(cart));
-        }
-
-        function renderCart() {
-            const container = document.getElementById('cartItems');
-            if (cart.length === 0) { container.innerHTML = '<p class="text-gray-500 text-center">Your cart is empty</p>'; document.getElementById('cartTotal').textContent = 'KES 0'; return; }
-            let total = 0;
-            container.innerHTML = cart.map((item, idx) => { total += item.price * item.qty; return '<div class="flex gap-4 bg-gray-50 p-4 rounded-lg"><img src="' + item.image + '" class="w-20 h-20 object-cover rounded"><div class="flex-1"><h4 class="font-semibold">' + item.name + '</h4><p class="text-emerald font-bold">KES ' + item.price.toLocaleString() + '</p><div class="flex items-center gap-2 mt-2"><button onclick="updateQty(' + idx + ', -1)" class="w-6 h-6 bg-gray-200 rounded">-</button><span>' + item.qty + '</span><button onclick="updateQty(' + idx + ', 1)" class="w-6 h-6 bg-gray-200 rounded">+</button></div></div><button onclick="removeItem(' + idx + ')" class="text-red-500"><i class="fas fa-trash"></i></button></div>'; }).join('');
-            document.getElementById('cartTotal').textContent = 'KES ' + total.toLocaleString();
-        }
-
-        function addToCart(id, name, price, image) { const existing = cart.find(item => item.id === id); if (existing) { existing.qty++; } else { cart.push({ id, name, price, image, qty: 1 }); } updateCart(); toggleCart(); }
-        function updateQty(idx, change) { cart[idx].qty += change; if (cart[idx].qty <= 0) cart.splice(idx, 1); updateCart(); }
-        function removeItem(idx) { cart.splice(idx, 1); updateCart(); }
-        function toggleCart() { document.getElementById('cartSidebar').classList.toggle('translate-x-full'); }
-
-        async function checkout() {
-            if (cart.length === 0) { alert('Your cart is empty!'); return; }
-            const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0) + 200;
-            const phone = prompt('Enter M-Pesa phone number (2547XXXXXXXX):'); if (!phone) return;
-            try {
-                const response = await fetch('/api/create-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'Customer', phone, email: 'customer@store.com', item: 'Store Order', price: total, type: 'template' }) });
-                const result = await response.json();
-                if (result.success) { alert('Payment request sent! Please enter M-Pesa PIN.'); cart = []; updateCart(); toggleCart(); }
-                else { alert('Payment failed: ' + result.message); }
-            } catch (error) { alert('Network error. Please try again.'); }
-        }
-        updateCart();
-    </script>
-</body>
-</html>`;
-    }
-
-    getAdminTemplate() {
-        return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - {{STORE_NAME}}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-50">
-    <div id="loginScreen" class="fixed inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4">
-            <h1 class="text-2xl font-bold text-center mb-8">Admin Login</h1>
-            <form id="loginForm" class="space-y-6">
-                <div>
-                    <label class="block text-sm font-medium mb-2">Username</label>
-                    <input type="text" id="username" value="admin" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Password</label>
-                    <input type="password" id="password" placeholder="admin123" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald outline-none">
-                </div>
-                <button type="submit" class="w-full py-3 bg-emerald text-white rounded-xl font-semibold hover:bg-emerald-600 transition">Sign In</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="dashboard" class="hidden">
-        <div class="flex h-screen">
-            <aside class="w-64 bg-white shadow-lg">
-                <div class="p-6 border-b">
-                    <h2 class="text-xl font-bold text-emerald">{{STORE_NAME}}</h2>
-                </div>
-                <nav class="p-4">
-                    <button onclick="showSection('products')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-gray-50"><i class="fas fa-box mr-3"></i>Products</button>
-                    <button onclick="logout()" class="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 text-red-600 mt-8"><i class="fas fa-sign-out-alt mr-3"></i>Logout</button>
-                </nav>
-            </aside>
-            <main class="flex-1 p-8">
-                <h1 class="text-2xl font-bold mb-6">Products</h1>
-                <button onclick="openProductModal()" class="px-4 py-2 bg-emerald text-white rounded-lg mb-4"><i class="fas fa-plus mr-2"></i>Add Product</button>
-                <div class="bg-white rounded-2xl shadow overflow-hidden">
-                    <table class="w-full">
-                        <thead class="bg-gray-50"><tr><th class="text-left p-4">Image</th><th class="text-left p-4">Name</th><th class="text-left p-4">Price</th><th class="text-left p-4">Actions</th></tr></thead>
-                        <tbody id="productsTable"></tbody>
-                    </table>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <div id="productModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6">
-            <h3 class="text-xl font-bold mb-4">Add Product</h3>
-            <form id="productForm" class="space-y-4">
-                <input type="text" id="productName" placeholder="Product Name" required class="w-full px-4 py-2 border rounded-lg">
-                <input type="number" id="productPrice" placeholder="Price (KES)" required class="w-full px-4 py-2 border rounded-lg">
-                <input type="url" id="productImage" placeholder="Image URL" required class="w-full px-4 py-2 border rounded-lg">
-                <button type="submit" class="w-full py-3 bg-emerald text-white rounded-lg font-semibold">Save Product</button>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        let products = JSON.parse(localStorage.getItem('products')) || [];
-        if (localStorage.getItem('adminLoggedIn') === 'true') showDashboard();
-        document.getElementById('loginForm').addEventListener('submit', function(e) { e.preventDefault(); if (document.getElementById('username').value === 'admin' && document.getElementById('password').value === 'admin123') { localStorage.setItem('adminLoggedIn', 'true'); showDashboard(); } else { alert('Invalid credentials'); } });
-        function showDashboard() { document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden'); renderProducts(); }
-        function logout() { localStorage.removeItem('adminLoggedIn'); location.reload(); }
-        function showSection(section) { renderProducts(); }
-        function openProductModal() { document.getElementById('productModal').classList.remove('hidden'); }
-        document.getElementById('productForm').addEventListener('submit', async function(e) { e.preventDefault(); const product = { id: Date.now().toString(), name: document.getElementById('productName').value, price: parseInt(document.getElementById('productPrice').value), image: document.getElementById('productImage').value }; products.push(product); localStorage.setItem('products', JSON.stringify(products)); try { await fetch('/api/products', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(product) }); } catch (e) { console.log('Server sync failed'); } document.getElementById('productModal').classList.add('hidden'); this.reset(); renderProducts(); alert('Product saved! Changes live in 2-3 minutes.'); });
-        function renderProducts() { document.getElementById('productsTable').innerHTML = products.map(p => '<tr class="border-b"><td class="p-4"><img src="' + p.image + '" class="w-12 h-12 object-cover rounded"></td><td class="p-4">' + p.name + '</td><td class="p-4">KES ' + p.price.toLocaleString() + '</td><td class="p-4"><button onclick="deleteProduct(' + p.id + ')" class="text-red-600"><i class="fas fa-trash"></i></button></td></tr>').join(''); }
-        function deleteProduct(id) { products = products.filter(p => p.id != id); localStorage.setItem('products', JSON.stringify(products)); renderProducts(); }
-    </script>
-</body>
-</html>`;
-    }
-
-    renderTemplate(templateName, data) {
-        let template = fs.readFileSync(path.join(this.templatesDir, `${templateName}.html`), 'utf8');
-        for (const [key, value] of Object.entries(data)) {
-            template = template.replace(new RegExp(`{{${key}}}`, 'g'), value);
-        }
-        return template;
+    generatePassword() {
+        return crypto.randomBytes(4).toString('hex');
     }
 }
 
@@ -640,9 +353,11 @@ const templateManager = new TemplateManager();
 // ==================== DATA STORAGE ====================
 const DATA_FILE = path.join(__dirname, 'orders.json');
 const PRODUCTS_FILE = path.join(__dirname, 'products.json');
+const DEPLOYMENTS_FILE = path.join(__dirname, 'deployments.json');
 
 let orders = new Map();
 let products = new Map();
+let deployments = new Map();
 
 function loadData() {
     try {
@@ -658,6 +373,10 @@ function loadData() {
             const data = JSON.parse(fs.readFileSync(PRODUCTS_FILE, 'utf8'));
             products = new Map(Object.entries(data));
         }
+        if (fs.existsSync(DEPLOYMENTS_FILE)) {
+            const data = JSON.parse(fs.readFileSync(DEPLOYMENTS_FILE, 'utf8'));
+            deployments = new Map(Object.entries(data));
+        }
     } catch (error) {
         console.error('Error loading data:', error);
     }
@@ -668,6 +387,7 @@ function saveData() {
         const data = { orders: Object.fromEntries(orders) };
         fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
         fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(Object.fromEntries(products), null, 2));
+        fs.writeFileSync(DEPLOYMENTS_FILE, JSON.stringify(Object.fromEntries(deployments), null, 2));
     } catch (error) {
         console.error('Error saving data:', error);
     }
@@ -703,6 +423,12 @@ const VALID_PRICES = {
     'Online Store Pro': 8000
 };
 
+const TEMPLATE_MAP = {
+    'Business Showcase': 'business-showcase',
+    'Professional Portfolio': 'professional-portfolio',
+    'Online Store Pro': 'online-store-pro'
+};
+
 // Initialize managers
 const render = new RenderDeployer(RENDER_API_KEY);
 
@@ -716,7 +442,7 @@ function validateConfig() {
         console.warn('Google Workspace not configured - emails will be logged only');
     }
     if (!AT_USERNAME || !AT_APIKEY) {
-        console.warn('Africa's Talking not configured - SMS will be logged only');
+        console.warn('Africa\'s Talking not configured - SMS will be logged only');
     }
     if (!RENDER_API_KEY) {
         console.warn('Render not configured - auto-deployment disabled');
@@ -791,6 +517,65 @@ function generateMpesaPassword(timestamp) {
     return Buffer.from(str).toString('base64');
 }
 
+// ==================== SITE GENERATION & DEPLOYMENT ====================
+async function generateAndDeploySite(orderData) {
+    const templateType = TEMPLATE_MAP[orderData.item];
+    if (!templateType) {
+        throw new Error('Invalid template type');
+    }
+
+    // Generate site package with customer data
+    const sitePackage = templateManager.generateSitePackage(orderData, templateType);
+
+    // Save deployment record
+    const deployId = crypto.randomUUID();
+    deployments.set(deployId, {
+        id: deployId,
+        orderId: orderData.id,
+        domain: orderData.domain,
+        templateType,
+        createdAt: new Date(),
+        status: 'building'
+    });
+    saveData();
+
+    // Deploy to Render if configured
+    if (RENDER_API_KEY) {
+        const deployResult = await render.deploySite(orderData, templateType);
+        if (deployResult.success) {
+            const dep = deployments.get(deployId);
+            dep.status = 'deployed';
+            dep.url = deployResult.url;
+            dep.customDomain = deployResult.customDomain;
+            dep.serviceId = deployResult.serviceId;
+            dep.adminUrl = deployResult.adminUrl;
+            saveData();
+            return deployResult;
+        }
+    }
+
+    // Fallback: save files locally for manual deployment
+    const deployDir = path.join(__dirname, 'deployments', orderData.domain);
+    fs.mkdirSync(deployDir, { recursive: true });
+    fs.writeFileSync(path.join(deployDir, 'index.html'), sitePackage.mainHtml);
+    if (sitePackage.adminHtml) {
+        fs.mkdirSync(path.join(deployDir, 'admin'), { recursive: true });
+        fs.writeFileSync(path.join(deployDir, 'admin', 'index.html'), sitePackage.adminHtml);
+    }
+
+    const dep = deployments.get(deployId);
+    dep.status = 'files_ready';
+    dep.localPath = deployDir;
+    saveData();
+
+    return {
+        success: true,
+        url: `/deployments/${orderData.domain}/`,
+        customDomain: `https://${orderData.domain}`,
+        message: 'Site files ready for deployment'
+    };
+}
+
 // ==================== ROUTES ====================
 app.get('/health', (req, res) => {
     res.json({
@@ -798,6 +583,7 @@ app.get('/health', (req, res) => {
         time: new Date().toISOString(),
         orders: orders.size,
         products: products.size,
+        deployments: deployments.size,
         uptime: process.uptime(),
         email_configured: !!(WORKSPACE_EMAIL && WORKSPACE_APP_PASSWORD),
         sms_configured: !!(AT_USERNAME && AT_APIKEY),
@@ -805,10 +591,27 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Preview template with customer data (for testing)
+app.post('/api/preview-site', async (req, res) => {
+    try {
+        const { templateType, ...customerData } = req.body;
+
+        if (!templateType || !['business-showcase', 'professional-portfolio', 'online-store-pro'].includes(templateType)) {
+            return res.status(400).json({ success: false, message: 'Invalid template type' });
+        }
+
+        const html = templateManager.generateSitePackage(customerData, templateType).mainHtml;
+        res.send(html);
+    } catch (error) {
+        console.error('Preview error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // Create order
 app.post('/api/create-order', createOrderLimiter, async (req, res) => {
     try {
-        const { name, email, phone, domain, item, price } = req.body;
+        const { name, email, phone, domain, item, price, businessName, tagline, description, services, portfolio, products: customerProducts, ...extraData } = req.body;
 
         if (!name || !email || !phone || !domain || !item || !price) {
             return res.status(400).json({ success: false, message: 'Please fill all fields' });
@@ -850,6 +653,13 @@ app.post('/api/create-order', createOrderLimiter, async (req, res) => {
             domain: domain.toLowerCase(),
             item,
             price,
+            businessName: sanitizeInput(businessName || name),
+            tagline: sanitizeInput(tagline || ''),
+            description: sanitizeInput(description || ''),
+            services: services || [],
+            portfolio: portfolio || [],
+            products: customerProducts || [],
+            ...extraData,
             status: 'pending',
             paid: false,
             createdAt: new Date()
@@ -937,20 +747,12 @@ app.post('/mpesa-callback', express.raw({ type: 'application/json' }), async (re
 
             // AUTO-PROVISIONING
             try {
-                // Deploy to Render
-                if (RENDER_API_KEY) {
-                    let templateType;
-                    if (order.item === 'Business Showcase') templateType = 'business-showcase';
-                    else if (order.item === 'Professional Portfolio') templateType = 'professional-portfolio';
-                    else if (order.item === 'Online Store Pro') templateType = 'online-store-pro';
+                const deployResult = await generateAndDeploySite(order);
 
-                    const deployResult = await render.deploySite(order, templateType);
-                    if (deployResult.success) {
-                        order.deployedUrl = deployResult.url;
-                        order.customDomainUrl = deployResult.customDomain;
-                        order.renderServiceId = deployResult.serviceId;
-                        order.adminUrl = deployResult.adminUrl;
-                    }
+                if (deployResult.success) {
+                    order.deployedUrl = deployResult.url;
+                    order.customDomainUrl = deployResult.customDomain;
+                    order.adminUrl = deployResult.adminUrl;
                 }
 
                 order.status = 'completed';
@@ -992,7 +794,7 @@ app.post('/mpesa-callback', express.raw({ type: 'application/json' }), async (re
                             <p><strong>Admin Panel:</strong></p>
                             <p>URL: ${order.adminUrl}</p>
                             <p>Username: admin</p>
-                            <p>Password: admin123</p>
+                            <p>Password: ${order.adminPassword || 'Check your deployment email'}</p>
                             <p style="font-size: 12px; color: #92400e;">Change this password immediately after login.</p>
                         </div>
                         ` : ''}
@@ -1100,12 +902,43 @@ app.delete('/api/products/:id', async (req, res) => {
     }
 });
 
+// Deployment API
+app.get('/api/deployments/:orderId', async (req, res) => {
+    try {
+        const order = orders.get(req.params.orderId);
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        const deployment = Array.from(deployments.values()).find(d => d.orderId === req.params.orderId);
+
+        res.json({
+            success: true,
+            order: {
+                id: order.id,
+                domain: order.domain,
+                item: order.item,
+                status: order.status,
+                deployedUrl: order.deployedUrl,
+                adminUrl: order.adminUrl
+            },
+            deployment: deployment || null
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Serve deployment files
+app.use('/deployments', express.static(path.join(__dirname, 'deployments')));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 SiteSawa Server v2.0 running on port ${PORT}`);
+    console.log(`🚀 SiteSawa Server v2.1 running on port ${PORT}`);
     console.log(`📧 Email: ${WORKSPACE_EMAIL ? 'Google Workspace ready' : 'Not configured'}`);
-    console.log(`📱 SMS: ${AT_USERNAME ? 'Africa's Talking ready' : 'Not configured'}`);
+    console.log(`📱 SMS: ${AT_USERNAME ? 'Africa\'s Talking ready' : 'Not configured'}`);
     console.log(`🚀 Render: ${RENDER_API_KEY ? 'Deployment ready' : 'Not configured'}`);
     console.log(`📦 Templates: ${VALID_ITEMS.join(', ')}`);
     console.log(`💰 Prices: Business/Portfolio KES 6,000 | Store KES 8,000`);
+    console.log(`🔧 File-based templates: ${fs.existsSync(path.join(__dirname, 'templates')) ? 'Ready' : 'Create /templates/ folder'}`);
 });
