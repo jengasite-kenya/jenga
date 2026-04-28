@@ -1,155 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard - ~store_name~</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-.stat-card { transition: transform 0.2s; }
-.stat-card:hover { transform: translateY(-4px); }
-.spinner { border: 3px solid #f3f3f3; border-top: 3px solid #10B981; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
-@keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-screen { min-height: 100vh; background: #212529; }
+        .sidebar { width: 260px; min-height: 100vh; position: fixed; background: #fff; border-right: 1px solid #dee2e6; }
+        .main-content { margin-left: 260px; padding: 2rem; }
+        .social-icon { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: white; text-decoration: none; margin-right: 8px; }
+        .bg-facebook { background: #1877f2; }
+        .bg-instagram { background: #e4405f; }
+        .bg-twitter { background: #1da1f2; }
+        .bg-whatsapp { background: #25d366; }
+    </style>
+<base target="_blank">
 </head>
-<body class="font-sans bg-gray-50">
+<body>
+    <div id="loginScreen" class="login-screen d-flex align-items-center justify-content-center">
+        <div class="card" style="width: 100%; max-width: 400px;">
+            <div class="card-body p-4">
+                <h4 class="card-title text-center mb-4">Admin Login</h4>
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <input type="text" id="username" class="form-control" placeholder="Username">
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" id="password" class="form-control" placeholder="Password">
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-<div id="loginScreen" class="fixed inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center z-50">
-<div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4">
-<div class="text-center mb-8">
-<h1 class="text-2xl font-bold text-gray-800">Admin Login</h1>
-<p class="text-gray-500 mt-2">~store_name~</p>
-</div>
-<form id="loginForm" class="space-y-6">
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Username</label><input type="text" id="username" value="admin" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald outline-none"></div>
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Password</label><input type="password" id="password" placeholder="~admin_password~" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald outline-none"><p class="text-xs text-gray-500 mt-1">Default: admin / ~admin_password~</p></div>
-<button type="submit" class="w-full py-3 bg-emerald text-white rounded-xl font-semibold hover:bg-emerald-600 transition">Sign In</button>
-</form>
-</div>
-</div>
+    <div id="dashboard" class="d-none">
+        <div class="sidebar d-none d-md-block">
+            <div class="p-3 border-bottom">
+                <h5 class="m-0 fw-bold">My Store</h5>
+                <small class="text-muted">Admin Panel</small>
+            </div>
+            <nav class="nav flex-column p-2">
+                <a class="nav-link" href="#" onclick="showSection('products')">Products</a>
+                <a class="nav-link" href="#" onclick="showSection('social')">Social Media</a>
+                <a class="nav-link text-danger" href="#" onclick="logout()">Logout</a>
+            </nav>
+        </div>
 
-<div id="dashboard" class="hidden">
-<aside class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-40 hidden md:block">
-<div class="p-6 border-b"><h2 class="text-xl font-bold text-emerald">~store_name~</h2><p class="text-sm text-gray-500">Admin Panel</p></div>
-<nav class="p-4 space-y-2">
-<button onclick="showSection('dashboard')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-emerald-50 text-emerald font-medium"><i class="fas fa-home mr-3"></i>Dashboard</button>
-<button onclick="showSection('products')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-gray-50 text-gray-700"><i class="fas fa-box mr-3"></i>Products</button>
-<button onclick="showSection('orders')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-gray-50 text-gray-700"><i class="fas fa-shopping-bag mr-3"></i>Orders</button>
-<button onclick="showSection('settings')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-gray-50 text-gray-700"><i class="fas fa-cog mr-3"></i>Settings</button>
-<button onclick="logout()" class="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 text-red-600 mt-8"><i class="fas fa-sign-out-alt mr-3"></i>Logout</button>
-</nav>
-</aside>
+        <div class="main-content">
+            <div id="productsSection">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="m-0">Products</h4>
+                    <button class="btn btn-dark" onclick="openModal()">Add Product</button>
+                </div>
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-hover m-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-<div class="md:hidden fixed top-0 left-0 right-0 h-16 bg-white shadow-sm z-30 flex items-center justify-between px-4">
-<h2 class="font-bold text-emerald">Admin</h2>
-<button class="text-gray-700"><i class="fas fa-bars text-xl"></i></button>
-</div>
+            <div id="socialSection" class="d-none">
+                <h4 class="mb-4">Social Media Links</h4>
+                <div class="card">
+                    <div class="card-body">
+                        <form id="socialForm">
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fab fa-facebook text-primary me-2"></i>Facebook URL</label>
+                                <input type="url" id="facebookUrl" class="form-control" placeholder="https://facebook.com/yourbusiness">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fab fa-instagram text-danger me-2"></i>Instagram URL</label>
+                                <input type="url" id="instagramUrl" class="form-control" placeholder="https://instagram.com/yourbusiness">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fab fa-twitter text-info me-2"></i>Twitter URL</label>
+                                <input type="url" id="twitterUrl" class="form-control" placeholder="https://twitter.com/yourbusiness">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fab fa-whatsapp text-success me-2"></i>WhatsApp Number</label>
+                                <input type="text" id="whatsappNumber" class="form-control" placeholder="254712345678">
+                            </div>
+                            <button type="submit" class="btn btn-dark">Save Links</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<main class="md:ml-64 pt-16 md:pt-0 min-h-screen">
-<header class="bg-white shadow-sm p-6 flex justify-between items-center">
-<h1 class="text-2xl font-bold text-gray-800" id="pageTitle">Dashboard</h1>
-<div class="flex items-center gap-4">
-<span class="text-gray-500">Welcome, Admin</span>
-<div class="w-10 h-10 bg-emerald rounded-full flex items-center justify-center text-white"><i class="fas fa-user"></i></div>
-</div>
-</header>
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="productForm">
+                        <div class="mb-3">
+                            <input type="text" id="productName" class="form-control" placeholder="Product Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="number" id="productPrice" class="form-control" placeholder="Price (KES)" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="url" id="productImage" class="form-control" placeholder="Image URL" required>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="p-6">
-<div id="dashboardSection" class="space-y-6">
-<div class="grid md:grid-cols-4 gap-6">
-<div class="stat-card bg-white p-6 rounded-2xl shadow-sm"><div class="flex items-center justify-between"><div><p class="text-gray-500 text-sm">Total Sales</p><p class="text-2xl font-bold text-emerald">KES ~total_sales~</p></div><div class="w-12 h-12 bg-emerald/10 rounded-full flex items-center justify-center text-emerald"><i class="fas fa-money-bill-wave"></i></div></div></div>
-<div class="stat-card bg-white p-6 rounded-2xl shadow-sm"><div class="flex items-center justify-between"><div><p class="text-gray-500 text-sm">Orders</p><p class="text-2xl font-bold text-blue-600">~total_orders~</p></div><div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600"><i class="fas fa-shopping-cart"></i></div></div></div>
-<div class="stat-card bg-white p-6 rounded-2xl shadow-sm"><div class="flex items-center justify-between"><div><p class="text-gray-500 text-sm">Products</p><p class="text-2xl font-bold text-purple-600">~total_products~</p></div><div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600"><i class="fas fa-box"></i></div></div></div>
-<div class="stat-card bg-white p-6 rounded-2xl shadow-sm"><div class="flex items-center justify-between"><div><p class="text-gray-500 text-sm">Customers</p><p class="text-2xl font-bold text-orange-500">~total_customers~</p></div><div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-500"><i class="fas fa-users"></i></div></div></div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+        let socialLinks = JSON.parse(localStorage.getItem('socialLinks')) || {};
+        const modal = new bootstrap.Modal(document.getElementById('productModal'));
 
-<div class="bg-white rounded-2xl shadow-sm p-6">
-<h3 class="font-bold text-lg mb-4">Recent Orders</h3>
-<div class="overflow-x-auto">
-<table class="w-full">
-<thead class="bg-gray-50"><tr><th class="text-left p-3 text-sm font-medium text-gray-700">Order ID</th><th class="text-left p-3 text-sm font-medium text-gray-700">Customer</th><th class="text-left p-3 text-sm font-medium text-gray-700">Amount</th><th class="text-left p-3 text-sm font-medium text-gray-700">Status</th></tr></thead>
-<tbody id="recentOrdersTable">~recent_orders~</tbody>
-</table>
-</div>
-</div>
-</div>
+        if (localStorage.getItem('adminLoggedIn') === 'true') showDashboard();
 
-<div id="productsSection" class="hidden space-y-6">
-<div class="flex justify-between items-center">
-<h3 class="font-bold text-lg">Manage Products</h3>
-<button onclick="openProductModal()" class="px-4 py-2 bg-emerald text-white rounded-lg hover:bg-emerald-600 transition"><i class="fas fa-plus mr-2"></i>Add Product</button>
-</div>
-<div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-<table class="w-full">
-<thead class="bg-gray-50"><tr><th class="text-left p-4 text-sm font-medium text-gray-700">Image</th><th class="text-left p-4 text-sm font-medium text-gray-700">Name</th><th class="text-left p-4 text-sm font-medium text-gray-700">Price</th><th class="text-left p-4 text-sm font-medium text-gray-700">Stock</th><th class="text-left p-4 text-sm font-medium text-gray-700">Actions</th></tr></thead>
-<tbody id="productsTable">~products_list~</tbody>
-</table>
-</div>
-</div>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (document.getElementById('username').value === 'admin' && document.getElementById('password').value === 'admin123') {
+                localStorage.setItem('adminLoggedIn', 'true');
+                showDashboard();
+            } else {
+                alert('Invalid credentials');
+            }
+        });
 
-<div id="ordersSection" class="hidden">
-<div class="bg-white rounded-2xl shadow-sm p-6">
-<h3 class="font-bold text-lg mb-4">All Orders</h3>
-<div class="overflow-x-auto">
-<table class="w-full">
-<thead class="bg-gray-50"><tr><th class="text-left p-3 text-sm font-medium text-gray-700">Order ID</th><th class="text-left p-3 text-sm font-medium text-gray-700">Date</th><th class="text-left p-3 text-sm font-medium text-gray-700">Customer</th><th class="text-left p-3 text-sm font-medium text-gray-700">Items</th><th class="text-left p-3 text-sm font-medium text-gray-700">Total</th><th class="text-left p-3 text-sm font-medium text-gray-700">Status</th></tr></thead>
-<tbody id="allOrdersTable">~all_orders~</tbody>
-</table>
-</div>
-</div>
-</div>
+        function showDashboard() {
+            document.getElementById('loginScreen').classList.add('d-none');
+            document.getElementById('dashboard').classList.remove('d-none');
+            renderProducts();
+            loadSocialLinks();
+        }
 
-<div id="settingsSection" class="hidden max-w-2xl">
-<div class="bg-white rounded-2xl shadow-sm p-6 space-y-6">
-<h3 class="font-bold text-lg">Store Settings</h3>
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Store Name</label><input type="text" id="storeName" value="~store_name~" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></div>
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Tagline</label><input type="text" id="storeTagline" value="~tagline~" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></div>
-<div><label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp Number</label><input type="text" id="whatsappNumber" value="~whatsapp~" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></div>
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Change Admin Password</label><input type="password" id="newPassword" placeholder="New password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none mb-2"><input type="password" id="confirmPassword" placeholder="Confirm password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></div>
-<div class="flex items-center gap-3">
-<div id="saveSpinner" class="spinner"></div>
-<button onclick="saveSettings()" class="px-6 py-3 bg-emerald text-white rounded-lg hover:bg-emerald-600 transition">Save Changes</button>
-</div>
-</div>
-</div>
-</div>
-</main>
-</div>
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            location.reload();
+        }
 
-<div id="productModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-<div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6">
-<div class="flex justify-between items-center mb-6">
-<h3 class="text-xl font-bold">Add Product</h3>
-<button onclick="document.getElementById('productModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
-</div>
-<form class="space-y-4" onsubmit="event.preventDefault(); alert('Product saved!'); document.getElementById('productModal').classList.add('hidden');">
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Product Name *</label><input type="text" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></div>
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Description</label><textarea rows="3" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></textarea></div>
-<div class="grid grid-cols-2 gap-4">
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Price (KES) *</label><input type="number" required min="0" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></div>
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Stock Quantity</label><input type="number" min="0" value="10" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"></div>
-</div>
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Category</label><select class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"><option>General</option><option>Vegetables</option><option>Fruits</option><option>Dairy & Eggs</option><option>Pantry Staples</option></select></div>
-<div><label class="block text-sm font-medium text-gray-700 mb-2">Image URL *</label><input type="url" required placeholder="https://example.com/image.jpg" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald outline-none"><p class="text-xs text-gray-500 mt-1">Paste image URL from Unsplash, Cloudinary, etc.</p></div>
-<div class="flex items-center gap-3">
-<div id="productSpinner" class="spinner"></div>
-<button type="submit" class="w-full py-3 bg-emerald text-white rounded-lg font-semibold hover:bg-emerald-600 transition">Save Product</button>
-</div>
-</form>
-</div>
-</div>
+        function showSection(section) {
+            document.getElementById('productsSection').classList.add('d-none');
+            document.getElementById('socialSection').classList.add('d-none');
+            document.getElementById(section + 'Section').classList.remove('d-none');
+        }
 
-<script>
-let isLoggedIn=localStorage.getItem('adminLoggedIn')==='true';
-if(isLoggedIn)showDashboard();
-document.getElementById('loginForm').addEventListener('submit',function(e){e.preventDefault();if(document.getElementById('username').value==='admin'&&document.getElementById('password').value==='~admin_password~'){localStorage.setItem('adminLoggedIn','true');showDashboard();}else{alert('Invalid credentials');}});
-function showDashboard(){document.getElementById('loginScreen').classList.add('hidden');document.getElementById('dashboard').classList.remove('hidden');}
-function logout(){localStorage.removeItem('adminLoggedIn');location.reload();}
-function showSection(section){['dashboard','products','orders','settings'].forEach(s=>document.getElementById(s+'Section').classList.add('hidden'));document.getElementById(section+'Section').classList.remove('hidden');const titles={dashboard:'Dashboard',products:'Products',orders:'Orders',settings:'Settings'};document.getElementById('pageTitle').textContent=titles[section];}
-function openProductModal(){document.getElementById('productModal').classList.remove('hidden');}
-function saveSettings(){const btn=event.target;const spinner=document.getElementById('saveSpinner');const pwd=document.getElementById('newPassword').value;const confirm=document.getElementById('confirmPassword').value;if(pwd&&pwd!==confirm){alert('Passwords do not match');return;}spinner.style.display='block';btn.disabled=true;setTimeout(()=>{spinner.style.display='none';btn.disabled=false;alert('Settings saved!');if(pwd){document.getElementById('newPassword').value='';document.getElementById('confirmPassword').value='';}},800);}
-</script>
+        function openModal() {
+            modal.show();
+        }
+
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const product = {
+                id: Date.now().toString(),
+                name: document.getElementById('productName').value,
+                price: parseInt(document.getElementById('productPrice').value),
+                image: document.getElementById('productImage').value
+            };
+            products.push(product);
+            localStorage.setItem('products', JSON.stringify(products));
+            modal.hide();
+            this.reset();
+            renderProducts();
+        });
+
+        function renderProducts() {
+            const tbody = document.getElementById('productsTable');
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No products</td></tr>';
+                return;
+            }
+            tbody.innerHTML = products.map(p => '<tr><td><img src="' + p.image + '" class="rounded" style="width:48px;height:48px;object-fit:cover;"></td><td>' + p.name + '</td><td>KES ' + p.price.toLocaleString() + '</td><td><button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(' + p.id + ')">Delete</button></td></tr>').join('');
+        }
+
+        function deleteProduct(id) {
+            products = products.filter(p => p.id != id);
+            localStorage.setItem('products', JSON.stringify(products));
+            renderProducts();
+        }
+
+        function loadSocialLinks() {
+            document.getElementById('facebookUrl').value = socialLinks.facebook || '';
+            document.getElementById('instagramUrl').value = socialLinks.instagram || '';
+            document.getElementById('twitterUrl').value = socialLinks.twitter || '';
+            document.getElementById('whatsappNumber').value = socialLinks.whatsapp || '';
+        }
+
+        document.getElementById('socialForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            socialLinks = {
+                facebook: document.getElementById('facebookUrl').value,
+                instagram: document.getElementById('instagramUrl').value,
+                twitter: document.getElementById('twitterUrl').value,
+                whatsapp: document.getElementById('whatsappNumber').value
+            };
+            localStorage.setItem('socialLinks', JSON.stringify(socialLinks));
+            alert('Social media links saved!');
+        });
+    </script>
 </body>
 </html>
