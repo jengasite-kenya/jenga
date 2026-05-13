@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - SiteSawa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .login-box { background: #111118; border: 1px solid #1f2937; border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; }
+    .logo { font-size: 24px; font-weight: 800; color: #a3e635; text-align: center; margin-bottom: 8px; }
+    .subtitle { text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 32px; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 13px; font-weight: 500; color: #9ca3af; margin-bottom: 6px; }
+    input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #374151; background: #0a0a0f; color: #fff; font-size: 14px; transition: border-color 0.2s; }
+    input:focus { outline: none; border-color: #a3e635; }
+    .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; background: #a3e635; color: #0a0a0f; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .btn:hover { background: #bef264; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .toggle { text-align: center; margin-top: 20px; font-size: 14px; color: #6b7280; }
+    .toggle a { color: #a3e635; text-decoration: none; cursor: pointer; }
+    .toggle a:hover { text-decoration: underline; }
+    .error { color: #ef4444; font-size: 13px; margin-top: 8px; display: none; }
+    .success { color: #a3e635; font-size: 13px; margin-top: 8px; display: none; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <div class="logo">SiteSawa</div>
+    <p class="subtitle" id="subtitle">Enter your phone and secret key</p>
+
+    <!-- Login Form -->
+    <form id="loginForm">
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="loginPhone" placeholder="+2547XX XXX XXX" required>
+      </div>
+      <div class="form-group">
+        <label>Secret Key</label>
+        <input type="password" id="loginKey" placeholder="Your 8-character key" required>
+      </div>
+      <button type="submit" class="btn" id="loginBtn">Login</button>
+      <p class="error" id="loginError"></p>
+    </form>
+
+    <!-- Register Form -->
+    <form id="registerForm" class="hidden">
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="regPhone" placeholder="+2547XX XXX XXX" required>
+      </div>
+      <div class="form-group">
+        <label>Choose Template</label>
+        <select id="regTemplate" style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid #374151;background:#0a0a0f;color:#fff;font-size:14px;">
+          <option value="me">ME (Personal) - KES 7,000</option>
+          <option value="biz">BIZ (Business) - KES 8,000</option>
+          <option value="shop">SHOP (E-commerce) - KES 9,000</option>
+        </select>
+      </div>
+      <button type="submit" class="btn" id="regBtn">Create Account</button>
+      <p class="success" id="regSuccess"></p>
+      <p class="error" id="regError"></p>
+    </form>
+
+    <div class="toggle">
+      <span id="toggleText">New here?</span>
+      <a id="toggleLink">Create account</a>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '';
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const toggleLink = document.getElementById('toggleLink');
+    const toggleText = document.getElementById('toggleText');
+    const subtitle = document.getElementById('subtitle');
+    let isLogin = true;
+
+    toggleLink.addEventListener('click', () => {
+      isLogin = !isLogin;
+      if (isLogin) {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        toggleText.textContent = 'New here?';
+        toggleLink.textContent = 'Create account';
+        subtitle.textContent = 'Enter your phone and secret key';
+      } else {
+        loginForm.classList.add('hidden');
+        registerForm.classList.remove('hidden');
+        toggleText.textContent = 'Have an account?';
+        toggleLink.textContent = 'Login';
+        subtitle.textContent = 'Register with your phone number';
+      }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const error = document.getElementById('loginError');
+      btn.disabled = true;
+      error.style.display = 'none';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: document.getElementById('loginPhone').value,
+            secretKey: document.getElementById('loginKey').value
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          localStorage.setItem('sitesawa_token', data.token);
+          localStorage.setItem('sitesawa_template', data.template);
+          window.location.href = '/dashboard.html';
+        } else {
+          error.textContent = data.error || 'Login failed';
+          error.style.display = 'block';
+        }
+      } catch (err) {
+        error.textContent = 'Network error. Try again.';
+        error.style.display = 'block';
+      }
+      btn.disabled = false;
+    });
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('regBtn');
+      const error = document.getElementById('regError');
+      const success = document.getElementById('regSuccess');
+      btn.disabled = true;
+      error.style.display = 'none';
+      success.style.display = 'none';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: document.getElementById('regPhone').value,
+            template: document.getElementById('regTemplate').value
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          success.textContent = data.message;
+          success.style.display = 'block';
+          setTimeout(() => {
+            toggleLink.click();
+          }, 3000);
+        } else {
+          error.textContent = data.error || 'Registration failed';
+          error.style.display = 'block';
+        }
+      } catch (err) {
+        error.textContent = 'Network error. Try again.';
+        error.style.display = 'block';
+      }
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>
