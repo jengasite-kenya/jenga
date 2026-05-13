@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{customer.bizName}} - Shop online in Kenya. M-Pesa checkout.">
+    <link rel="canonical" href="https://{{customer.domain}}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link id="fontLink" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    <title>{{customer.bizName}} | Online Store</title>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+        const customerGA = "{{customer.googleAnalytics}}";
+        if(customerGA && customerGA !== 'G-XXXXXXXXXX') gtag('config', customerGA);
+    </script>
+    <script>
+        !function(w,d,t){var ttq=w.ttq=w.ttq||[];ttq.load('7630892299157143560');
+        const p = "{{customer.tiktokPixel}}"; if(p) ttq.load(p); ttq.page();}(window,document,'script');
+    </script>
+
+    <style id="dynamicStyles">
+        :root {
+            --forest: #0d3b2e;
+            --deep-green: #1a5c48;
+            --gold: #d4a843;
+            --gold-light: #f0d78c;
+            --cream: #faf8f3;
+            --warm-white: #fffdf9;
+            --sans: 'DM Sans', sans-serif;
+            --radius: 20px;
+            --spacing: 1;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--sans); background: var(--cream); color: var(--forest); overflow-x: hidden; }
+        .editor-panel { position: fixed; right: 24px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 12px; }
+        .editor-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--forest); color: var(--gold); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; border: 2px solid var(--gold); transition: all 0.3s; }
+        .editor-btn:hover { background: var(--gold); color: var(--forest); transform: scale(1.1); }
+        .settings-panel { position: fixed; right: 80px; top: 50%; transform: translateY(-50%); width: 320px; max-height: 80vh; overflow-y: auto; background: var(--forest); color: var(--cream); border-radius: 24px; padding: 24px; z-index: 99; display: none; box-shadow: 0 25px 50px rgba(0,0,0,0.3); }
+        .settings-panel.open { display: block; }
+        .settings-panel h3 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; color: var(--gold); }
+        .setting-row { margin-bottom: 16px; }
+        .setting-row label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; color: rgba(250,248,243,0.6); }
+        .setting-row input[type="color"] { width: 100%; height: 40px; border: none; border-radius: 8px; cursor: pointer; }
+        .setting-row select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(212,168,67,0.3); background: rgba(212,168,67,0.05); color: var(--cream); font-size: 13px; }
+        .setting-row select option { background: var(--forest); color: var(--cream); }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; }
+        .toggle-switch { width: 44px; height: 24px; background: rgba(250,248,243,0.2); border-radius: 12px; position: relative; cursor: pointer; transition: background 0.3s; }
+        .toggle-switch.on { background: var(--gold); }
+        .toggle-switch::after { content: ''; position: absolute; width: 20px; height: 20px; background: var(--cream); border-radius: 50%; top: 2px; left: 2px; transition: transform 0.3s; }
+        .toggle-switch.on::after { transform: translateX(20px); }
+        []:focus { outline: 2px solid var(--gold); background: rgba(212,168,67,0.08); padding: 4px 8px; border-radius: 4px; }
+        .section-label { position: absolute; top: 16px; left: 16px; background: var(--gold); color: var(--forest); padding: 6px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 20px; opacity: 0; transition: opacity 0.3s; z-index: 10; }
+        .section:hover .section-label { opacity: 1; }
+        .section.hidden-section { display: none !important; }
+
+        .product-card { background: var(--warm-white); border-radius: var(--radius); overflow: hidden; transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }
+        .product-card:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 25px 50px rgba(13,59,46,0.15); }
+        .product-card .add-btn { position: absolute; bottom: 16px; right: 16px; width: 48px; height: 48px; border-radius: 50%; background: var(--gold); color: var(--forest); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; cursor: pointer; transform: scale(0); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 4px 15px rgba(212,168,67,0.4); }
+        .product-card:hover .add-btn { transform: scale(1); }
+        .product-card .add-btn:active { transform: scale(0.9); }
+
+        .cart-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 460px; height: 100vh; background: var(--warm-white); z-index: 200; transition: right 0.5s cubic-bezier(0.22, 1, 0.36, 1); overflow-y: auto; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
+        .cart-drawer.open { right: 0; }
+        .cart-overlay { position: fixed; inset: 0; background: rgba(13,59,46,0.4); z-index: 199; opacity: 0; pointer-events: none; transition: opacity 0.4s; backdrop-filter: blur(4px); }
+        .cart-overlay.open { opacity: 1; pointer-events: all; }
+
+        .qty-btn { width: 32px; height: 32px; border-radius: 10px; background: var(--cream); border: 1px solid rgba(13,59,46,0.1); color: var(--forest); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .qty-btn:hover { background: var(--gold); border-color: var(--gold); }
+        .remove-btn { color: #c44; cursor: pointer; font-size: 11px; font-weight: 500; transition: color 0.2s; }
+        .remove-btn:hover { color: #e44; }
+
+        .checkout-btn { background: var(--forest); color: var(--gold); padding: 18px; border-radius: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; width: 100%; cursor: pointer; border: none; font-size: 14px; transition: all 0.3s; }
+        .checkout-btn:hover { background: var(--deep-green); transform: scale(1.02); box-shadow: 0 10px 30px rgba(13,59,46,0.2); }
+        .checkout-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .paybill-input { background: var(--cream); border: 2px solid rgba(13,59,46,0.1); color: var(--forest); padding: 14px 18px; border-radius: 12px; width: 100%; font-size: 16px; font-family: var(--sans); transition: all 0.3s; }
+        .paybill-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 4px rgba(212,168,67,0.15); }
+        .paybill-input::placeholder { color: rgba(13,59,46,0.3); }
+
+        .shipping-option { border: 2px solid rgba(13,59,46,0.08); padding: 16px; border-radius: 14px; cursor: pointer; transition: all 0.3s; background: var(--warm-white); }
+        .shipping-option:hover { border-color: var(--gold); }
+        .shipping-option.selected { border-color: var(--gold); background: rgba(212,168,67,0.08); }
+
+        .social-icon { width: 44px; height: 44px; border-radius: 50%; background: rgba(212,168,67,0.1); display: flex; align-items: center; justify-content: center; color: var(--forest); transition: all 0.3s; }
+        .social-icon:hover { background: var(--gold); color: var(--forest); transform: translateY(-3px); }
+
+        .editable-img { position: relative; overflow: hidden; cursor: pointer; }
+        .editable-img:hover::after { content: 'Change'; position: absolute; inset: 0; background: rgba(13,59,46,0.6); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+        input[type="file"] { display: none; }
+
+        .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .badge-gold { background: var(--gold); color: var(--forest); }
+
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .float-anim { animation: float 3s ease-in-out infinite; }
+
+        .spacing-compact section { padding: 40px 0; }
+        .spacing-dramatic section { padding: 120px 0; }
+        .radius-sharp { --radius: 4px; }
+        .radius-pill .badge, .radius-pill .checkout-btn { border-radius: 50px; }
+        .layout-grid #productsGrid { grid-template-columns: repeat(4, 1fr); }
+        .layout-large #productsGrid { grid-template-columns: repeat(2, 1fr); }
+        .layout-masonry #productsGrid { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 768px) {
+            .layout-grid #productsGrid, .layout-large #productsGrid, .layout-masonry #productsGrid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body class="spacing-normal">
+
+
+    <!-- SETTINGS PANEL REMOVED - EDIT IN DASHBOARD -->
+    <div class="settings-panel hidden" id="settingsPanel">
+        <h3>Template Settings</h3>
+        <div class="setting-row">
+            <label>Primary Color</label>
+            <input type="color" id="colorPrimary" value="#d4a843" onchange="applyColors()">
+        </div>
+        <div class="setting-row">
+            <label>Background</label>
+            <input type="color" id="colorBg" value="#faf8f3" onchange="applyColors()">
+        </div>
+        <div class="setting-row">
+            <label>Forest Color</label>
+            <input type="color" id="colorForest" value="#0d3b2e" onchange="applyColors()">
+        </div>
+        <div class="setting-row">
+            <label>Font</label>
+            <select id="fontSelect" onchange="applyFont()">
+                <option value="dm">DM Sans (Clean)</option>
+                <option value="outfit">Outfit + Geist (Modern)</option>
+                <option value="nunito">Nunito + Space Grotesk (Friendly)</option>
+                <option value="urbanist">Urbanist + Inter (Sharp)</option>
+            </select>
+        </div>
+        <div class="setting-row">
+            <label>Spacing</label>
+            <select id="spacingSelect" onchange="applySpacing()">
+                <option value="compact">Compact</option>
+                <option value="normal" selected>Normal</option>
+                <option value="dramatic">Dramatic</option>
+            </select>
+        </div>
+        <div class="setting-row">
+            <label>Card Style</label>
+            <select id="radiusSelect" onchange="applyRadius()">
+                <option value="rounded">Rounded</option>
+                <option value="sharp">Sharp</option>
+                <option value="pill">Pill</option>
+            </select>
+        </div>
+        <div class="setting-row">
+            <label>Product Grid</label>
+            <select id="layoutSelect" onchange="applyLayout()">
+                <option value="grid">4-Column Grid</option>
+                <option value="large">2-Column Large</option>
+                <option value="masonry">3-Column Masonry</option>
+            </select>
+        </div>
+        <h3 style="margin-top:24px">Section Visibility</h3>
+        <div class="setting-row toggle-row">
+            <label>Trust Bar</label>
+            <div class="toggle-switch on" id="toggleTrust" onclick="toggleSection('trust')"></div>
+        </div>
+        <div class="setting-row toggle-row">
+            <label>Shipping Options</label>
+            <div class="toggle-switch on" id="toggleShipping" onclick="toggleSection('shipping')"></div>
+        </div>
+        <div class="setting-row" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(212,168,67,0.2);">
+            <label>Share Edit Access</label>
+            <p class="text-xs" style="color: rgba(250,248,243,0.3); margin-bottom: 8px;">Generate a one-time link for someone else to edit your site</p>
+            <button onclick="generateShareLink()" class="checkout-btn" style="width: 100%; font-size: 11px; padding: 12px; background: var(--gold); color: var(--forest);">Generate Share Link</button>
+            <div id="shareResult" class="mt-3 hidden">
+                <div class="p-3 rounded-lg" style="background: rgba(212,168,67,0.1); border: 1px solid rgba(212,168,67,0.2);">
+                    <p class="text-xs font-bold mb-1" style="color: var(--gold);">Link generated!</p>
+                    <p id="shareUrl" class="text-xs break-all" style="color: rgba(250,248,243,0.6);"></p>
+                    <button onclick="copyShareLink()" class="mt-2 text-xs font-bold uppercase tracking-wider" style="color: var(--gold);">Copy Link</button>
+                </div>
+            </div>
+        </div>
+        <button onclick="saveSettings()" class="checkout-btn" style="width:100%; margin-top:16px;">Apply & Save</button>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold" style="color: var(--forest);">Your Cart</h2>
+                    <p class="text-xs font-medium mt-1" style="color: rgba(13,59,46,0.4);"><span id="cartCount">0</span> items</p>
+                </div>
+                <button onclick="closeCart()" class="w-10 h-10 rounded-full flex items-center justify-center" style="background: var(--cream); color: var(--forest); font-size: 20px;">&times;</button>
+            </div>
+            <div id="cartItems" class="space-y-4 mb-8"></div>
+            <div id="cartEmpty" class="text-center py-16">
+                <p class="text-5xl mb-4 float-anim">🛒</p>
+                <p class="font-bold text-sm" style="color: rgba(13,59,46,0.3);">Your cart is empty</p>
+                <p class="text-xs mt-2" style="color: rgba(13,59,46,0.2);">Swipe products to add them</p>
+            </div>
+            <div id="shippingSection" class="mb-6 hidden">
+                <h3 class="text-xs font-bold uppercase tracking-widest mb-4" style="color: rgba(13,59,46,0.4);">Delivery Method</h3>
+                <div class="space-y-3" id="shippingOptions">
+                    <div class="shipping-option selected" data-method="pickup" onclick="selectShipping('pickup')">
+                        <div class="flex justify-between items-center">
+                            <div><p class="font-bold text-sm" style="color: var(--forest);">Store Pickup</p><p class="text-xs" style="color: rgba(13,59,46,0.4);">Collect from our shop</p></div>
+                            <span class="badge badge-gold">FREE</span>
+                        </div>
+                    </div>
+                    <div class="shipping-option" data-method="local" onclick="selectShipping('local')">
+                        <div class="flex justify-between items-center">
+                            <div><p class="font-bold text-sm" style="color: var(--forest);">Local Delivery</p><p class="text-xs" style="color: rgba(13,59,46,0.4);">Same-day in your area</p></div>
+                            <span class="font-bold" style="color: var(--gold);" id="localFee">KES 200</span>
+                        </div>
+                    </div>
+                    <div class="shipping-option" data-method="nationwide" onclick="selectShipping('nationwide')">
+                        <div class="flex justify-between items-center">
+                            <div><p class="font-bold text-sm" style="color: var(--forest);">Nationwide</p><p class="text-xs" style="color: rgba(13,59,46,0.4);">2-3 days across Kenya</p></div>
+                            <span class="font-bold" style="color: var(--gold);" id="nationwideFee">KES 500</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t-2 pt-6 mb-6" style="border-color: rgba(13,59,46,0.06);">
+                <div class="flex justify-between mb-3"><span class="text-sm" style="color: rgba(13,59,46,0.4);">Subtotal</span><span class="font-bold" style="color: var(--forest);" id="subtotal">KES 0</span></div>
+                <div class="flex justify-between mb-3" id="shippingLine"><span class="text-sm" style="color: rgba(13,59,46,0.4);">Shipping</span><span class="font-bold" style="color: var(--gold);" id="shippingCost">FREE</span></div>
+                <div class="flex justify-between text-xl mt-4 pt-4 border-t" style="border-color: rgba(13,59,46,0.06);"><span class="font-bold" style="color: var(--forest);">Total</span><span class="font-bold" style="color: var(--gold); font-size: 1.5rem;" id="total">KES 0</span></div>
+            </div>
+            <div id="checkoutSection">
+                <p class="text-xs font-bold uppercase tracking-widest mb-4" style="color: rgba(13,59,46,0.4);">Pay with M-Pesa</p>
+                <div class="space-y-4 mb-6">
+                    <div><label class="text-xs font-bold uppercase tracking-wider mb-2 block" style="color: rgba(13,59,46,0.4);">M-Pesa Number</label><input type="tel" id="phoneInput" class="paybill-input" placeholder="2547XX XXX XXX" maxlength="12"></div>
+                    <div><label class="text-xs font-bold uppercase tracking-wider mb-2 block" style="color: rgba(13,59,46,0.4);">Confirmation Code</label><input type="text" id="codeInput" class="paybill-input" placeholder="Enter code after payment" maxlength="10"></div>
+                </div>
+                <button id="payBtn" class="checkout-btn" onclick="processPayment()">Complete Payment</button>
+                <p class="text-center text-xs mt-4" style="color: rgba(13,59,46,0.3);">You will receive an STK push on your phone</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50" style="background: rgba(250,248,243,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(13,59,46,0.06);">
+        <div class="px-6 md:px-10 py-4 flex justify-between items-center max-w-7xl mx-auto">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl overflow-hidden"><img src="{{customer.logo}}" class="w-full h-full object-cover"></div>
+                <h1 id="bizName"  class="text-xl md:text-2xl font-bold tracking-tight" style="color: var(--forest);">{{customer.bizName}}</h1>
+            </div>
+            <button onclick="openCart()" class="flex items-center gap-3 px-5 py-3 rounded-2xl transition-all hover:shadow-lg" style="background: var(--forest); color: var(--gold);">
+                <span class="text-xs font-bold uppercase tracking-wider">Cart</span>
+                <span id="cartBadge" class="bg-[#d4a843] text-[#0d3b2e] text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="relative px-6 md:px-10 py-20 md:py-32 overflow-hidden" id="hero" style="background: var(--forest);">
+        
+        <div class="absolute top-0 right-0 w-1/2 h-full opacity-10"><div class="absolute inset-0" style="background: radial-gradient(circle at 80% 20%, var(--gold) 0%, transparent 50%);"></div></div>
+        <div class="max-w-6xl mx-auto relative z-10">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="badge badge-gold">New Collection</span>
+                <span class="badge" style="background: rgba(255,255,255,0.1); color: var(--gold-light);">M-Pesa Checkout</span>
+            </div>
+            <h2 id="heroText"  class="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6" style="color: var(--warm-white);">{{customer.heroText}}</h2>
+            <p class="text-lg mb-8 max-w-lg" style="color: rgba(255,253,249,0.5);">Quality products delivered across Kenya. Fast, secure M-Pesa payment.</p>
+            <button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})" class="px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-wider transition-all hover:scale-105" style="background: var(--gold); color: var(--forest);">Shop Now</button>
+        </div>
+    </section>
+
+    <!-- PRODUCTS - DYNAMIC -->
+    <section id="products" class="px-6 md:px-10 py-20 md:py-28 max-w-7xl mx-auto relative">
+        
+        <div class="flex justify-between items-end mb-12">
+            <div><p class="text-xs font-bold uppercase tracking-widest mb-3" style="color: var(--gold);">Featured</p><h2 class="text-3xl md:text-4xl font-bold" style="color: var(--forest);">Our Products</h2></div>
+            <button onclick="addProduct()" class="text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl" style="background: var(--gold); color: var(--forest);">+ Add Product</button>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8" id="productsGrid">
+            <!-- Products injected dynamically -->
+        </div>
+    </section>
+
+    <!-- TRUST BAR -->
+    <section class="px-6 md:px-10 py-16" id="trust" style="background: var(--forest);">
+        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div><p class="text-3xl font-bold mb-2" style="color: var(--gold);">🇰🇪</p><p class="text-xs font-bold uppercase tracking-wider" style="color: rgba(255,253,249,0.4);">Made in Kenya</p></div>
+            <div><p class="text-3xl font-bold mb-2" style="color: var(--gold);">⚡</p><p class="text-xs font-bold uppercase tracking-wider" style="color: rgba(255,253,249,0.4);">Fast Delivery</p></div>
+            <div><p class="text-3xl font-bold mb-2" style="color: var(--gold);">🔒</p><p class="text-xs font-bold uppercase tracking-wider" style="color: rgba(255,253,249,0.4);">M-Pesa Secure</p></div>
+            <div><p class="text-3xl font-bold mb-2" style="color: var(--gold);">⭐</p><p class="text-xs font-bold uppercase tracking-wider" style="color: rgba(255,253,249,0.4);">Quality Guaranteed</p></div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="px-6 md:px-10 py-16" id="footer" style="background: var(--forest); color: var(--warm-white);">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="text-center md:text-left">
+                    <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color: var(--gold);">SiteSawa</p>
+                    <p class="text-sm" style="color: rgba(255,253,249,0.4);">{{customer.phone}}</p>
+                </div>
+                <div class="flex gap-4">
+                    <a href="https://wa.me/254{{customer.phone}}" class="social-icon" style="background: rgba(212,168,67,0.15); color: var(--gold);"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+                    <a href="#" class="social-icon" style="background: rgba(212,168,67,0.15); color: var(--gold);"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                    <a href="#" class="social-icon" style="background: rgba(212,168,67,0.15); color: var(--gold);"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+                    <a href="#" class="social-icon" style="background: rgba(212,168,67,0.15); color: var(--gold);"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+                </div>
+            </div>
+            <div class="border-t mt-10 pt-8 text-center" style="border-color: rgba(255,253,249,0.06);"><p class="text-[10px] uppercase tracking-widest font-bold" style="color: rgba(255,253,249,0.15);">Built by SiteSawa · Kenyan E-Commerce</p></div>
+        </div>
+    </footer>
+
+        <script>
+        let cart = [];
+        let shippingMethod = 'pickup';
+        let shippingEnabled = false;
+        let shippingFees = { pickup: 0, local: 200, nationwide: 500 };
+        let products = [
+            { id: '1', name: 'Product One', price: 4500, image: '{{customer.logo}}' },
+            { id: '2', name: 'Product Two', price: 3200, image: '{{customer.logo}}' },
+            { id: '3', name: 'Product Three', price: 6800, image: '{{customer.logo}}' },
+            { id: '4', name: 'Product Four', price: 2900, image: '{{customer.logo}}' }
+        ];
+
+        async function loadSettings() {
+            try {
+                const res = await fetch('/api/get-shop-settings?domain=' + window.location.hostname);
+                const settings = await res.json();
+                if (settings) {
+                    shippingEnabled = settings.shippingEnabled || false;
+                    if (settings.shippingOptions) {
+                        shippingFees.local = settings.localDeliveryFee || 200;
+                        shippingFees.nationwide = settings.nationwideFee || 500;
+                    }
+                    updateShippingUI();
+                }
+            } catch(e) { console.log('No saved settings'); }
+        }
+        loadSettings();
+
+        function updateShippingUI() {
+            const section = document.getElementById('shippingSection');
+            const line = document.getElementById('shippingLine');
+            if (shippingEnabled) { section.classList.remove('hidden'); line.classList.remove('hidden'); }
+            else { section.classList.add('hidden'); line.classList.add('hidden'); }
+            document.getElementById('localFee').innerText = 'KES ' + shippingFees.local;
+            document.getElementById('nationwideFee').innerText = 'KES ' + shippingFees.nationwide;
+        }
+
+        function addToCart(name, price, image) {
+            const existing = cart.find(item => item.name === name);
+            if (existing) { existing.qty++; }
+            else { cart.push({ name, price, image, qty: 1 }); }
+            updateCart();
+            const btn = event.target;
+            btn.style.transform = 'scale(1.3)';
+            setTimeout(() => btn.style.transform = 'scale(1)', 200);
+        }
+
+        function removeFromCart(name) {
+            cart = cart.filter(item => item.name !== name);
+            updateCart();
+        }
+
+        function changeQty(name, delta) {
+            const item = cart.find(item => item.name === name);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) removeFromCart(name);
+                else updateCart();
+            }
+        }
+
+        function updateCart() {
+            const container = document.getElementById('cartItems');
+            const emptyMsg = document.getElementById('cartEmpty');
+            const count = document.getElementById('cartCount');
+            const badge = document.getElementById('cartBadge');
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            count.innerText = totalQty;
+            badge.innerText = totalQty;
+            if (cart.length === 0) {
+                container.innerHTML = '';
+                emptyMsg.classList.remove('hidden');
+                document.getElementById('checkoutSection').classList.add('hidden');
+            } else {
+                emptyMsg.classList.add('hidden');
+                document.getElementById('checkoutSection').classList.remove('hidden');
+                container.innerHTML = cart.map(item => `
+                    <div class="flex gap-4 items-center p-4 rounded-2xl" style="background: var(--cream);">
+                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-xl">
+                        <div class="flex-1">
+                            <p class="font-bold text-sm" style="color: var(--forest);">${item.name}</p>
+                            <p class="font-bold text-sm" style="color: var(--gold);">KES ${item.price.toLocaleString()}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="qty-btn" onclick="changeQty('${item.name}', -1)">−</button>
+                            <span class="font-bold w-6 text-center" style="color: var(--forest);">${item.qty}</span>
+                            <button class="qty-btn" onclick="changeQty('${item.name}', 1)">+</button>
+                        </div>
+                        <button class="remove-btn" onclick="removeFromCart('${item.name}')">Remove</button>
+                    </div>
+                `).join('');
+            }
+            updateTotals();
+        }
+
+        function updateTotals() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const shipping = shippingEnabled ? shippingFees[shippingMethod] : 0;
+            const total = subtotal + shipping;
+            document.getElementById('subtotal').innerText = 'KES ' + subtotal.toLocaleString();
+            document.getElementById('shippingCost').innerText = shipping === 0 ? 'FREE' : 'KES ' + shipping.toLocaleString();
+            document.getElementById('total').innerText = 'KES ' + total.toLocaleString();
+        }
+
+        function selectShipping(method) {
+            shippingMethod = method;
+            document.querySelectorAll('.shipping-option').forEach(el => el.classList.remove('selected'));
+            document.querySelector(`[data-method="${method}"]`).classList.add('selected');
+            updateTotals();
+        }
+
+        function openCart() {
+            document.getElementById('cartDrawer').classList.add('open');
+            document.getElementById('cartOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCart() {
+            document.getElementById('cartDrawer').classList.remove('open');
+            document.getElementById('cartOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function processPayment() {
+            const phone = document.getElementById('phoneInput').value;
+            const code = document.getElementById('codeInput').value;
+            if (!phone || phone.length < 10) { alert('Please enter a valid M-Pesa phone number'); return; }
+            if (cart.length === 0) { alert('Your cart is empty'); return; }
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0) + (shippingEnabled ? shippingFees[shippingMethod] : 0);
+            const btn = document.getElementById('payBtn');
+            btn.disabled = true;
+            btn.innerText = 'Processing...';
+            fetch('/api/mpesa-stk', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ phone, amount: total, domain: window.location.hostname, items: cart, shipping: shippingMethod })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('M-Pesa STK push sent! Check your phone to complete payment.');
+                    btn.innerText = 'Check Your Phone';
+                } else {
+                    alert('Payment initiation failed. Please try again.');
+                    btn.disabled = false;
+                    btn.innerText = 'Complete Payment';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
