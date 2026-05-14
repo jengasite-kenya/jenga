@@ -1,4 +1,5 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
 const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -130,6 +131,41 @@ function normalizePhone(phone) {
 
   // Default: assume it's a Kenyan number, add +254
   return '+254' + phone.replace(/\D/g, '');
+}
+
+
+// Email transporter using Google Workspace
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.WORKSPACE_EMAIL,
+    pass: process.env.WORKSPACE_APP_PASSWORD
+  }
+});
+
+// Send email function
+async function sendEmail(to, subject, text, html = null) {
+  try {
+    if (!process.env.WORKSPACE_EMAIL || !process.env.WORKSPACE_APP_PASSWORD) {
+      console.log('Email skipped: Workspace not configured');
+      return { success: false, error: 'Email not configured' };
+    }
+
+    const mailOptions = {
+      from: `"SiteSawa" <${process.env.WORKSPACE_EMAIL}>`,
+      to: to,
+      subject: subject,
+      text: text,
+      html: html || `<p>${text.replace(/\n/g, '<br>')}</p>`
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent:', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (err) {
+    console.error('Email error:', err);
+    return { success: false, error: err.message };
+  }
 }
 
 app.post('/api/register', async (req, res) => {
@@ -422,4 +458,15 @@ app.get('/:identifier', async (req, res) => {
 
 // ── START SERVER ──
 const PORT = process.env.PORT || 3000;
+
+// Test email route
+app.get('/api/test-email', async (req, res) => {
+  const result = await sendEmail(
+    process.env.WORKSPACE_EMAIL || 'test@sitesawa.co.ke',
+    'Test from SiteSawa',
+    'This is a test email from your SiteSawa server. If you received this, email is working!'
+  );
+  res.json(result);
+});
+
 app.listen(PORT, () => console.log(`SiteSawa server running on port ${PORT}`));
