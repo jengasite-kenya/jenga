@@ -50,6 +50,7 @@
       .cards { grid-template-columns: 1fr; }
     }
   </style>
+<base target="_blank">
 </head>
 <body>
   <div class="container">
@@ -135,7 +136,7 @@
       btn.disabled = true;
 
       try {
-        const res = await fetch('/api/create-order', { 
+        const res = await fetch('https://jenga-vh5z.onrender.com/api/create-order', { 
           method: 'POST', 
           headers: {'Content-Type': 'application/json'}, 
           body: JSON.stringify({ businessName: biz, phone: tel, item: selectedTier }) 
