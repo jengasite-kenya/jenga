@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - SiteSawa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #fff; min-height: 100vh; }
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+    header { padding: 20px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1f2937; }
+    .logo { font-size: 20px; font-weight: 800; color: #a3e635; }
+    .header-actions { display: flex; gap: 12px; align-items: center; }
+    .btn-sm { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; }
+    .btn-outline { background: transparent; color: #9ca3af; border: 1px solid #374151; }
+    .btn-outline:hover { border-color: #a3e635; color: #a3e635; }
+    .btn-primary { background: #a3e635; color: #0a0a0f; }
+    .btn-primary:hover { background: #bef264; }
+
+    .hero { padding: 32px 0 24px; }
+    .hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .hero p { color: #6b7280; font-size: 14px; }
+
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: #111118; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; }
+    .stat-card h3 { font-size: 12px; color: #6b7280; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .stat-card .num { font-size: 28px; font-weight: 800; color: #a3e635; }
+
+    .section-card { background: #111118; border: 1px solid #1f2937; border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+    .section-header { margin-bottom: 20px; }
+    .section-header h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .section-header p { font-size: 13px; color: #6b7280; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: #9ca3af; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-group label svg { width: 16px; height: 16px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid #374151; background: #0a0a0f; color: #fff; font-size: 14px; transition: all 0.2s; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #a3e635; }
+    .form-group input::placeholder { color: #4b5563; }
+    .form-group textarea { min-height: 100px; resize: vertical; }
+    .hint { font-size: 11px; color: #4b5563; margin-top: 4px; }
+
+    .save-bar { position: sticky; bottom: 0; background: #0a0a0f; border-top: 1px solid #1f2937; padding: 16px 0; display: flex; justify-content: space-between; align-items: center; }
+    .save-bar .status { font-size: 13px; color: #6b7280; }
+    .save-bar .status.saved { color: #a3e635; }
+
+    .preview-box { margin-top: 20px; padding: 20px; background: #0a0a0f; border-radius: 12px; border: 1px solid #1f2937; }
+    .preview-box p { font-size: 12px; color: #6b7280; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .social-preview { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .social-preview .icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
+    .social-preview .icon:hover { transform: scale(1.1); }
+    .social-preview .icon.whatsapp { background: #25d366; }
+    .social-preview .icon.facebook { background: #1877f2; }
+    .social-preview .icon.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .social-preview .icon.twitter { background: #000; border: 1px solid #333; }
+    .social-preview .icon.linkedin { background: #0a66c2; }
+    .social-preview .icon.tiktok { background: #000; border: 1px solid #333; }
+    .social-preview .empty { color: #4b5563; font-size: 13px; }
+
+    .site-link { background: #111118; border: 1px solid #1f2937; border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .site-link .url { font-size: 14px; color: #a3e635; font-weight: 500; }
+    .site-link .copy { font-size: 12px; color: #6b7280; cursor: pointer; }
+    .site-link .copy:hover { color: #a3e635; }
+
+    .hidden { display: none; }
+    .loading { text-align: center; padding: 60px; color: #6b7280; }
+    .error { background: #7f1d1d; color: #fca5a5; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
+
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">SiteSawa</div>
+      <div class="header-actions">
+        <a href="#" class="btn-sm btn-outline" onclick="viewSite()">View Site</a>
+        <button class="btn-sm btn-primary" onclick="saveAll()">Save Changes</button>
+        <button class="btn-sm btn-outline" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <div class="loading" id="loading">Loading your dashboard...</div>
+    <div id="dashboardContent" class="hidden">
+
+      <section class="hero">
+        <h1 id="welcomeName">Welcome</h1>
+        <p id="welcomeSub">Manage your website settings below</p>
+      </section>
+
+      <div class="site-link">
+        <span class="url" id="siteUrl">yourname.sitesawa.com</span>
+        <span class="copy" onclick="copyUrl()">Copy Link</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <h3>Template</h3>
+          <div class="num" id="templateType">-</div>
+        </div>
+        <div class="stat-card">
+          <h3>Products</h3>
+          <div class="num" id="productCount">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>Orders</h3>
+          <div class="num" id="orderCount">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>Joined</h3>
+          <div class="num" id="joinDate">-</div>
+        </div>
+      </div>
+
+      <!-- BUSINESS INFO -->
+      <div class="section-card">
+        <div class="section-header">
+          <h3>Business Information</h3>
+          <p>This appears on your website</p>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Business Name</label>
+            <input type="text" id="bizName" placeholder="Your Business Name">
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="bizPhone" placeholder="+2547XX XXX XXX" readonly>
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Tagline / Hero Text</label>
+            <input type="text" id="heroText" placeholder="What makes your business special?">
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>About Your Business</label>
+            <textarea id="aboutText" placeholder="Tell customers what you do..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOCIAL MEDIA -->
+      <div class="section-card">
+        <div class="section-header">
+          <h3>Social Media Links</h3>
+          <p>Add your profiles. Leave empty to hide from your site.</p>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>
+              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              WhatsApp Number
+            </label>
+            <input type="tel" id="socialWhatsapp" placeholder="2547XX XXX XXX" oninput="updateSocialPreview()">
+            <p class="hint">Customers click to chat with you</p>
+          </div>
+          <div class="form-group">
+            <label>
+              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              Facebook
+            </label>
+            <input type="url" id="socialFacebook" placeholder="https://facebook.com/yourpage" oninput="updateSocialPreview()">
+          </div>
+          <div class="form-group">
+            <label>
+              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+              Instagram
+            </label>
+            <input type="url" id="socialInstagram" placeholder="https://instagram.com/yourhandle" oninput="updateSocialPreview()">
+          </div>
+          <div class="form-group">
+            <label>
+              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              X (Twitter)
+            </label>
+            <input type="url" id="socialTwitter" placeholder="https://x.com/yourhandle" oninput="updateSocialPreview()">
+          </div>
+          <div class="form-group">
+            <label>
+              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </label>
+            <input type="url" id="socialLinkedin" placeholder="https://linkedin.com/in/yourprofile" oninput="updateSocialPreview()">
+          </div>
+          <div class="form-group">
+            <label>
+              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/></svg>
+              TikTok
+            </label>
+            <input type="url" id="socialTiktok" placeholder="https://tiktok.com/@yourhandle" oninput="updateSocialPreview()">
+          </div>
+        </div>
+
+        <div class="preview-box">
+          <p>Preview — This is how it looks on your site</p>
+          <div class="social-preview" id="socialPreview">
+            <span class="empty">Add links above to see preview</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- GOOGLE ANALYTICS -->
+      <div class="section-card">
+        <div class="section-header">
+          <h3>Analytics & Tracking</h3>
+          <p>Track visitors to your website</p>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Google Analytics ID</label>
+            <input type="text" id="googleAnalytics" placeholder="G-XXXXXXXXXX">
+            <p class="hint">Optional — track website visitors</p>
+          </div>
+          <div class="form-group">
+            <label>TikTok Pixel ID</label>
+            <input type="text" id="tiktokPixel" placeholder="Optional — for TikTok ads">
+            <p class="hint">Optional — track conversions from TikTok</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="save-bar">
+      <span class="status" id="saveStatus">Unsaved changes</span>
+      <button class="btn-sm btn-primary" onclick="saveAll()">Save All Changes</button>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '';
+    let userData = {};
+
+    function getToken() {
+      return localStorage.getItem('sitesawa_token');
+    }
+
+    function checkAuth() {
+      if (!getToken()) {
+        window.location.href = '/login.html';
+      }
+    }
+
+    async function loadDashboard() {
+      try {
+        const res = await fetch(`${API_BASE}/api/me`, {
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            localStorage.removeItem('sitesawa_token');
+            window.location.href = '/login.html';
+            return;
+          }
+          throw new Error(data.error || 'Failed to load');
+        }
+
+        userData = data;
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('dashboardContent').classList.remove('hidden');
+
+        // Fill in data
+        document.getElementById('welcomeName').textContent = `Welcome, ${data.data?.bizName || data.phone || 'User'}`;
+        document.getElementById('welcomeSub').textContent = `Manage your ${data.template?.toUpperCase()} website`;
+        document.getElementById('siteUrl').textContent = data.customDomain || `${data.subdomain || data.phone}.sitesawa.com`;
+        document.getElementById('templateType').textContent = data.template?.toUpperCase() || '-';
+        document.getElementById('productCount').textContent = (data.products || []).length;
+        document.getElementById('orderCount').textContent = (data.orders || []).length;
+        document.getElementById('joinDate').textContent = data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '-';
+
+        // Business info
+        document.getElementById('bizName').value = data.data?.bizName || '';
+        document.getElementById('bizPhone').value = data.phone || '';
+        document.getElementById('heroText').value = data.data?.heroText || '';
+        document.getElementById('aboutText').value = data.data?.aboutText || '';
+
+        // Social links
+        const social = data.data?.social || {};
+        document.getElementById('socialWhatsapp').value = social.whatsapp || '';
+        document.getElementById('socialFacebook').value = social.facebook || '';
+        document.getElementById('socialInstagram').value = social.instagram || '';
+        document.getElementById('socialTwitter').value = social.twitter || '';
+        document.getElementById('socialLinkedin').value = social.linkedin || '';
+        document.getElementById('socialTiktok').value = social.tiktok || '';
+
+        // Analytics
+        document.getElementById('googleAnalytics').value = data.data?.googleAnalytics || '';
+        document.getElementById('tiktokPixel').value = data.data?.tiktokPixel || '';
+
+        updateSocialPreview();
+      } catch (err) {
+        document.getElementById('loading').textContent = 'Error: ' + err.message;
+      }
+    }
+
+    function updateSocialPreview() {
+      const platforms = [
+        { id: 'socialWhatsapp', name: 'WhatsApp', class: 'whatsapp', icon: '💬' },
+        { id: 'socialFacebook', name: 'Facebook', class: 'facebook', icon: 'f' },
+        { id: 'socialInstagram', name: 'Instagram', class: 'instagram', icon: '📷' },
+        { id: 'socialTwitter', name: 'X', class: 'twitter', icon: '𝕏' },
+        { id: 'socialLinkedin', name: 'LinkedIn', class: 'linkedin', icon: 'in' },
+        { id: 'socialTiktok', name: 'TikTok', class: 'tiktok', icon: '🎵' }
+      ];
+
+      const preview = document.getElementById('socialPreview');
+      let html = '';
+      let hasAny = false;
+
+      platforms.forEach(p => {
+        const val = document.getElementById(p.id).value.trim();
+        if (val) {
+          hasAny = true;
+          html += `<div class="icon ${p.class}" title="${p.name}: ${val}">${p.icon}</div>`;
+        }
+      });
+
+      preview.innerHTML = hasAny ? html : '<span class="empty">Add links above to see preview</span>';
+    }
+
+    async function saveAll() {
+      const btn = document.querySelector('.save-bar .btn-primary');
+      const status = document.getElementById('saveStatus');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      try {
+        const updates = {
+          data: {
+            ...userData.data,
+            bizName: document.getElementById('bizName').value.trim(),
+            heroText: document.getElementById('heroText').value.trim(),
+            aboutText: document.getElementById('aboutText').value.trim(),
+            social: {
+              whatsapp: document.getElementById('socialWhatsapp').value.trim(),
+              facebook: document.getElementById('socialFacebook').value.trim(),
+              instagram: document.getElementById('socialInstagram').value.trim(),
+              twitter: document.getElementById('socialTwitter').value.trim(),
+              linkedin: document.getElementById('socialLinkedin').value.trim(),
+              tiktok: document.getElementById('socialTiktok').value.trim()
+            },
+            googleAnalytics: document.getElementById('googleAnalytics').value.trim(),
+            tiktokPixel: document.getElementById('tiktokPixel').value.trim()
+          }
+        };
+
+        const res = await fetch(`${API_BASE}/api/me`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${getToken()}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updates)
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          status.textContent = 'All changes saved!';
+          status.classList.add('saved');
+          setTimeout(() => {
+            status.textContent = 'Unsaved changes';
+            status.classList.remove('saved');
+          }, 3000);
+        } else {
+          throw new Error(data.error || 'Save failed');
+        }
+      } catch (err) {
+        status.textContent = 'Error: ' + err.message;
+        status.style.color = '#fca5a5';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Save All Changes';
+    }
+
+    function viewSite() {
+      const url = userData.customDomain || `${userData.subdomain || userData.phone}.sitesawa.com`;
+      window.open(`https://${url}`, '_blank');
+    }
+
+    function copyUrl() {
+      const url = document.getElementById('siteUrl').textContent;
+      navigator.clipboard.writeText(`https://${url}`);
+      const copy = document.querySelector('.site-link .copy');
+      copy.textContent = 'Copied!';
+      setTimeout(() => copy.textContent = 'Copy Link', 2000);
+    }
+
+    function logout() {
+      localStorage.removeItem('sitesawa_token');
+      localStorage.removeItem('sitesawa_template');
+      window.location.href = '/login.html';
+    }
+
+    checkAuth();
+    loadDashboard();
+  </script>
+</body>
+</html>
