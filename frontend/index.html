@@ -50,6 +50,7 @@
       .cards { grid-template-columns: 1fr; }
     }
   </style>
+<base target="_blank">
 </head>
 <body>
   <div class="container">
@@ -101,6 +102,7 @@
         <h3>Building: <span id="typeName" style="color:#a3e635;">ME</span></h3>
         <div style="display:flex;flex-direction:column;gap:16px;">
           <input type="text" id="bizNameInput" placeholder="Business Name" class="form-input">
+          <input type="email" id="emailInput" placeholder="Email Address (for your secret key)" class="form-input">
           <input type="tel" id="phoneInput" placeholder="M-Pesa Number (07... or 01...)" class="form-input">
           <button onclick="launchNow()" class="btn btn-primary" id="payButton" style="width:100%;padding:18px;font-size:18px;">Pay & Build Website</button>
         </div>
@@ -135,10 +137,10 @@
       btn.disabled = true;
 
       try {
-        const res = await fetch('https://jenga-vh5z.onrender.com/api/create-order', { 
+        const res = await fetch('/api/create-account-order', { 
           method: 'POST', 
           headers: {'Content-Type': 'application/json'}, 
-          body: JSON.stringify({ businessName: biz, phone: tel, item: selectedTier }) 
+          body: JSON.stringify({ businessName: biz, phone: tel, email: document.getElementById('emailInput').value.trim(), item: selectedTier }) 
         });
         const data = await res.json(); 
 
