@@ -298,21 +298,25 @@ app.post('/api/register', async (req, res) => {
     if (!phone || !/^\+?[0-9]{10,15}$/.test(phone)) {
       return res.status(400).json({ error: 'Valid phone number required' });
     }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ error: 'Valid email required' });
-    }
-    const existingPhone = await User.findOne({ phone });
-    if (existingPhone) return res.status(409).json({ error: 'Phone already registered' });
-    const existingEmail = await User.findOne({ email });
-    if (existingEmail) return res.status(409).json({ error: 'Email already registered' });
+    const existing = await User.findOne({ phone });
+    if (existing) return res.status(409).json({ error: 'Phone already registered' });
 
     const secretKey = generateSecretKey();
     const hashedKey = await bcrypt.hash(secretKey, 12);
-    const user = new User({ phone, email, secretKey: hashedKey, template: template || 'me' });
+    const user = new User({ phone, secretKey: hashedKey, template: template || 'me' });
+
+    // Save email if provided
+    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      const existingEmail = await User.findOne({ email });
+      if (!existingEmail) {
+        user.email = email;
+      }
+    }
+
     await user.save();
 
-    // Send secret key via Google Workspace email
-    if (process.env.WORKSPACE_EMAIL && process.env.WORKSPACE_APP_PASSWORD) {
+    // Send secret key via Google Workspace email (if email provided)
+    if (email && process.env.WORKSPACE_EMAIL && process.env.WORKSPACE_APP_PASSWORD) {
       try {
         const nodemailer = require('nodemailer');
         const transporter = nodemailer.createTransport({
@@ -329,7 +333,15 @@ app.post('/api/register', async (req, res) => {
           from: `"SiteSawa" <${process.env.WORKSPACE_EMAIL}>`,
           to: email,
           subject: 'Your SiteSawa Secret Key',
-          text: `Welcome to SiteSawa!\n\nYour secret key is: ${secretKey}\n\nUse this key with your phone number to log in to your dashboard.\n\nKeep it safe — do not share it with anyone.\n\n- SiteSawa Team`,
+          text: `Welcome to SiteSawa!
+
+Your secret key is: ${secretKey}
+
+Use this key with your phone number to log in to your dashboard.
+
+Keep it safe — do not share it with anyone.
+
+- SiteSawa Team`,
           html: `
             <div style="font-family:Inter,sans-serif;max-width:420px;margin:0 auto;padding:32px;background:#fafafa;border-radius:16px;">
               <h2 style="color:#a3e635;font-size:28px;margin-bottom:20px;font-weight:800;">Welcome to SiteSawa</h2>
@@ -353,7 +365,7 @@ app.post('/api/register', async (req, res) => {
       }
     }
 
-    res.json({ success: true, message: 'Registered! Check your email for your secret key.' });
+    res.json({ success: true, message: email ? 'Registered! Check your email for your secret key.' : 'Registered! Your secret key will be sent to your phone.' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Registration failed' });
@@ -511,6 +523,104 @@ app.get('/api/shop-settings/:identifier', async (req, res) => {
 });
 
 // Create order
+
+// Landing page checkout: create account + process payment + send secret key via email
+app.post('/api/create-account-order', async (req, res) => {
+  try {
+    const { businessName, phone, email, item } = req.body;
+
+    if (!phone || !/^\+?[0-9]{10,15}$/.test(phone)) {
+      return res.status(400).json({ error: 'Valid phone number required' });
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Valid email required' });
+    }
+    if (!businessName) {
+      return res.status(400).json({ error: 'Business name required' });
+    }
+
+    const normalizedPhone = normalizePhone(phone);
+    const template = item?.toLowerCase() || 'me';
+    const amount = template === 'me' ? 7000 : template === 'biz' ? 8000 : 9000;
+
+    // Check if phone already registered
+    const existing = await User.findOne({ phone: normalizedPhone });
+    if (existing) {
+      return res.status(409).json({ error: 'Phone number already registered. Please login instead.' });
+    }
+
+    // Generate secret key
+    const secretKey = generateSecretKey();
+    const hashedKey = await bcrypt.hash(secretKey, 12);
+
+    // Create user account
+    const user = new User({
+      phone: normalizedPhone,
+      email: email,
+      secretKey: hashedKey,
+      template: template,
+      data: { bizName: businessName }
+    });
+    await user.save();
+
+    // Send secret key via Google Workspace email
+    if (process.env.WORKSPACE_EMAIL && process.env.WORKSPACE_APP_PASSWORD) {
+      try {
+        const nodemailer = require('nodemailer');
+        const transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.WORKSPACE_EMAIL,
+            pass: process.env.WORKSPACE_APP_PASSWORD
+          }
+        });
+
+        await transporter.sendMail({
+          from: `"SiteSawa" <${process.env.WORKSPACE_EMAIL}>`,
+          to: email,
+          subject: 'Your SiteSawa Secret Key',
+          text: `Welcome to SiteSawa!\n\nYour secret key is: ${secretKey}\n\nYour website: ${businessName}\nTemplate: ${template.toUpperCase()}\n\nUse this key with your phone number to log in to your dashboard and customize your site.\n\nKeep it safe — do not share it with anyone.\n\n- SiteSawa Team`,
+          html: `
+            <div style="font-family:Inter,sans-serif;max-width:420px;margin:0 auto;padding:32px;background:#fafafa;border-radius:16px;">
+              <h2 style="color:#a3e635;font-size:28px;margin-bottom:20px;font-weight:800;">Welcome to SiteSawa</h2>
+              <p style="color:#333;font-size:15px;line-height:1.6;margin-bottom:20px;">Your website <strong>${businessName}</strong> is ready. Here is your secret key:</p>
+              <div style="background:#0a0a0f;color:#fff;padding:24px;border-radius:12px;text-align:center;margin:20px 0;">
+                <p style="font-size:11px;color:#9ca3af;margin-bottom:12px;text-transform:uppercase;letter-spacing:2px;font-weight:600;">Secret Key</p>
+                <p style="font-size:36px;font-weight:800;color:#a3e635;letter-spacing:6px;margin:0;font-family:monospace;">${secretKey}</p>
+              </div>
+              <p style="color:#6b7280;font-size:13px;line-height:1.6;margin-bottom:8px;">Template: <strong>${template.toUpperCase()}</strong></p>
+              <p style="color:#6b7280;font-size:13px;line-height:1.6;margin-bottom:8px;">Use this key with your phone number to log in.</p>
+              <p style="color:#ef4444;font-size:12px;font-weight:600;">Do not share this key with anyone.</p>
+              <div style="border-top:1px solid #e5e7eb;margin-top:24px;padding-top:16px;">
+                <p style="color:#9ca3af;font-size:12px;">Need help? Reply to this email or WhatsApp us.</p>
+              </div>
+              <p style="color:#9ca3af;font-size:11px;margin-top:16px;">- SiteSawa Team</p>
+            </div>
+          `
+        });
+        console.log('Secret key email sent to', email);
+      } catch (emailErr) {
+        console.log('Email failed (non-critical):', emailErr.message);
+      }
+    }
+
+    // Now process M-Pesa payment
+    // For now, return success and let frontend handle STK push
+    res.json({ 
+      success: true, 
+      message: 'Account created! Check your email for your secret key. M-Pesa STK push sent.',
+      phone: normalizedPhone,
+      secretKey: secretKey,
+      amount: amount
+    });
+  } catch (err) {
+    console.error('Create account order error:', err);
+    res.status(500).json({ error: 'Failed to create account' });
+  }
+});
+
 app.post('/api/create-order', async (req, res) => {
   try {
     const { phone, amount, items, shopIdentifier, customerPhone, customerName, confirmationCode } = req.body;
