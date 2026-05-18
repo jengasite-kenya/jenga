@@ -25,6 +25,7 @@
     .success { color: #a3e635; font-size: 13px; margin-top: 8px; display: none; }
     .hidden { display: none; }
   </style>
+<base target="_blank">
 </head>
 <body>
   <div class="login-box">
@@ -50,6 +51,11 @@
       <div class="form-group">
         <label>Phone Number</label>
         <input type="tel" id="regPhone" placeholder="+2547XX XXX XXX" required>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="regEmail" placeholder="your@email.com" required>
+        <p style="font-size:11px;color:#4b5563;margin-top:4px;">We will send your secret key here</p>
       </div>
       <div class="form-group">
         <label>Choose Template</label>
@@ -143,6 +149,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             phone: document.getElementById('regPhone').value,
+            email: document.getElementById('regEmail').value,
             template: document.getElementById('regTemplate').value
           })
         });
