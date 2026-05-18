@@ -34,6 +34,7 @@ app.use('/templates', express.static(path.join(__dirname, 'templates')));
 // ── MONGOOSE SCHEMAS ──
 const UserSchema = new mongoose.Schema({
   phone: { type: String, required: true, unique: true, index: true },
+  email: { type: String, unique: true, sparse: true },
   secretKey: { type: String, required: true },
   template: { type: String, enum: ['me', 'biz', 'shop'], default: 'me' },
   subdomain: { type: String, unique: true, sparse: true },
@@ -293,36 +294,66 @@ function generateStructuredData(user) {
 // Register
 app.post('/api/register', async (req, res) => {
   try {
-    const { phone, template } = req.body;
+    const { phone, email, template } = req.body;
     if (!phone || !/^\+?[0-9]{10,15}$/.test(phone)) {
       return res.status(400).json({ error: 'Valid phone number required' });
     }
-    const existing = await User.findOne({ phone });
-    if (existing) return res.status(409).json({ error: 'Phone already registered' });
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Valid email required' });
+    }
+    const existingPhone = await User.findOne({ phone });
+    if (existingPhone) return res.status(409).json({ error: 'Phone already registered' });
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) return res.status(409).json({ error: 'Email already registered' });
 
     const secretKey = generateSecretKey();
     const hashedKey = await bcrypt.hash(secretKey, 12);
-    const user = new User({ phone, secretKey: hashedKey, template: template || 'me' });
+    const user = new User({ phone, email, secretKey: hashedKey, template: template || 'me' });
     await user.save();
 
-    // Send SMS with secret key via Africa's Talking
-    if (process.env.AT_API_KEY && process.env.AT_USERNAME) {
+    // Send secret key via Google Workspace email
+    if (process.env.WORKSPACE_EMAIL && process.env.WORKSPACE_APP_PASSWORD) {
       try {
-        const africastalking = require('africastalking')({
-          apiKey: process.env.AT_API_KEY,
-          username: process.env.AT_USERNAME
+        const nodemailer = require('nodemailer');
+        const transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.WORKSPACE_EMAIL,
+            pass: process.env.WORKSPACE_APP_PASSWORD
+          }
         });
-        await africastalking.SMS.send({
-          to: [phone],
-          message: `Your SiteSawa secret key: ${secretKey}. Keep it safe!`,
-          from: process.env.AT_SENDER_ID || 'SiteSawa'
+
+        await transporter.sendMail({
+          from: `"SiteSawa" <${process.env.WORKSPACE_EMAIL}>`,
+          to: email,
+          subject: 'Your SiteSawa Secret Key',
+          text: `Welcome to SiteSawa!\n\nYour secret key is: ${secretKey}\n\nUse this key with your phone number to log in to your dashboard.\n\nKeep it safe — do not share it with anyone.\n\n- SiteSawa Team`,
+          html: `
+            <div style="font-family:Inter,sans-serif;max-width:420px;margin:0 auto;padding:32px;background:#fafafa;border-radius:16px;">
+              <h2 style="color:#a3e635;font-size:28px;margin-bottom:20px;font-weight:800;">Welcome to SiteSawa</h2>
+              <p style="color:#333;font-size:15px;line-height:1.6;margin-bottom:20px;">Your website is almost ready. Here is your secret key:</p>
+              <div style="background:#0a0a0f;color:#fff;padding:24px;border-radius:12px;text-align:center;margin:20px 0;">
+                <p style="font-size:11px;color:#9ca3af;margin-bottom:12px;text-transform:uppercase;letter-spacing:2px;font-weight:600;">Secret Key</p>
+                <p style="font-size:36px;font-weight:800;color:#a3e635;letter-spacing:6px;margin:0;font-family:monospace;">${secretKey}</p>
+              </div>
+              <p style="color:#6b7280;font-size:13px;line-height:1.6;margin-bottom:8px;">Use this key with your phone number to log in.</p>
+              <p style="color:#ef4444;font-size:12px;font-weight:600;">Do not share this key with anyone.</p>
+              <div style="border-top:1px solid #e5e7eb;margin-top:24px;padding-top:16px;">
+                <p style="color:#9ca3af;font-size:12px;">Need help? Reply to this email or WhatsApp us.</p>
+              </div>
+              <p style="color:#9ca3af;font-size:11px;margin-top:16px;">- SiteSawa Team</p>
+            </div>
+          `
         });
-      } catch (smsErr) {
-        console.log('SMS failed (non-critical):', smsErr.message);
+        console.log('Secret key email sent to', email);
+      } catch (emailErr) {
+        console.log('Email failed (non-critical):', emailErr.message);
       }
     }
 
-    res.json({ success: true, message: 'Registered. Check SMS for your secret key.' });
+    res.json({ success: true, message: 'Registered! Check your email for your secret key.' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Registration failed' });
