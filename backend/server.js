@@ -28,8 +28,8 @@ if (!process.env.JWT_SECRET) {
 // ── MIDDLEWARE ──
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
-app.use('/templates', express.static(path.join(__dirname, '..', 'templates')));
+app.use(express.static(path.join(__dirname, 'frontend')));
+app.use('/templates', express.static(path.join(__dirname, 'templates')));
 
 // ── MONGOOSE SCHEMAS ──
 const UserSchema = new mongoose.Schema({
@@ -836,7 +836,7 @@ app.delete('/api/admin/customers/:id', verifyAdmin, async (req, res) => {
 
 // ── ROOT ROUTE: Serve landing page ──
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
 // ── SERVE TEMPLATES ──
@@ -851,7 +851,7 @@ app.get('/:identifier', async (req, res) => {
     if (!user) return res.status(404).send('Site not found');
 
     const templateFile = `${user.template}-template.html`;
-    res.sendFile(path.join(__dirname, '..', 'templates', templateFile));
+    res.sendFile(path.join(__dirname, 'templates', templateFile));
   } catch (err) {
     res.status(500).send('Server error');
   }
