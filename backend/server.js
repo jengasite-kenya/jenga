@@ -834,6 +834,11 @@ app.delete('/api/admin/customers/:id', verifyAdmin, async (req, res) => {
   }
 });
 
+// ── ROOT ROUTE: Serve landing page ──
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+});
+
 // ── SERVE TEMPLATES ──
 app.get('/:identifier', async (req, res) => {
   try {
