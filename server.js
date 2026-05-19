@@ -25,6 +25,14 @@ if (!process.env.JWT_SECRET) {
   process.exit(1);
 }
 
+// ── GOOGLE ADS CONFIG ──
+const GOOGLE_ADS_ID = process.env.GOOGLE_ADS_ID || 'AW-18173399672';
+const GOOGLE_ADS_CONVERSION_LABEL = process.env.GOOGLE_ADS_CONVERSION_LABEL || '';
+const GOOGLE_ADS_SEND_TO = GOOGLE_ADS_CONVERSION_LABEL 
+  ? `${GOOGLE_ADS_ID}/${GOOGLE_ADS_CONVERSION_LABEL}` 
+  : null;
+const GOOGLE_ADS_CURRENCY = process.env.GOOGLE_ADS_CURRENCY || 'KES';
+
 // ── MIDDLEWARE ──
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
@@ -799,7 +807,13 @@ app.post('/api/create-account-order', async (req, res) => {
       phone: normalizedPhone,
       secretKey: secretKey,
       amount: amount,
-      payment: paymentResult
+      payment: paymentResult,
+      googleAds: GOOGLE_ADS_SEND_TO ? {
+        id: GOOGLE_ADS_ID,
+        sendTo: GOOGLE_ADS_SEND_TO,
+        value: amount,
+        currency: GOOGLE_ADS_CURRENCY
+      } : null
     });
   } catch (err) {
     console.error('Create account order error:', err);
@@ -1077,6 +1091,16 @@ app.post('/api/seo/setup', verifyToken, async (req, res) => {
   }
 });
 
+
+// Get Google Ads config (public - for frontend conversion tracking)
+app.get('/api/google-ads-config', (req, res) => {
+  res.json({
+    id: GOOGLE_ADS_ID,
+    sendTo: GOOGLE_ADS_SEND_TO,
+    enabled: !!GOOGLE_ADS_CONVERSION_LABEL
+  });
+});
+
 // Get SEO status
 app.get('/api/seo/status', verifyToken, async (req, res) => {
   try {
@@ -1114,14 +1138,32 @@ app.get('/api/site/:identifier', async (req, res) => {
 app.post('/api/admin/login', async (req, res) => {
   try {
     const { phone, secretKey } = req.body;
-    if (phone !== process.env.ADMIN_PHONE) {
-      return res.status(401).json({ error: 'Invalid admin credentials' });
-    }
-    const user = await User.findOne({ phone });
-    if (!user) return res.status(401).json({ error: 'Invalid admin credentials' });
 
+    // Check 1: Phone must match ADMIN_PHONE env var exactly
+    if (phone !== process.env.ADMIN_PHONE) {
+      return res.status(401).json({ 
+        error: 'Phone not authorized as admin',
+        detail: `You sent: "${phone}". ADMIN_PHONE env var is: "${process.env.ADMIN_PHONE || 'NOT SET'}". Must match exactly including + sign.`
+      });
+    }
+
+    // Check 2: Phone must be a registered user in the database
+    const user = await User.findOne({ phone });
+    if (!user) {
+      return res.status(401).json({ 
+        error: 'Phone not registered',
+        detail: 'This phone is authorized as admin but has no user account. Sign up as a regular customer first, then use admin login.'
+      });
+    }
+
+    // Check 3: Secret key must match
     const valid = await bcrypt.compare(secretKey, user.secretKey);
-    if (!valid) return res.status(401).json({ error: 'Invalid admin credentials' });
+    if (!valid) {
+      return res.status(401).json({ 
+        error: 'Wrong secret key',
+        detail: 'The secret key you entered does not match. Check your email for the correct key. Keys are case-sensitive.'
+      });
+    }
 
     const token = jwt.sign({ userId: user._id, isAdmin: true }, process.env.JWT_SECRET, { expiresIn: '1d' });
     res.json({ success: true, token });
