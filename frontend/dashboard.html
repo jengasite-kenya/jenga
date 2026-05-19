@@ -226,7 +226,141 @@
 
     </div>
 
-    <div class="save-bar">
+    
+      <!-- M-PESA CONFIGURATION -->
+      <div class="section-card" id="mpesaSection">
+        <div class="section-header">
+          <h3>M-Pesa Payment Setup</h3>
+          <p>Configure how customers pay you (SHOP template only)</p>
+        </div>
+        <div class="form-grid">
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Payment Mode</label>
+            <select id="mpesaMode" onchange="toggleMpesaMode()">
+              <option value="">Not configured</option>
+              <option value="simple">Simple — Manual Paybill</option>
+              <option value="api">API — Automatic STK Push</option>
+            </select>
+            <p class="hint">Simple = customers send to your number. API = automatic M-Pesa popup.</p>
+          </div>
+          <div class="form-group" id="simpleFields">
+            <label>Your M-Pesa Number (Paybill)</label>
+            <input type="tel" id="paybillPhone" placeholder="2547XX XXX XXX">
+            <p class="hint">Customers send money to this number</p>
+          </div>
+          <div class="form-group hidden" id="apiFields1">
+            <label>Consumer Key</label>
+            <input type="text" id="consumerKey" placeholder="From Daraja portal">
+          </div>
+          <div class="form-group hidden" id="apiFields2">
+            <label>Consumer Secret</label>
+            <input type="password" id="consumerSecret" placeholder="From Daraja portal">
+          </div>
+          <div class="form-group hidden" id="apiFields3">
+            <label>Passkey</label>
+            <input type="password" id="passkey" placeholder="From Daraja portal">
+          </div>
+          <div class="form-group hidden" id="apiFields4">
+            <label>Shortcode</label>
+            <input type="text" id="shortcode" placeholder="e.g. 174379">
+          </div>
+          <div class="form-group hidden" id="apiFields5">
+            <label>Environment</label>
+            <select id="environment">
+              <option value="sandbox">Sandbox (Test)</option>
+              <option value="live">Live (Production)</option>
+            </select>
+          </div>
+        </div>
+        <button onclick="saveMpesaConfig()" class="btn-sm btn-primary" style="margin-top:16px;">Save M-Pesa Config</button>
+        <p class="error hidden" id="mpesaError" style="margin-top:8px;"></p>
+      </div>
+
+      <!-- PRODUCT EDITOR (SHOP only) -->
+      <div class="section-card hidden" id="productSection">
+        <div class="section-header">
+          <h3>Products</h3>
+          <p>Add or edit products for your shop</p>
+        </div>
+        <div id="productList" style="margin-bottom:20px;"></div>
+        <div class="form-grid" style="background:#0a0a0f;padding:20px;border-radius:12px;border:1px solid #1f2937;">
+          <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" id="prodName" placeholder="e.g. Leather Wallet">
+          </div>
+          <div class="form-group">
+            <label>Price (KES)</label>
+            <input type="number" id="prodPrice" placeholder="1500">
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Image URL</label>
+            <input type="url" id="prodImage" placeholder="https://... or leave blank for logo">
+            <p class="hint">Paste an image link, or leave empty to use your logo</p>
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <button onclick="addProduct()" class="btn-sm btn-primary">Add Product</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHIPPING SETTINGS (SHOP only) -->
+      <div class="section-card hidden" id="shippingSection">
+        <div class="section-header">
+          <h3>Shipping Options</h3>
+          <p>Enable delivery options for your customers</p>
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+          <label class="toggle-row" style="justify-content:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="shippingEnabled" style="width:auto;" onchange="toggleShipping()">
+            <span>Enable shipping/delivery</span>
+          </label>
+        </div>
+        <div id="shippingFields" class="hidden">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Local Delivery Fee (KES)</label>
+              <input type="number" id="localFee" value="200">
+            </div>
+            <div class="form-group">
+              <label>Nationwide Fee (KES)</label>
+              <input type="number" id="nationwideFee" value="500">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOGO UPLOAD -->
+      <div class="section-card">
+        <div class="section-header">
+          <h3>Logo & Images</h3>
+          <p>Upload your business logo</p>
+        </div>
+        <div class="form-group">
+          <label>Logo URL</label>
+          <input type="url" id="logoUrl" placeholder="https://...">
+          <p class="hint">Upload to Imgur/Cloudinary and paste the direct link here</p>
+        </div>
+        <div class="preview-box">
+          <p>Preview</p>
+          <img id="logoPreview" src="" style="max-width:120px;max-height:120px;border-radius:12px;object-fit:cover;display:none;">
+          <p class="empty" id="logoEmpty" style="margin-top:8px;">No logo set</p>
+        </div>
+      </div>
+
+      <!-- DOMAIN SETTINGS -->
+      <div class="section-card">
+        <div class="section-header">
+          <h3>Custom Domain</h3>
+          <p>Connect your own domain (optional)</p>
+        </div>
+        <div class="form-group">
+          <label>Your Domain</label>
+          <input type="text" id="customDomain" placeholder="www.yourbusiness.co.ke">
+          <p class="hint">Enter your domain, then set a CNAME record pointing to sitesawa.com</p>
+        </div>
+      </div>
+
+<div class="save-bar">
       <span class="status" id="saveStatus">Unsaved changes</span>
       <button class="btn-sm btn-primary" onclick="saveAll()">Save All Changes</button>
     </div>
@@ -280,6 +414,42 @@
         document.getElementById('bizPhone').value = data.phone || '';
         document.getElementById('heroText').value = data.data?.heroText || '';
         document.getElementById('aboutText').value = data.data?.aboutText || '';
+        document.getElementById('logoUrl').value = data.data?.logo || '';
+        document.getElementById('customDomain').value = data.customDomain || '';
+
+        // Logo preview
+        if (data.data?.logo) {
+          document.getElementById('logoPreview').src = data.data.logo;
+          document.getElementById('logoPreview').style.display = 'block';
+          document.getElementById('logoEmpty').classList.add('hidden');
+        }
+
+        // M-Pesa config
+        const mpesa = data.mpesaConfig || {};
+        document.getElementById('mpesaMode').value = mpesa.mode || '';
+        document.getElementById('paybillPhone').value = mpesa.paybillPhone || '';
+        document.getElementById('consumerKey').value = mpesa.consumerKey || '';
+        document.getElementById('consumerSecret').value = mpesa.consumerSecret || '';
+        document.getElementById('passkey').value = mpesa.passkey || '';
+        document.getElementById('shortcode').value = mpesa.shortcode || '';
+        document.getElementById('environment').value = mpesa.environment || 'sandbox';
+        toggleMpesaMode();
+
+        // Shipping
+        document.getElementById('shippingEnabled').checked = data.data?.shippingEnabled || false;
+        document.getElementById('localFee').value = data.data?.localDeliveryFee || 200;
+        document.getElementById('nationwideFee').value = data.data?.nationwideFee || 500;
+        toggleShipping();
+
+        // Show/hide SHOP-only sections
+        if (data.template === 'shop') {
+          document.getElementById('productSection').classList.remove('hidden');
+          document.getElementById('shippingSection').classList.remove('hidden');
+          renderProductList(data.products || []);
+        }
+
+        // Show M-Pesa section for all (in case they switch templates)
+        document.getElementById('mpesaSection').classList.remove('hidden');
 
         // Social links
         const social = data.data?.social || {};
@@ -338,6 +508,10 @@
             bizName: document.getElementById('bizName').value.trim(),
             heroText: document.getElementById('heroText').value.trim(),
             aboutText: document.getElementById('aboutText').value.trim(),
+            logo: document.getElementById('logoUrl').value.trim(),
+            shippingEnabled: document.getElementById('shippingEnabled').checked,
+            localDeliveryFee: parseInt(document.getElementById('localFee').value) || 200,
+            nationwideFee: parseInt(document.getElementById('nationwideFee').value) || 500,
             social: {
               whatsapp: document.getElementById('socialWhatsapp').value.trim(),
               facebook: document.getElementById('socialFacebook').value.trim(),
@@ -348,7 +522,8 @@
             },
             googleAnalytics: document.getElementById('googleAnalytics').value.trim(),
             tiktokPixel: document.getElementById('tiktokPixel').value.trim()
-          }
+          },
+          customDomain: document.getElementById('customDomain').value.trim() || null
         };
 
         const res = await fetch(`${API_BASE}/api/me`, {
@@ -402,6 +577,155 @@
 
     checkAuth();
     loadDashboard();
-  </script>
+  
+    function toggleMpesaMode() {
+      const mode = document.getElementById('mpesaMode').value;
+      const simple = document.getElementById('simpleFields');
+      const api1 = document.getElementById('apiFields1');
+      const api2 = document.getElementById('apiFields2');
+      const api3 = document.getElementById('apiFields3');
+      const api4 = document.getElementById('apiFields4');
+      const api5 = document.getElementById('apiFields5');
+
+      if (mode === 'simple') {
+        simple.classList.remove('hidden');
+        api1.classList.add('hidden'); api2.classList.add('hidden');
+        api3.classList.add('hidden'); api4.classList.add('hidden'); api5.classList.add('hidden');
+      } else if (mode === 'api') {
+        simple.classList.add('hidden');
+        api1.classList.remove('hidden'); api2.classList.remove('hidden');
+        api3.classList.remove('hidden'); api4.classList.remove('hidden'); api5.classList.remove('hidden');
+      } else {
+        simple.classList.add('hidden');
+        api1.classList.add('hidden'); api2.classList.add('hidden');
+        api3.classList.add('hidden'); api4.classList.add('hidden'); api5.classList.add('hidden');
+      }
+    }
+
+    function toggleShipping() {
+      const enabled = document.getElementById('shippingEnabled').checked;
+      document.getElementById('shippingFields').classList.toggle('hidden', !enabled);
+    }
+
+    function renderProductList(products) {
+      const container = document.getElementById('productList');
+      if (products.length === 0) {
+        container.innerHTML = '<p class="empty" style="padding:20px;">No products yet. Add your first product below.</p>';
+        return;
+      }
+      container.innerHTML = products.map((p, i) => `
+        <div style="display:flex;gap:12px;align-items:center;padding:12px;background:#0a0a0f;border-radius:8px;margin-bottom:8px;border:1px solid #1f2937;">
+          <img src="${p.image || 'https://via.placeholder.com/60'}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
+          <div style="flex:1;">
+            <p style="font-weight:600;font-size:14px;">${p.name}</p>
+            <p style="color:#a3e635;font-size:13px;">KES ${p.price?.toLocaleString() || 0}</p>
+          </div>
+          <button onclick="deleteProduct('${p.id}')" class="btn-sm btn-delete" style="font-size:11px;">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    async function addProduct() {
+      const name = document.getElementById('prodName').value.trim();
+      const price = parseInt(document.getElementById('prodPrice').value);
+      const image = document.getElementById('prodImage').value.trim();
+
+      if (!name || !price) { alert('Name and price required'); return; }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/products`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${getToken()}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name, price, image: image || userData.data?.logo || '' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('prodName').value = '';
+          document.getElementById('prodPrice').value = '';
+          document.getElementById('prodImage').value = '';
+          // Reload user data
+          const userRes = await fetch(`${API_BASE}/api/me`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+          userData = await userRes.json();
+          renderProductList(userData.products || []);
+          document.getElementById('productCount').textContent = (userData.products || []).length;
+        }
+      } catch (err) { alert('Failed to add product'); }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Delete this product?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/products/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        if (res.ok) {
+          const userRes = await fetch(`${API_BASE}/api/me`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+          userData = await userRes.json();
+          renderProductList(userData.products || []);
+          document.getElementById('productCount').textContent = (userData.products || []).length;
+        }
+      } catch (err) { alert('Failed to delete'); }
+    }
+
+    async function saveMpesaConfig() {
+      const mode = document.getElementById('mpesaMode').value;
+      const btn = event.target;
+      btn.textContent = 'Saving...';
+      btn.disabled = true;
+
+      try {
+        const config = { mode };
+        if (mode === 'simple') {
+          config.paybillPhone = document.getElementById('paybillPhone').value.trim();
+        } else if (mode === 'api') {
+          config.consumerKey = document.getElementById('consumerKey').value.trim();
+          config.consumerSecret = document.getElementById('consumerSecret').value.trim();
+          config.passkey = document.getElementById('passkey').value.trim();
+          config.shortcode = document.getElementById('shortcode').value.trim();
+          config.environment = document.getElementById('environment').value;
+        }
+
+        const res = await fetch(`${API_BASE}/api/mpesa-config`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${getToken()}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(config)
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('M-Pesa config saved!');
+        } else {
+          document.getElementById('mpesaError').textContent = data.error || 'Save failed';
+          document.getElementById('mpesaError').classList.remove('hidden');
+        }
+      } catch (err) {
+        document.getElementById('mpesaError').textContent = 'Network error';
+        document.getElementById('mpesaError').classList.remove('hidden');
+      }
+      btn.textContent = 'Save M-Pesa Config';
+      btn.disabled = false;
+    }
+
+    // Logo preview on input
+    document.getElementById('logoUrl')?.addEventListener('input', (e) => {
+      const url = e.target.value.trim();
+      const preview = document.getElementById('logoPreview');
+      const empty = document.getElementById('logoEmpty');
+      if (url) {
+        preview.src = url;
+        preview.style.display = 'block';
+        empty.classList.add('hidden');
+      } else {
+        preview.style.display = 'none';
+        empty.classList.remove('hidden');
+      }
+    });
+</script>
 </body>
 </html>
