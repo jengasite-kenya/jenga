@@ -220,7 +220,7 @@
           showDashboard();
           loadCustomers();
         } else {
-          error.textContent = data.error || 'Invalid admin credentials';
+          error.textContent = (data.error || 'Login failed') + (data.detail ? ' — ' + data.detail : '');
           error.style.display = 'block';
         }
       } catch (err) {
