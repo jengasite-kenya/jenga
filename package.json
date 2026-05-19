@@ -16,7 +16,7 @@
     "jsonwebtoken": "^9.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "africastalking": "^0.6.2"
+    "googleapis": "^128.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
