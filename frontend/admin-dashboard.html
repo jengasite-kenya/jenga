@@ -98,7 +98,10 @@
     <div class="main">
       <div class="header">
         <h1>Master View</h1>
-        <span id="adminName" style="color:#6b7280;font-size:14px;">Admin</span>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <button onclick="viewRevenue()" class="btn-sm btn-view" style="background:#a3e635;color:#0a0a0f;font-weight:600;">View Revenue</button>
+          <span id="adminName" style="color:#6b7280;font-size:14px;">Admin</span>
+        </div>
       </div>
 
       <div id="customersSection">
@@ -155,6 +158,14 @@
       <button class="close-btn" onclick="closeModal()">&times;</button>
       <h2>Customer Details</h2>
       <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div id="revenueModal" class="modal-overlay hidden" onclick="if(event.target===this)closeRevenueModal()">
+    <div class="modal" style="position:relative;max-width:600px;">
+      <button class="close-btn" onclick="closeRevenueModal()">&times;</button>
+      <h2>Revenue Breakdown</h2>
+      <div id="revenueContent"></div>
     </div>
   </div>
 
@@ -247,6 +258,41 @@
         document.getElementById('bizCount').textContent = customers.filter(c => c.template === 'biz').length;
         document.getElementById('shopCount').textContent = customers.filter(c => c.template === 'shop').length;
 
+        // Revenue calculations
+        const pricing = { me: 7000, biz: 8000, shop: 9000 };
+        let totalRev = 0;
+        let monthRev = 0;
+        let orderCount = 0;
+        const now = new Date();
+        const thisMonth = now.getMonth();
+        const thisYear = now.getFullYear();
+
+        customers.forEach(c => {
+          const templatePrice = pricing[c.template] || 0;
+          totalRev += templatePrice;
+
+          const joined = new Date(c.createdAt);
+          if (joined.getMonth() === thisMonth && joined.getFullYear() === thisYear) {
+            monthRev += templatePrice;
+          }
+
+          const orders = c.orders || [];
+          orders.forEach(o => {
+            if (o.status === 'paid' || o.status === 'completed') {
+              totalRev += (o.amount || 0);
+              orderCount++;
+              const orderDate = new Date(o.createdAt);
+              if (orderDate.getMonth() === thisMonth && orderDate.getFullYear() === thisYear) {
+                monthRev += (o.amount || 0);
+              }
+            }
+          });
+        });
+
+        document.getElementById('totalRevenue').textContent = 'KES ' + totalRev.toLocaleString();
+        document.getElementById('monthRevenue').textContent = 'KES ' + monthRev.toLocaleString();
+        document.getElementById('avgOrder').textContent = orderCount > 0 ? 'KES ' + Math.round(totalRev / orderCount).toLocaleString() : 'KES 0';
+
         if (customers.length === 0) {
           empty.classList.remove('hidden');
           return;
@@ -294,6 +340,54 @@
 
     function closeModal() {
       document.getElementById('customerModal').classList.add('hidden');
+    }
+
+    function viewRevenue() {
+      const pricing = { me: 7000, biz: 8000, shop: 9000 };
+      let byTemplate = { me: 0, biz: 0, shop: 0 };
+      let byMonth = {};
+      let totalOrders = 0;
+      let totalOrderValue = 0;
+
+      customers.forEach(c => {
+        byTemplate[c.template] += (pricing[c.template] || 0);
+
+        const month = new Date(c.createdAt).toLocaleString('en-US', { month: 'short', year: 'numeric' });
+        byMonth[month] = (byMonth[month] || 0) + (pricing[c.template] || 0);
+
+        (c.orders || []).forEach(o => {
+          if (o.status === 'paid' || o.status === 'completed') {
+            totalOrders++;
+            totalOrderValue += (o.amount || 0);
+            const oMonth = new Date(o.createdAt).toLocaleString('en-US', { month: 'short', year: 'numeric' });
+            byMonth[oMonth] = (byMonth[oMonth] || 0) + (o.amount || 0);
+          }
+        });
+      });
+
+      let html = '<div style="margin-bottom:20px;"><h3 style="font-size:16px;margin-bottom:12px;color:#a3e635;">By Template</h3>';
+      html += `<div class="modal-row"><span>ME Plans</span><span>KES ${byTemplate.me.toLocaleString()}</span></div>`;
+      html += `<div class="modal-row"><span>BIZ Plans</span><span>KES ${byTemplate.biz.toLocaleString()}</span></div>`;
+      html += `<div class="modal-row"><span>SHOP Plans</span><span>KES ${byTemplate.shop.toLocaleString()}</span></div>`;
+      html += '</div>';
+
+      html += '<div style="margin-bottom:20px;"><h3 style="font-size:16px;margin-bottom:12px;color:#a3e635;">By Month</h3>';
+      Object.entries(byMonth).sort().reverse().forEach(([month, amount]) => {
+        html += `<div class="modal-row"><span>${month}</span><span>KES ${amount.toLocaleString()}</span></div>`;
+      });
+      html += '</div>';
+
+      html += '<div><h3 style="font-size:16px;margin-bottom:12px;color:#a3e635;">Order Stats</h3>';
+      html += `<div class="modal-row"><span>Total Paid Orders</span><span>${totalOrders}</span></div>`;
+      html += `<div class="modal-row"><span>Avg Order Value</span><span>KES ${totalOrders > 0 ? Math.round(totalOrderValue/totalOrders).toLocaleString() : 0}</span></div>`;
+      html += '</div>';
+
+      document.getElementById('revenueContent').innerHTML = html;
+      document.getElementById('revenueModal').classList.remove('hidden');
+    }
+
+    function closeRevenueModal() {
+      document.getElementById('revenueModal').classList.add('hidden');
     }
 
     async function deleteCustomer(id) {
