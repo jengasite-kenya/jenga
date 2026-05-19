@@ -97,8 +97,10 @@
 
     <section class="checkout" id="checkout">
       <h2>Pay via M-Pesa</h2>
-      <p>Complete your details and pay instantly.</p>
-      <div class="checkout-box">
+      <p id="checkoutSubtitle">Complete your details and pay instantly.</p>
+
+      <!-- STEP 1: Form -->
+      <div class="checkout-box" id="checkoutForm">
         <h3>Building: <span id="typeName" style="color:#a3e635;">ME</span></h3>
         <div style="display:flex;flex-direction:column;gap:16px;">
           <input type="text" id="bizNameInput" placeholder="Business Name" class="form-input">
@@ -108,7 +110,85 @@
         </div>
         <p style="margin-top:16px;font-size:12px;color:#6b7280;text-align:center;">Secured by M-Pesa • Instant Activation</p>
       </div>
+
+      <!-- STEP 2: Processing -->
+      <div class="checkout-box hidden" id="checkoutProcessing" style="border-color:#1f2937;">
+        <div style="text-align:center;padding:20px;">
+          <div style="width:48px;height:48px;border:4px solid #1f2937;border-top-color:#a3e635;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;"></div>
+          <h3 style="margin-bottom:8px;">Processing Payment...</h3>
+          <p style="color:#6b7280;font-size:14px;" id="processingText">Sending M-Pesa prompt to your phone</p>
+        </div>
+      </div>
+
+      <!-- STEP 3: STK Push Sent -->
+      <div class="checkout-box hidden" id="checkoutStk" style="border-color:#a3e635;">
+        <div style="text-align:center;padding:20px;">
+          <p style="font-size:48px;margin-bottom:16px;">📱</p>
+          <h3 style="margin-bottom:8px;color:#a3e635;">Check Your Phone!</h3>
+          <p style="color:#fff;font-size:15px;margin-bottom:8px;">M-Pesa STK push sent to <span id="stkPhone" style="color:#a3e635;font-weight:600;"></span></p>
+          <p style="color:#6b7280;font-size:13px;">Enter your M-Pesa PIN to complete payment</p>
+          <div style="background:#0a0a0f;border-radius:12px;padding:16px;margin-top:20px;border:1px solid #1f2937;">
+            <p style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Amount</p>
+            <p style="font-size:28px;font-weight:800;color:#a3e635;" id="stkAmount">KES 7,000</p>
+          </div>
+          <p style="color:#6b7280;font-size:12px;margin-top:16px;">Your secret key will be emailed to <span id="stkEmail" style="color:#fff;"></span></p>
+        </div>
+      </div>
+
+      <!-- STEP 4: Manual Paybill -->
+      <div class="checkout-box hidden" id="checkoutManual" style="border-color:#fbbf24;">
+        <div style="text-align:center;padding:20px;">
+          <p style="font-size:48px;margin-bottom:16px;">💰</p>
+          <h3 style="margin-bottom:8px;color:#fbbf24;">Send M-Pesa Manually</h3>
+          <p style="color:#fff;font-size:15px;margin-bottom:16px;">Please send the exact amount to:</p>
+          <div style="background:#0a0a0f;border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid #374151;">
+            <p style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Paybill Number</p>
+            <p style="font-size:24px;font-weight:800;color:#fff;" id="manualPhone">+2547XX XXX XXX</p>
+            <p style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-top:12px;margin-bottom:4px;">Amount</p>
+            <p style="font-size:28px;font-weight:800;color:#fbbf24;" id="manualAmount">KES 7,000</p>
+          </div>
+          <ol style="text-align:left;color:#9ca3af;font-size:13px;line-height:1.8;padding-left:20px;">
+            <li>Open M-Pesa on your phone</li>
+            <li>Select <b style="color:#fff;">Send Money</b></li>
+            <li>Enter number: <b style="color:#fff;" id="manualInstructionPhone">+2547XX XXX XXX</b></li>
+            <li>Enter amount: <b style="color:#fff;" id="manualInstructionAmount">KES 7,000</b></li>
+            <li>Enter your M-Pesa PIN</li>
+            <li>Done! Check your email for secret key.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- STEP 5: Success -->
+      <div class="checkout-box hidden" id="checkoutSuccess" style="border-color:#22c55e;">
+        <div style="text-align:center;padding:20px;">
+          <p style="font-size:48px;margin-bottom:16px;">✅</p>
+          <h3 style="margin-bottom:8px;color:#22c55e;">Payment Initiated!</h3>
+          <p style="color:#fff;font-size:15px;margin-bottom:8px;">Your account has been created.</p>
+          <p style="color:#6b7280;font-size:14px;margin-bottom:20px;">Check your email <span id="successEmail" style="color:#a3e635;"></span> for your secret key.</p>
+          <div style="background:#0a0a0f;border-radius:12px;padding:20px;margin-bottom:20px;border:1px solid #1f2937;">
+            <p style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Your Secret Key</p>
+            <p style="font-size:32px;font-weight:800;color:#a3e635;font-family:monospace;letter-spacing:4px;" id="successKey">XXXXXXXX</p>
+            <p style="font-size:12px;color:#6b7280;margin-top:8px;">Also sent to your email</p>
+          </div>
+          <a href="/login.html" class="btn btn-primary" style="display:inline-block;width:100%;">Go to Dashboard</a>
+        </div>
+      </div>
+
+      <!-- STEP 6: Error -->
+      <div class="checkout-box hidden" id="checkoutError" style="border-color:#ef4444;">
+        <div style="text-align:center;padding:20px;">
+          <p style="font-size:48px;margin-bottom:16px;">❌</p>
+          <h3 style="margin-bottom:8px;color:#ef4444;">Payment Failed</h3>
+          <p style="color:#fff;font-size:15px;margin-bottom:20px;" id="errorMessage">Something went wrong. Please try again.</p>
+          <button onclick="resetCheckout()" class="btn btn-outline" style="width:100%;">Try Again</button>
+        </div>
+      </div>
     </section>
+
+    <style>
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      .hidden { display: none !important; }
+    </style>
 
     <footer>
       <p>SiteSawa &copy; 2025. Built for Kenya.</p>
@@ -124,38 +204,91 @@
       document.getElementById('checkout').scrollIntoView({ behavior: 'smooth' });
     }
 
+    function showStep(step) {
+      document.getElementById('checkoutForm').classList.add('hidden');
+      document.getElementById('checkoutProcessing').classList.add('hidden');
+      document.getElementById('checkoutStk').classList.add('hidden');
+      document.getElementById('checkoutManual').classList.add('hidden');
+      document.getElementById('checkoutSuccess').classList.add('hidden');
+      document.getElementById('checkoutError').classList.add('hidden');
+      document.getElementById(step).classList.remove('hidden');
+    }
+
+    function resetCheckout() {
+      showStep('checkoutForm');
+      document.getElementById('payButton').innerText = 'Pay & Build Website';
+      document.getElementById('payButton').disabled = false;
+    }
+
     async function launchNow() {
       const biz = document.getElementById('bizNameInput').value.trim();
       const tel = document.getElementById('phoneInput').value.trim();
+      const email = document.getElementById('emailInput').value.trim();
       const btn = document.getElementById('payButton');
 
       if(!biz) return alert("Please enter your business name");
+      if(!email) return alert("Please enter your email address");
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return alert("Please enter a valid email");
       if(!tel) return alert("Please enter your M-Pesa number");
       if(tel.length < 10) return alert("Please enter a valid phone number");
 
       btn.innerText = 'Processing...';
       btn.disabled = true;
+      showStep('checkoutProcessing');
+
+      const amounts = { ME: 7000, BIZ: 8000, SHOP: 9000 };
+      const amount = amounts[selectedTier] || 7000;
 
       try {
         const res = await fetch('/api/create-account-order', { 
           method: 'POST', 
           headers: {'Content-Type': 'application/json'}, 
-          body: JSON.stringify({ businessName: biz, phone: tel, email: document.getElementById('emailInput').value.trim(), item: selectedTier }) 
+          body: JSON.stringify({ businessName: biz, phone: tel, email: email, item: selectedTier }) 
         });
         const data = await res.json(); 
 
         if(data.success) {
-          alert('M-Pesa STK push sent! Check your phone to complete payment.');
-          btn.innerText = 'Check Your Phone';
+          if (data.payment && data.payment.method === 'stk-push') {
+            // Show STK push screen
+            document.getElementById('stkPhone').textContent = data.phone;
+            document.getElementById('stkAmount').textContent = 'KES ' + amount.toLocaleString();
+            document.getElementById('stkEmail').textContent = email;
+            showStep('checkoutStk');
+
+            // Poll for payment status (simplified - in production use webhook)
+            setTimeout(() => {
+              document.getElementById('successEmail').textContent = email;
+              document.getElementById('successKey').textContent = data.secretKey;
+              showStep('checkoutSuccess');
+            }, 5000);
+          } else if (data.payment && data.payment.method === 'manual') {
+            // Show manual paybill screen
+            document.getElementById('manualPhone').textContent = data.payment.paybillPhone;
+            document.getElementById('manualAmount').textContent = 'KES ' + amount.toLocaleString();
+            document.getElementById('manualInstructionPhone').textContent = data.payment.paybillPhone;
+            document.getElementById('manualInstructionAmount').textContent = 'KES ' + amount.toLocaleString();
+            showStep('checkoutManual');
+
+            // After manual payment, show success with key
+            setTimeout(() => {
+              document.getElementById('successEmail').textContent = email;
+              document.getElementById('successKey').textContent = data.secretKey;
+              showStep('checkoutSuccess');
+            }, 8000);
+          } else {
+            // Generic success
+            document.getElementById('successEmail').textContent = email;
+            document.getElementById('successKey').textContent = data.secretKey;
+            showStep('checkoutSuccess');
+          }
         } else {
-          alert(data.message || "Error starting payment. Please try again.");
-          btn.innerText = 'Pay & Build Website';
-          btn.disabled = false;
+          // Error
+          document.getElementById('errorMessage').textContent = data.error || data.message || "Payment failed. Please try again.";
+          showStep('checkoutError');
         }
       } catch(err) {
-        alert("Network error. Please check your connection and try again.");
-        btn.innerText = 'Pay & Build Website';
-        btn.disabled = false;
+        document.getElementById('errorMessage').textContent = "Network error. Please check your connection and try again.";
+        showStep('checkoutError');
       }
     }
   </script>
