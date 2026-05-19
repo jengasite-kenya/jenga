@@ -3,729 +3,424 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - SiteSawa</title>
+  <title>Admin Dashboard - SiteSawa</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #fff; min-height: 100vh; }
-    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #fff; }
 
-    header { padding: 20px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1f2937; }
-    .logo { font-size: 20px; font-weight: 800; color: #a3e635; }
-    .header-actions { display: flex; gap: 12px; align-items: center; }
-    .btn-sm { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; }
-    .btn-outline { background: transparent; color: #9ca3af; border: 1px solid #374151; }
-    .btn-outline:hover { border-color: #a3e635; color: #a3e635; }
-    .btn-primary { background: #a3e635; color: #0a0a0f; }
-    .btn-primary:hover { background: #bef264; }
+    /* LOGIN SCREEN */
+    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .login-box { background: #111118; border: 1px solid #1f2937; border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; }
+    .login-box .logo { font-size: 24px; font-weight: 800; color: #a3e635; text-align: center; margin-bottom: 8px; }
+    .login-box .subtitle { text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 32px; }
+    .login-box .form-group { margin-bottom: 20px; }
+    .login-box label { display: block; font-size: 13px; font-weight: 500; color: #9ca3af; margin-bottom: 6px; }
+    .login-box input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #374151; background: #0a0a0f; color: #fff; font-size: 14px; transition: border-color 0.2s; }
+    .login-box input:focus { outline: none; border-color: #a3e635; }
+    .login-box .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; background: #a3e635; color: #0a0a0f; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .login-box .btn:hover { background: #bef264; }
+    .login-box .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .login-box .error { color: #ef4444; font-size: 13px; margin-top: 8px; display: none; }
 
-    .hero { padding: 32px 0 24px; }
-    .hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-    .hero p { color: #6b7280; font-size: 14px; }
-
+    /* DASHBOARD */
+    .sidebar { position: fixed; left: 0; top: 0; width: 240px; height: 100vh; background: #111118; border-right: 1px solid #1f2937; padding: 24px; }
+    .sidebar .logo { font-size: 20px; font-weight: 800; color: #a3e635; margin-bottom: 32px; }
+    .nav-item { display: block; padding: 12px 16px; border-radius: 8px; color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 4px; transition: all 0.2s; cursor: pointer; }
+    .nav-item:hover, .nav-item.active { background: #1f2937; color: #fff; }
+    .main { margin-left: 240px; padding: 32px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+    .header h1 { font-size: 28px; font-weight: 700; }
     .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
-    .stat-card { background: #111118; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; }
-    .stat-card h3 { font-size: 12px; color: #6b7280; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-    .stat-card .num { font-size: 28px; font-weight: 800; color: #a3e635; }
-
-    .section-card { background: #111118; border: 1px solid #1f2937; border-radius: 16px; padding: 24px; margin-bottom: 24px; }
-    .section-header { margin-bottom: 20px; }
-    .section-header h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-    .section-header p { font-size: 13px; color: #6b7280; }
-
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: #9ca3af; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .form-group label svg { width: 16px; height: 16px; }
-    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid #374151; background: #0a0a0f; color: #fff; font-size: 14px; transition: all 0.2s; }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #a3e635; }
-    .form-group input::placeholder { color: #4b5563; }
-    .form-group textarea { min-height: 100px; resize: vertical; }
-    .hint { font-size: 11px; color: #4b5563; margin-top: 4px; }
-
-    .save-bar { position: sticky; bottom: 0; background: #0a0a0f; border-top: 1px solid #1f2937; padding: 16px 0; display: flex; justify-content: space-between; align-items: center; }
-    .save-bar .status { font-size: 13px; color: #6b7280; }
-    .save-bar .status.saved { color: #a3e635; }
-
-    .preview-box { margin-top: 20px; padding: 20px; background: #0a0a0f; border-radius: 12px; border: 1px solid #1f2937; }
-    .preview-box p { font-size: 12px; color: #6b7280; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
-    .social-preview { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-    .social-preview .icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
-    .social-preview .icon:hover { transform: scale(1.1); }
-    .social-preview .icon.whatsapp { background: #25d366; }
-    .social-preview .icon.facebook { background: #1877f2; }
-    .social-preview .icon.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-    .social-preview .icon.twitter { background: #000; border: 1px solid #333; }
-    .social-preview .icon.linkedin { background: #0a66c2; }
-    .social-preview .icon.tiktok { background: #000; border: 1px solid #333; }
-    .social-preview .empty { color: #4b5563; font-size: 13px; }
-
-    .site-link { background: #111118; border: 1px solid #1f2937; border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .site-link .url { font-size: 14px; color: #a3e635; font-weight: 500; }
-    .site-link .copy { font-size: 12px; color: #6b7280; cursor: pointer; }
-    .site-link .copy:hover { color: #a3e635; }
-
-    .hidden { display: none; }
+    .stat-card { background: #111118; border: 1px solid #1f2937; border-radius: 12px; padding: 24px; }
+    .stat-card h3 { font-size: 13px; color: #6b7280; font-weight: 500; margin-bottom: 8px; }
+    .stat-card .number { font-size: 32px; font-weight: 800; color: #a3e635; }
+    .table-container { background: #111118; border: 1px solid #1f2937; border-radius: 12px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 14px 20px; font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #1f2937; }
+    td { padding: 14px 20px; font-size: 14px; border-bottom: 1px solid #1f2937; }
+    td:last-child { border-bottom: none; }
+    tr:hover td { background: #1f2937; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .badge-me { background: #fef3c7; color: #92400e; }
+    .badge-biz { background: #dbeafe; color: #1e40af; }
+    .badge-shop { background: #dcfce7; color: #166534; }
+    .btn-sm { padding: 6px 14px; border-radius: 6px; border: none; font-size: 12px; font-weight: 500; cursor: pointer; }
+    .btn-view { background: #1f2937; color: #fff; }
+    .btn-view:hover { background: #374151; }
+    .btn-delete { background: #7f1d1d; color: #fca5a5; }
+    .btn-delete:hover { background: #991b1b; }
+    .empty { text-align: center; padding: 60px; color: #6b7280; }
     .loading { text-align: center; padding: 60px; color: #6b7280; }
-    .error { background: #7f1d1d; color: #fca5a5; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
-
-    @media (max-width: 640px) {
-      .form-grid { grid-template-columns: 1fr; }
-      .stats { grid-template-columns: repeat(2, 1fr); }
-    }
+    .error-box { background: #7f1d1d; color: #fca5a5; padding: 16px 20px; border-radius: 8px; margin-bottom: 20px; }
+    .hidden { display: none !important; }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal { background: #111118; border: 1px solid #1f2937; border-radius: 16px; padding: 32px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
+    .modal h2 { margin-bottom: 20px; }
+    .modal-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1f2937; font-size: 14px; }
+    .modal-row:last-child { border-bottom: none; }
+    .modal-row span:first-child { color: #6b7280; }
+    .close-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #6b7280; font-size: 20px; cursor: pointer; }
   </style>
+<base target="_blank">
 </head>
 <body>
-  <div class="container">
-    <header>
+
+  <!-- LOGIN SCREEN -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
       <div class="logo">SiteSawa</div>
-      <div class="header-actions">
-        <a href="#" class="btn-sm btn-outline" onclick="viewSite()">View Site</a>
-        <button class="btn-sm btn-primary" onclick="saveAll()">Save Changes</button>
-        <button class="btn-sm btn-outline" onclick="logout()">Logout</button>
-      </div>
-    </header>
+      <p class="subtitle">Admin Access</p>
 
-    <div class="loading" id="loading">Loading your dashboard...</div>
-    <div id="dashboardContent" class="hidden">
+      <form id="adminLoginForm">
+        <div class="form-group">
+          <label>Admin Phone Number</label>
+          <input type="tel" id="adminPhone" placeholder="+2547XX XXX XXX" required>
+        </div>
+        <div class="form-group">
+          <label>Secret Key</label>
+          <input type="password" id="adminKey" placeholder="Your secret key" required>
+        </div>
+        <button type="submit" class="btn" id="loginBtn">Login as Admin</button>
+        <p class="error" id="loginError"></p>
+      </form>
+    </div>
+  </div>
 
-      <section class="hero">
-        <h1 id="welcomeName">Welcome</h1>
-        <p id="welcomeSub">Manage your website settings below</p>
-      </section>
-
-      <div class="site-link">
-        <span class="url" id="siteUrl">yourname.sitesawa.com</span>
-        <span class="copy" onclick="copyUrl()">Copy Link</span>
-      </div>
-
-      <div class="stats">
-        <div class="stat-card">
-          <h3>Template</h3>
-          <div class="num" id="templateType">-</div>
-        </div>
-        <div class="stat-card">
-          <h3>Products</h3>
-          <div class="num" id="productCount">0</div>
-        </div>
-        <div class="stat-card">
-          <h3>Orders</h3>
-          <div class="num" id="orderCount">0</div>
-        </div>
-        <div class="stat-card">
-          <h3>Joined</h3>
-          <div class="num" id="joinDate">-</div>
-        </div>
-      </div>
-
-      <!-- BUSINESS INFO -->
-      <div class="section-card">
-        <div class="section-header">
-          <h3>Business Information</h3>
-          <p>This appears on your website</p>
-        </div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Business Name</label>
-            <input type="text" id="bizName" placeholder="Your Business Name">
-          </div>
-          <div class="form-group">
-            <label>Phone Number</label>
-            <input type="tel" id="bizPhone" placeholder="+2547XX XXX XXX" readonly>
-          </div>
-          <div class="form-group" style="grid-column: 1 / -1;">
-            <label>Tagline / Hero Text</label>
-            <input type="text" id="heroText" placeholder="What makes your business special?">
-          </div>
-          <div class="form-group" style="grid-column: 1 / -1;">
-            <label>About Your Business</label>
-            <textarea id="aboutText" placeholder="Tell customers what you do..."></textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- SOCIAL MEDIA -->
-      <div class="section-card">
-        <div class="section-header">
-          <h3>Social Media Links</h3>
-          <p>Add your profiles. Leave empty to hide from your site.</p>
-        </div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>
-              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-              WhatsApp Number
-            </label>
-            <input type="tel" id="socialWhatsapp" placeholder="2547XX XXX XXX" oninput="updateSocialPreview()">
-            <p class="hint">Customers click to chat with you</p>
-          </div>
-          <div class="form-group">
-            <label>
-              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-              Facebook
-            </label>
-            <input type="url" id="socialFacebook" placeholder="https://facebook.com/yourpage" oninput="updateSocialPreview()">
-          </div>
-          <div class="form-group">
-            <label>
-              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-              Instagram
-            </label>
-            <input type="url" id="socialInstagram" placeholder="https://instagram.com/yourhandle" oninput="updateSocialPreview()">
-          </div>
-          <div class="form-group">
-            <label>
-              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              X (Twitter)
-            </label>
-            <input type="url" id="socialTwitter" placeholder="https://x.com/yourhandle" oninput="updateSocialPreview()">
-          </div>
-          <div class="form-group">
-            <label>
-              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              LinkedIn
-            </label>
-            <input type="url" id="socialLinkedin" placeholder="https://linkedin.com/in/yourprofile" oninput="updateSocialPreview()">
-          </div>
-          <div class="form-group">
-            <label>
-              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/></svg>
-              TikTok
-            </label>
-            <input type="url" id="socialTiktok" placeholder="https://tiktok.com/@yourhandle" oninput="updateSocialPreview()">
-          </div>
-        </div>
-
-        <div class="preview-box">
-          <p>Preview — This is how it looks on your site</p>
-          <div class="social-preview" id="socialPreview">
-            <span class="empty">Add links above to see preview</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- GOOGLE ANALYTICS -->
-      <div class="section-card">
-        <div class="section-header">
-          <h3>Analytics & Tracking</h3>
-          <p>Track visitors to your website</p>
-        </div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Google Analytics ID</label>
-            <input type="text" id="googleAnalytics" placeholder="G-XXXXXXXXXX">
-            <p class="hint">Optional — track website visitors</p>
-          </div>
-          <div class="form-group">
-            <label>TikTok Pixel ID</label>
-            <input type="text" id="tiktokPixel" placeholder="Optional — for TikTok ads">
-            <p class="hint">Optional — track conversions from TikTok</p>
-          </div>
-        </div>
-      </div>
-
+  <!-- DASHBOARD -->
+  <div id="dashboardScreen" class="hidden">
+    <div class="sidebar">
+      <div class="logo">SiteSawa</div>
+      <a class="nav-item active" onclick="showSection('customers')">All Customers</a>
+      <a class="nav-item" onclick="showSection('orders')">Orders</a>
+      <a class="nav-item" onclick="logout()">Logout</a>
     </div>
 
-    
-      <!-- M-PESA CONFIGURATION -->
-      <div class="section-card" id="mpesaSection">
-        <div class="section-header">
-          <h3>M-Pesa Payment Setup</h3>
-          <p>Configure how customers pay you (SHOP template only)</p>
-        </div>
-        <div class="form-grid">
-          <div class="form-group" style="grid-column: 1 / -1;">
-            <label>Payment Mode</label>
-            <select id="mpesaMode" onchange="toggleMpesaMode()">
-              <option value="">Not configured</option>
-              <option value="simple">Simple — Manual Paybill</option>
-              <option value="api">API — Automatic STK Push</option>
-            </select>
-            <p class="hint">Simple = customers send to your number. API = automatic M-Pesa popup.</p>
-          </div>
-          <div class="form-group" id="simpleFields">
-            <label>Your M-Pesa Number (Paybill)</label>
-            <input type="tel" id="paybillPhone" placeholder="2547XX XXX XXX">
-            <p class="hint">Customers send money to this number</p>
-          </div>
-          <div class="form-group hidden" id="apiFields1">
-            <label>Consumer Key</label>
-            <input type="text" id="consumerKey" placeholder="From Daraja portal">
-          </div>
-          <div class="form-group hidden" id="apiFields2">
-            <label>Consumer Secret</label>
-            <input type="password" id="consumerSecret" placeholder="From Daraja portal">
-          </div>
-          <div class="form-group hidden" id="apiFields3">
-            <label>Passkey</label>
-            <input type="password" id="passkey" placeholder="From Daraja portal">
-          </div>
-          <div class="form-group hidden" id="apiFields4">
-            <label>Shortcode</label>
-            <input type="text" id="shortcode" placeholder="e.g. 174379">
-          </div>
-          <div class="form-group hidden" id="apiFields5">
-            <label>Environment</label>
-            <select id="environment">
-              <option value="sandbox">Sandbox (Test)</option>
-              <option value="live">Live (Production)</option>
-            </select>
-          </div>
-        </div>
-        <button onclick="saveMpesaConfig()" class="btn-sm btn-primary" style="margin-top:16px;">Save M-Pesa Config</button>
-        <p class="error hidden" id="mpesaError" style="margin-top:8px;"></p>
-      </div>
-
-      <!-- PRODUCT EDITOR (SHOP only) -->
-      <div class="section-card hidden" id="productSection">
-        <div class="section-header">
-          <h3>Products</h3>
-          <p>Add or edit products for your shop</p>
-        </div>
-        <div id="productList" style="margin-bottom:20px;"></div>
-        <div class="form-grid" style="background:#0a0a0f;padding:20px;border-radius:12px;border:1px solid #1f2937;">
-          <div class="form-group">
-            <label>Product Name</label>
-            <input type="text" id="prodName" placeholder="e.g. Leather Wallet">
-          </div>
-          <div class="form-group">
-            <label>Price (KES)</label>
-            <input type="number" id="prodPrice" placeholder="1500">
-          </div>
-          <div class="form-group" style="grid-column: 1 / -1;">
-            <label>Image URL</label>
-            <input type="url" id="prodImage" placeholder="https://... or leave blank for logo">
-            <p class="hint">Paste an image link, or leave empty to use your logo</p>
-          </div>
-          <div class="form-group" style="grid-column: 1 / -1;">
-            <button onclick="addProduct()" class="btn-sm btn-primary">Add Product</button>
-          </div>
+    <div class="main">
+      <div class="header">
+        <h1>Master View</h1>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <button onclick="viewRevenue()" class="btn-sm btn-view" style="background:#a3e635;color:#0a0a0f;font-weight:600;">View Revenue</button>
+          <span id="adminName" style="color:#6b7280;font-size:14px;">Admin</span>
         </div>
       </div>
 
-      <!-- SHIPPING SETTINGS (SHOP only) -->
-      <div class="section-card hidden" id="shippingSection">
-        <div class="section-header">
-          <h3>Shipping Options</h3>
-          <p>Enable delivery options for your customers</p>
-        </div>
-        <div class="form-group" style="margin-bottom:16px;">
-          <label class="toggle-row" style="justify-content:flex-start;gap:12px;cursor:pointer;">
-            <input type="checkbox" id="shippingEnabled" style="width:auto;" onchange="toggleShipping()">
-            <span>Enable shipping/delivery</span>
-          </label>
-        </div>
-        <div id="shippingFields" class="hidden">
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Local Delivery Fee (KES)</label>
-              <input type="number" id="localFee" value="200">
-            </div>
-            <div class="form-group">
-              <label>Nationwide Fee (KES)</label>
-              <input type="number" id="nationwideFee" value="500">
-            </div>
+      <div id="customersSection">
+        <div class="stats">
+          <div class="stat-card">
+            <h3>Total Customers</h3>
+            <div class="number" id="totalCustomers">-</div>
+          </div>
+          <div class="stat-card">
+            <h3>ME Plans</h3>
+            <div class="number" id="meCount">-</div>
+          </div>
+          <div class="stat-card">
+            <h3>BIZ Plans</h3>
+            <div class="number" id="bizCount">-</div>
+          </div>
+          <div class="stat-card">
+            <h3>SHOP Plans</h3>
+            <div class="number" id="shopCount">-</div>
           </div>
         </div>
-      </div>
 
-      <!-- LOGO UPLOAD -->
-      <div class="section-card">
-        <div class="section-header">
-          <h3>Logo & Images</h3>
-          <p>Upload your business logo</p>
-        </div>
-        <div class="form-group">
-          <label>Logo URL</label>
-          <input type="url" id="logoUrl" placeholder="https://...">
-          <p class="hint">Upload to Imgur/Cloudinary and paste the direct link here</p>
-        </div>
-        <div class="preview-box">
-          <p>Preview</p>
-          <img id="logoPreview" src="" style="max-width:120px;max-height:120px;border-radius:12px;object-fit:cover;display:none;">
-          <p class="empty" id="logoEmpty" style="margin-top:8px;">No logo set</p>
-        </div>
-      </div>
-
-      <!-- DOMAIN SETTINGS -->
-      <div class="section-card">
-        <div class="section-header">
-          <h3>Custom Domain</h3>
-          <p>Connect your own domain (optional)</p>
-        </div>
-        <div class="form-group">
-          <label>Your Domain</label>
-          <input type="text" id="customDomain" placeholder="www.yourbusiness.co.ke">
-          <p class="hint">Enter your domain, then set a CNAME record pointing to sitesawa.com</p>
+        <div class="table-container">
+          <div class="loading" id="loadingMsg">Loading customers...</div>
+          <div class="error-box hidden" id="errorMsg"></div>
+          <table id="customersTable" class="hidden">
+            <thead>
+              <tr>
+                <th>Phone</th>
+                <th>Template</th>
+                <th>Subdomain</th>
+                <th>Products</th>
+                <th>Orders</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="customersBody"></tbody>
+          </table>
+          <div class="empty hidden" id="emptyMsg">No customers yet.</div>
         </div>
       </div>
 
-<div class="save-bar">
-      <span class="status" id="saveStatus">Unsaved changes</span>
-      <button class="btn-sm btn-primary" onclick="saveAll()">Save All Changes</button>
+      <div id="ordersSection" class="hidden">
+        <div class="table-container">
+          <div class="empty">Orders view coming soon.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="customerModal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="position:relative;">
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+      <h2>Customer Details</h2>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div id="revenueModal" class="modal-overlay hidden" onclick="if(event.target===this)closeRevenueModal()">
+    <div class="modal" style="position:relative;max-width:600px;">
+      <button class="close-btn" onclick="closeRevenueModal()">&times;</button>
+      <h2>Revenue Breakdown</h2>
+      <div id="revenueContent"></div>
     </div>
   </div>
 
   <script>
     const API_BASE = '';
-    let userData = {};
+    let customers = [];
 
     function getToken() {
-      return localStorage.getItem('sitesawa_token');
+      return localStorage.getItem('sitesawa_admin_token');
     }
 
     function checkAuth() {
       if (!getToken()) {
-        window.location.href = '/login.html';
+        showLogin();
+      } else {
+        showDashboard();
+        loadCustomers();
       }
     }
 
-    async function loadDashboard() {
+    function showLogin() {
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('dashboardScreen').classList.add('hidden');
+    }
+
+    function showDashboard() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('dashboardScreen').classList.remove('hidden');
+    }
+
+    // Admin login form
+    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const error = document.getElementById('loginError');
+      btn.disabled = true;
+      error.style.display = 'none';
+
       try {
-        const res = await fetch(`${API_BASE}/api/me`, {
+        const res = await fetch(`${API_BASE}/api/admin/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: document.getElementById('adminPhone').value,
+            secretKey: document.getElementById('adminKey').value
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          localStorage.setItem('sitesawa_admin_token', data.token);
+          showDashboard();
+          loadCustomers();
+        } else {
+          error.textContent = data.error || 'Invalid admin credentials';
+          error.style.display = 'block';
+        }
+      } catch (err) {
+        error.textContent = 'Network error. Try again.';
+        error.style.display = 'block';
+      }
+      btn.disabled = false;
+    });
+
+    async function loadCustomers() {
+      const loading = document.getElementById('loadingMsg');
+      const error = document.getElementById('errorMsg');
+      const table = document.getElementById('customersTable');
+      const empty = document.getElementById('emptyMsg');
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/customers`, {
           headers: { 'Authorization': `Bearer ${getToken()}` }
         });
         const data = await res.json();
 
         if (!res.ok) {
           if (res.status === 401) {
-            localStorage.removeItem('sitesawa_token');
-            window.location.href = '/login.html';
+            localStorage.removeItem('sitesawa_admin_token');
+            showLogin();
             return;
           }
           throw new Error(data.error || 'Failed to load');
         }
 
-        userData = data;
-        document.getElementById('loading').classList.add('hidden');
-        document.getElementById('dashboardContent').classList.remove('hidden');
+        customers = data.customers || [];
+        loading.classList.add('hidden');
 
-        // Fill in data
-        document.getElementById('welcomeName').textContent = `Welcome, ${data.data?.bizName || data.phone || 'User'}`;
-        document.getElementById('welcomeSub').textContent = `Manage your ${data.template?.toUpperCase()} website`;
-        document.getElementById('siteUrl').textContent = data.customDomain || `${data.subdomain || data.phone}.sitesawa.com`;
-        document.getElementById('templateType').textContent = data.template?.toUpperCase() || '-';
-        document.getElementById('productCount').textContent = (data.products || []).length;
-        document.getElementById('orderCount').textContent = (data.orders || []).length;
-        document.getElementById('joinDate').textContent = data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '-';
+        document.getElementById('totalCustomers').textContent = customers.length;
+        document.getElementById('meCount').textContent = customers.filter(c => c.template === 'me').length;
+        document.getElementById('bizCount').textContent = customers.filter(c => c.template === 'biz').length;
+        document.getElementById('shopCount').textContent = customers.filter(c => c.template === 'shop').length;
 
-        // Business info
-        document.getElementById('bizName').value = data.data?.bizName || '';
-        document.getElementById('bizPhone').value = data.phone || '';
-        document.getElementById('heroText').value = data.data?.heroText || '';
-        document.getElementById('aboutText').value = data.data?.aboutText || '';
-        document.getElementById('logoUrl').value = data.data?.logo || '';
-        document.getElementById('customDomain').value = data.customDomain || '';
+        // Revenue calculations
+        const pricing = { me: 7000, biz: 8000, shop: 9000 };
+        let totalRev = 0;
+        let monthRev = 0;
+        let orderCount = 0;
+        const now = new Date();
+        const thisMonth = now.getMonth();
+        const thisYear = now.getFullYear();
 
-        // Logo preview
-        if (data.data?.logo) {
-          document.getElementById('logoPreview').src = data.data.logo;
-          document.getElementById('logoPreview').style.display = 'block';
-          document.getElementById('logoEmpty').classList.add('hidden');
+        customers.forEach(c => {
+          const templatePrice = pricing[c.template] || 0;
+          totalRev += templatePrice;
+
+          const joined = new Date(c.createdAt);
+          if (joined.getMonth() === thisMonth && joined.getFullYear() === thisYear) {
+            monthRev += templatePrice;
+          }
+
+          const orders = c.orders || [];
+          orders.forEach(o => {
+            if (o.status === 'paid' || o.status === 'completed') {
+              totalRev += (o.amount || 0);
+              orderCount++;
+              const orderDate = new Date(o.createdAt);
+              if (orderDate.getMonth() === thisMonth && orderDate.getFullYear() === thisYear) {
+                monthRev += (o.amount || 0);
+              }
+            }
+          });
+        });
+
+        document.getElementById('totalRevenue').textContent = 'KES ' + totalRev.toLocaleString();
+        document.getElementById('monthRevenue').textContent = 'KES ' + monthRev.toLocaleString();
+        document.getElementById('avgOrder').textContent = orderCount > 0 ? 'KES ' + Math.round(totalRev / orderCount).toLocaleString() : 'KES 0';
+
+        if (customers.length === 0) {
+          empty.classList.remove('hidden');
+          return;
         }
 
-        // M-Pesa config
-        const mpesa = data.mpesaConfig || {};
-        document.getElementById('mpesaMode').value = mpesa.mode || '';
-        document.getElementById('paybillPhone').value = mpesa.paybillPhone || '';
-        document.getElementById('consumerKey').value = mpesa.consumerKey || '';
-        document.getElementById('consumerSecret').value = mpesa.consumerSecret || '';
-        document.getElementById('passkey').value = mpesa.passkey || '';
-        document.getElementById('shortcode').value = mpesa.shortcode || '';
-        document.getElementById('environment').value = mpesa.environment || 'sandbox';
-        toggleMpesaMode();
+        const tbody = document.getElementById('customersBody');
+        tbody.innerHTML = customers.map(c => `
+          <tr>
+            <td>${c.phone}</td>
+            <td><span class="badge badge-${c.template}">${c.template.toUpperCase()}</span></td>
+            <td>${c.subdomain || '-'}</td>
+            <td>${(c.products || []).length}</td>
+            <td>${(c.orders || []).length}</td>
+            <td>${new Date(c.createdAt).toLocaleDateString()}</td>
+            <td>
+              <button class="btn-sm btn-view" onclick="viewCustomer('${c._id}')">View</button>
+              <button class="btn-sm btn-delete" onclick="deleteCustomer('${c._id}')">Delete</button>
+            </td>
+          </tr>
+        `).join('');
 
-        // Shipping
-        document.getElementById('shippingEnabled').checked = data.data?.shippingEnabled || false;
-        document.getElementById('localFee').value = data.data?.localDeliveryFee || 200;
-        document.getElementById('nationwideFee').value = data.data?.nationwideFee || 500;
-        toggleShipping();
-
-        // Show/hide SHOP-only sections
-        if (data.template === 'shop') {
-          document.getElementById('productSection').classList.remove('hidden');
-          document.getElementById('shippingSection').classList.remove('hidden');
-          renderProductList(data.products || []);
-        }
-
-        // Show M-Pesa section for all (in case they switch templates)
-        document.getElementById('mpesaSection').classList.remove('hidden');
-
-        // Social links
-        const social = data.data?.social || {};
-        document.getElementById('socialWhatsapp').value = social.whatsapp || '';
-        document.getElementById('socialFacebook').value = social.facebook || '';
-        document.getElementById('socialInstagram').value = social.instagram || '';
-        document.getElementById('socialTwitter').value = social.twitter || '';
-        document.getElementById('socialLinkedin').value = social.linkedin || '';
-        document.getElementById('socialTiktok').value = social.tiktok || '';
-
-        // Analytics
-        document.getElementById('googleAnalytics').value = data.data?.googleAnalytics || '';
-        document.getElementById('tiktokPixel').value = data.data?.tiktokPixel || '';
-
-        updateSocialPreview();
+        table.classList.remove('hidden');
       } catch (err) {
-        document.getElementById('loading').textContent = 'Error: ' + err.message;
+        loading.classList.add('hidden');
+        error.textContent = err.message;
+        error.classList.remove('hidden');
       }
     }
 
-    function updateSocialPreview() {
-      const platforms = [
-        { id: 'socialWhatsapp', name: 'WhatsApp', class: 'whatsapp', icon: '💬' },
-        { id: 'socialFacebook', name: 'Facebook', class: 'facebook', icon: 'f' },
-        { id: 'socialInstagram', name: 'Instagram', class: 'instagram', icon: '📷' },
-        { id: 'socialTwitter', name: 'X', class: 'twitter', icon: '𝕏' },
-        { id: 'socialLinkedin', name: 'LinkedIn', class: 'linkedin', icon: 'in' },
-        { id: 'socialTiktok', name: 'TikTok', class: 'tiktok', icon: '🎵' }
-      ];
+    async function viewCustomer(id) {
+      const customer = customers.find(c => c._id === id);
+      if (!customer) return;
+      const content = document.getElementById('modalContent');
+      content.innerHTML = `
+        <div class="modal-row"><span>Phone</span><span>${customer.phone}</span></div>
+        <div class="modal-row"><span>Template</span><span class="badge badge-${customer.template}">${customer.template.toUpperCase()}</span></div>
+        <div class="modal-row"><span>Subdomain</span><span>${customer.subdomain || 'Not set'}</span></div>
+        <div class="modal-row"><span>Custom Domain</span><span>${customer.customDomain || 'Not set'}</span></div>
+        <div class="modal-row"><span>Products</span><span>${(customer.products || []).length}</span></div>
+        <div class="modal-row"><span>Orders</span><span>${(customer.orders || []).length}</span></div>
+        <div class="modal-row"><span>Joined</span><span>${new Date(customer.createdAt).toLocaleString()}</span></div>
+      `;
+      document.getElementById('customerModal').classList.remove('hidden');
+    }
 
-      const preview = document.getElementById('socialPreview');
-      let html = '';
-      let hasAny = false;
+    function closeModal() {
+      document.getElementById('customerModal').classList.add('hidden');
+    }
 
-      platforms.forEach(p => {
-        const val = document.getElementById(p.id).value.trim();
-        if (val) {
-          hasAny = true;
-          html += `<div class="icon ${p.class}" title="${p.name}: ${val}">${p.icon}</div>`;
-        }
+    function viewRevenue() {
+      const pricing = { me: 7000, biz: 8000, shop: 9000 };
+      let byTemplate = { me: 0, biz: 0, shop: 0 };
+      let byMonth = {};
+      let totalOrders = 0;
+      let totalOrderValue = 0;
+
+      customers.forEach(c => {
+        byTemplate[c.template] += (pricing[c.template] || 0);
+
+        const month = new Date(c.createdAt).toLocaleString('en-US', { month: 'short', year: 'numeric' });
+        byMonth[month] = (byMonth[month] || 0) + (pricing[c.template] || 0);
+
+        (c.orders || []).forEach(o => {
+          if (o.status === 'paid' || o.status === 'completed') {
+            totalOrders++;
+            totalOrderValue += (o.amount || 0);
+            const oMonth = new Date(o.createdAt).toLocaleString('en-US', { month: 'short', year: 'numeric' });
+            byMonth[oMonth] = (byMonth[oMonth] || 0) + (o.amount || 0);
+          }
+        });
       });
 
-      preview.innerHTML = hasAny ? html : '<span class="empty">Add links above to see preview</span>';
+      let html = '<div style="margin-bottom:20px;"><h3 style="font-size:16px;margin-bottom:12px;color:#a3e635;">By Template</h3>';
+      html += `<div class="modal-row"><span>ME Plans</span><span>KES ${byTemplate.me.toLocaleString()}</span></div>`;
+      html += `<div class="modal-row"><span>BIZ Plans</span><span>KES ${byTemplate.biz.toLocaleString()}</span></div>`;
+      html += `<div class="modal-row"><span>SHOP Plans</span><span>KES ${byTemplate.shop.toLocaleString()}</span></div>`;
+      html += '</div>';
+
+      html += '<div style="margin-bottom:20px;"><h3 style="font-size:16px;margin-bottom:12px;color:#a3e635;">By Month</h3>';
+      Object.entries(byMonth).sort().reverse().forEach(([month, amount]) => {
+        html += `<div class="modal-row"><span>${month}</span><span>KES ${amount.toLocaleString()}</span></div>`;
+      });
+      html += '</div>';
+
+      html += '<div><h3 style="font-size:16px;margin-bottom:12px;color:#a3e635;">Order Stats</h3>';
+      html += `<div class="modal-row"><span>Total Paid Orders</span><span>${totalOrders}</span></div>`;
+      html += `<div class="modal-row"><span>Avg Order Value</span><span>KES ${totalOrders > 0 ? Math.round(totalOrderValue/totalOrders).toLocaleString() : 0}</span></div>`;
+      html += '</div>';
+
+      document.getElementById('revenueContent').innerHTML = html;
+      document.getElementById('revenueModal').classList.remove('hidden');
     }
 
-    async function saveAll() {
-      const btn = document.querySelector('.save-bar .btn-primary');
-      const status = document.getElementById('saveStatus');
-      btn.disabled = true;
-      btn.textContent = 'Saving...';
+    function closeRevenueModal() {
+      document.getElementById('revenueModal').classList.add('hidden');
+    }
 
+    async function deleteCustomer(id) {
+      if (!confirm('Delete this customer permanently?')) return;
       try {
-        const updates = {
-          data: {
-            ...userData.data,
-            bizName: document.getElementById('bizName').value.trim(),
-            heroText: document.getElementById('heroText').value.trim(),
-            aboutText: document.getElementById('aboutText').value.trim(),
-            logo: document.getElementById('logoUrl').value.trim(),
-            shippingEnabled: document.getElementById('shippingEnabled').checked,
-            localDeliveryFee: parseInt(document.getElementById('localFee').value) || 200,
-            nationwideFee: parseInt(document.getElementById('nationwideFee').value) || 500,
-            social: {
-              whatsapp: document.getElementById('socialWhatsapp').value.trim(),
-              facebook: document.getElementById('socialFacebook').value.trim(),
-              instagram: document.getElementById('socialInstagram').value.trim(),
-              twitter: document.getElementById('socialTwitter').value.trim(),
-              linkedin: document.getElementById('socialLinkedin').value.trim(),
-              tiktok: document.getElementById('socialTiktok').value.trim()
-            },
-            googleAnalytics: document.getElementById('googleAnalytics').value.trim(),
-            tiktokPixel: document.getElementById('tiktokPixel').value.trim()
-          },
-          customDomain: document.getElementById('customDomain').value.trim() || null
-        };
-
-        const res = await fetch(`${API_BASE}/api/me`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(updates)
-        });
-
-        const data = await res.json();
-
-        if (data.success) {
-          status.textContent = 'All changes saved!';
-          status.classList.add('saved');
-          setTimeout(() => {
-            status.textContent = 'Unsaved changes';
-            status.classList.remove('saved');
-          }, 3000);
-        } else {
-          throw new Error(data.error || 'Save failed');
-        }
-      } catch (err) {
-        status.textContent = 'Error: ' + err.message;
-        status.style.color = '#fca5a5';
-      }
-
-      btn.disabled = false;
-      btn.textContent = 'Save All Changes';
-    }
-
-    function viewSite() {
-      const url = userData.customDomain || `${userData.subdomain || userData.phone}.sitesawa.com`;
-      window.open(`https://${url}`, '_blank');
-    }
-
-    function copyUrl() {
-      const url = document.getElementById('siteUrl').textContent;
-      navigator.clipboard.writeText(`https://${url}`);
-      const copy = document.querySelector('.site-link .copy');
-      copy.textContent = 'Copied!';
-      setTimeout(() => copy.textContent = 'Copy Link', 2000);
-    }
-
-    function logout() {
-      localStorage.removeItem('sitesawa_token');
-      localStorage.removeItem('sitesawa_template');
-      window.location.href = '/login.html';
-    }
-
-    checkAuth();
-    loadDashboard();
-  
-    function toggleMpesaMode() {
-      const mode = document.getElementById('mpesaMode').value;
-      const simple = document.getElementById('simpleFields');
-      const api1 = document.getElementById('apiFields1');
-      const api2 = document.getElementById('apiFields2');
-      const api3 = document.getElementById('apiFields3');
-      const api4 = document.getElementById('apiFields4');
-      const api5 = document.getElementById('apiFields5');
-
-      if (mode === 'simple') {
-        simple.classList.remove('hidden');
-        api1.classList.add('hidden'); api2.classList.add('hidden');
-        api3.classList.add('hidden'); api4.classList.add('hidden'); api5.classList.add('hidden');
-      } else if (mode === 'api') {
-        simple.classList.add('hidden');
-        api1.classList.remove('hidden'); api2.classList.remove('hidden');
-        api3.classList.remove('hidden'); api4.classList.remove('hidden'); api5.classList.remove('hidden');
-      } else {
-        simple.classList.add('hidden');
-        api1.classList.add('hidden'); api2.classList.add('hidden');
-        api3.classList.add('hidden'); api4.classList.add('hidden'); api5.classList.add('hidden');
-      }
-    }
-
-    function toggleShipping() {
-      const enabled = document.getElementById('shippingEnabled').checked;
-      document.getElementById('shippingFields').classList.toggle('hidden', !enabled);
-    }
-
-    function renderProductList(products) {
-      const container = document.getElementById('productList');
-      if (products.length === 0) {
-        container.innerHTML = '<p class="empty" style="padding:20px;">No products yet. Add your first product below.</p>';
-        return;
-      }
-      container.innerHTML = products.map((p, i) => `
-        <div style="display:flex;gap:12px;align-items:center;padding:12px;background:#0a0a0f;border-radius:8px;margin-bottom:8px;border:1px solid #1f2937;">
-          <img src="${p.image || 'https://via.placeholder.com/60'}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
-          <div style="flex:1;">
-            <p style="font-weight:600;font-size:14px;">${p.name}</p>
-            <p style="color:#a3e635;font-size:13px;">KES ${p.price?.toLocaleString() || 0}</p>
-          </div>
-          <button onclick="deleteProduct('${p.id}')" class="btn-sm btn-delete" style="font-size:11px;">Delete</button>
-        </div>
-      `).join('');
-    }
-
-    async function addProduct() {
-      const name = document.getElementById('prodName').value.trim();
-      const price = parseInt(document.getElementById('prodPrice').value);
-      const image = document.getElementById('prodImage').value.trim();
-
-      if (!name || !price) { alert('Name and price required'); return; }
-
-      try {
-        const res = await fetch(`${API_BASE}/api/products`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ name, price, image: image || userData.data?.logo || '' })
-        });
-        const data = await res.json();
-        if (data.success) {
-          document.getElementById('prodName').value = '';
-          document.getElementById('prodPrice').value = '';
-          document.getElementById('prodImage').value = '';
-          // Reload user data
-          const userRes = await fetch(`${API_BASE}/api/me`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
-          userData = await userRes.json();
-          renderProductList(userData.products || []);
-          document.getElementById('productCount').textContent = (userData.products || []).length;
-        }
-      } catch (err) { alert('Failed to add product'); }
-    }
-
-    async function deleteProduct(id) {
-      if (!confirm('Delete this product?')) return;
-      try {
-        const res = await fetch(`${API_BASE}/api/products/${id}`, {
+        const res = await fetch(`${API_BASE}/api/admin/customers/${id}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${getToken()}` }
         });
         if (res.ok) {
-          const userRes = await fetch(`${API_BASE}/api/me`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
-          userData = await userRes.json();
-          renderProductList(userData.products || []);
-          document.getElementById('productCount').textContent = (userData.products || []).length;
-        }
-      } catch (err) { alert('Failed to delete'); }
-    }
-
-    async function saveMpesaConfig() {
-      const mode = document.getElementById('mpesaMode').value;
-      const btn = event.target;
-      btn.textContent = 'Saving...';
-      btn.disabled = true;
-
-      try {
-        const config = { mode };
-        if (mode === 'simple') {
-          config.paybillPhone = document.getElementById('paybillPhone').value.trim();
-        } else if (mode === 'api') {
-          config.consumerKey = document.getElementById('consumerKey').value.trim();
-          config.consumerSecret = document.getElementById('consumerSecret').value.trim();
-          config.passkey = document.getElementById('passkey').value.trim();
-          config.shortcode = document.getElementById('shortcode').value.trim();
-          config.environment = document.getElementById('environment').value;
-        }
-
-        const res = await fetch(`${API_BASE}/api/mpesa-config`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${getToken()}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(config)
-        });
-        const data = await res.json();
-        if (data.success) {
-          alert('M-Pesa config saved!');
+          loadCustomers();
         } else {
-          document.getElementById('mpesaError').textContent = data.error || 'Save failed';
-          document.getElementById('mpesaError').classList.remove('hidden');
+          alert('Delete failed');
         }
       } catch (err) {
-        document.getElementById('mpesaError').textContent = 'Network error';
-        document.getElementById('mpesaError').classList.remove('hidden');
+        alert('Network error');
       }
-      btn.textContent = 'Save M-Pesa Config';
-      btn.disabled = false;
     }
 
-    // Logo preview on input
-    document.getElementById('logoUrl')?.addEventListener('input', (e) => {
-      const url = e.target.value.trim();
-      const preview = document.getElementById('logoPreview');
-      const empty = document.getElementById('logoEmpty');
-      if (url) {
-        preview.src = url;
-        preview.style.display = 'block';
-        empty.classList.add('hidden');
-      } else {
-        preview.style.display = 'none';
-        empty.classList.remove('hidden');
-      }
-    });
-</script>
+    function showSection(section) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('customersSection').classList.toggle('hidden', section !== 'customers');
+      document.getElementById('ordersSection').classList.toggle('hidden', section !== 'orders');
+    }
+
+    function logout() {
+      localStorage.removeItem('sitesawa_admin_token');
+      showLogin();
+    }
+
+    checkAuth();
+  </script>
 </body>
 </html>
