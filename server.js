@@ -389,6 +389,115 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+
+// ── FORGOT / RESET SECRET KEY ──
+
+app.post('/api/forgot-key', async (req, res) => {
+  try {
+    const { phone } = req.body;
+    if (!phone) return res.status(400).json({ error: 'Phone number required' });
+
+    const normalizedPhone = normalizePhone(phone);
+    const user = await User.findOne({ phone: normalizedPhone });
+    if (!user) return res.status(404).json({ error: 'Phone number not found' });
+    if (!user.email) return res.status(400).json({ error: 'No email on file. Contact support.' });
+
+    const resetCode = crypto.randomInt(100000, 999999).toString();
+    const hashedCode = await bcrypt.hash(resetCode, 10);
+
+    await User.findByIdAndUpdate(user._id, {
+      $set: {
+        resetCode: hashedCode,
+        resetCodeExpiry: new Date(Date.now() + 15 * 60 * 1000)
+      }
+    });
+
+    if (process.env.WORKSPACE_EMAIL && process.env.WORKSPACE_APP_PASSWORD) {
+      try {
+        const nodemailer = require('nodemailer');
+        const transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.WORKSPACE_EMAIL,
+            pass: process.env.WORKSPACE_APP_PASSWORD
+          }
+        });
+
+        await transporter.sendMail({
+          from: `"SiteSawa" <${process.env.WORKSPACE_EMAIL}>`,
+          to: user.email,
+          subject: 'Reset Your SiteSawa Secret Key',
+          text: `Your reset code is: ${resetCode}
+
+This code expires in 15 minutes.
+
+If you didn't request this, ignore this email.`,
+          html: `
+            <div style="font-family:Inter,sans-serif;max-width:420px;margin:0 auto;padding:32px;background:#fafafa;border-radius:16px;">
+              <h2 style="color:#a3e635;font-size:28px;margin-bottom:20px;font-weight:800;">Reset Your Key</h2>
+              <p style="color:#333;font-size:15px;line-height:1.6;margin-bottom:20px;">Use this code to reset your secret key:</p>
+              <div style="background:#0a0a0f;color:#fff;padding:24px;border-radius:12px;text-align:center;margin:20px 0;">
+                <p style="font-size:11px;color:#9ca3af;margin-bottom:12px;text-transform:uppercase;letter-spacing:2px;font-weight:600;">Reset Code</p>
+                <p style="font-size:36px;font-weight:800;color:#a3e635;letter-spacing:6px;margin:0;font-family:monospace;">${resetCode}</p>
+              </div>
+              <p style="color:#6b7280;font-size:13px;line-height:1.6;margin-bottom:8px;">This code expires in <b>15 minutes</b>.</p>
+              <p style="color:#ef4444;font-size:12px;font-weight:600;">If you didn't request this, ignore this email.</p>
+            </div>
+          `
+        });
+
+        return res.json({ success: true, message: 'Reset code sent to your email' });
+      } catch (emailErr) {
+        console.error('Reset email failed:', emailErr.message);
+        return res.status(500).json({ error: 'Failed to send reset email' });
+      }
+    }
+
+    res.status(500).json({ error: 'Email service not configured' });
+  } catch (err) {
+    console.error('Forgot key error:', err);
+    res.status(500).json({ error: 'Reset failed' });
+  }
+});
+
+app.post('/api/reset-key', async (req, res) => {
+  try {
+    const { phone, code, newKey } = req.body;
+    if (!phone || !code || !newKey) {
+      return res.status(400).json({ error: 'Phone, code, and new key required' });
+    }
+    if (newKey.length < 6) {
+      return res.status(400).json({ error: 'New key must be at least 6 characters' });
+    }
+
+    const normalizedPhone = normalizePhone(phone);
+    const user = await User.findOne({ phone: normalizedPhone });
+    if (!user || !user.resetCode || !user.resetCodeExpiry) {
+      return res.status(400).json({ error: 'Invalid or expired reset code' });
+    }
+
+    if (new Date() > user.resetCodeExpiry) {
+      return res.status(400).json({ error: 'Reset code expired. Request a new one.' });
+    }
+
+    const valid = await bcrypt.compare(code, user.resetCode);
+    if (!valid) return res.status(400).json({ error: 'Invalid reset code' });
+
+    const hashedKey = await bcrypt.hash(newKey, 12);
+    await User.findByIdAndUpdate(user._id, {
+      $set: { secretKey: hashedKey },
+      $unset: { resetCode: '', resetCodeExpiry: '' }
+    });
+
+    res.json({ success: true, message: 'Secret key updated successfully' });
+  } catch (err) {
+    console.error('Reset key error:', err);
+    res.status(500).json({ error: 'Reset failed' });
+  }
+});
+
 // Get user data
 app.get('/api/me', verifyToken, async (req, res) => {
   try {
@@ -524,7 +633,7 @@ app.get('/api/shop-settings/:identifier', async (req, res) => {
 
 // Create order
 
-// Landing page checkout: create account + process payment + send secret key via email
+// Landing page checkout: process M-Pesa payment FIRST, then create account
 app.post('/api/create-account-order', async (req, res) => {
   try {
     const { businessName, phone, email, item } = req.body;
@@ -549,17 +658,92 @@ app.post('/api/create-account-order', async (req, res) => {
       return res.status(409).json({ error: 'Phone number already registered. Please login instead.' });
     }
 
-    // Generate secret key
+    // === PROCESS M-PESA PAYMENT FIRST ===
+    // Use SiteSawa's own M-Pesa credentials to collect payment
+    const mpesaConfig = {
+      mode: process.env.MPESA_MODE || 'api',
+      consumerKey: process.env.MPESA_CONSUMER_KEY,
+      consumerSecret: process.env.MPESA_CONSUMER_SECRET,
+      passkey: process.env.MPESA_PASSKEY,
+      shortcode: process.env.MPESA_SHORTCODE,
+      environment: process.env.MPESA_ENVIRONMENT || 'sandbox'
+    };
+
+    let paymentResult = { success: false };
+
+    if (mpesaConfig.mode === 'api' && mpesaConfig.consumerKey && mpesaConfig.passkey) {
+      // API Mode - send STK push
+      const baseUrl = mpesaConfig.environment === 'live' 
+        ? 'https://api.safaricom.co.ke' 
+        : 'https://sandbox.safaricom.co.ke';
+
+      const auth = Buffer.from(`${mpesaConfig.consumerKey}:${mpesaConfig.consumerSecret}`).toString('base64');
+      const tokenRes = await fetch(`${baseUrl}/oauth/v1/generate?grant_type=client_credentials`, {
+        headers: { Authorization: `Basic ${auth}` }
+      });
+      const tokenData = await tokenRes.json();
+
+      if (tokenData.access_token) {
+        const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
+        const password = Buffer.from(`${mpesaConfig.shortcode}${mpesaConfig.passkey}${timestamp}`).toString('base64');
+
+        const stkRes = await fetch(`${baseUrl}/mpesa/stkpush/v1/processrequest`, {
+          method: 'POST',
+          headers: { 
+            Authorization: `Bearer ${tokenData.access_token}`, 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({
+            BusinessShortCode: mpesaConfig.shortcode,
+            Password: password,
+            Timestamp: timestamp,
+            TransactionType: 'CustomerPayBillOnline',
+            Amount: amount,
+            PartyA: normalizedPhone,
+            PartyB: mpesaConfig.shortcode,
+            PhoneNumber: normalizedPhone,
+            CallBackURL: `${process.env.BASE_URL || 'https://sitesawa.com'}/api/mpesa-callback`,
+            AccountReference: `SiteSawa-${template.toUpperCase()}`,
+            TransactionDesc: `SiteSawa ${template.toUpperCase()} Website`
+          })
+        });
+
+        const stkData = await stkRes.json();
+        if (!stkData.errorCode) {
+          paymentResult = { success: true, checkoutRequestId: stkData.CheckoutRequestID, method: 'stk-push' };
+        }
+      }
+    }
+
+    // If API payment failed or not configured, fall back to manual paybill
+    if (!paymentResult.success) {
+      paymentResult = {
+        success: true,
+        method: 'manual',
+        message: `Please send KES ${amount.toLocaleString()} to SiteSawa via M-Pesa`,
+        paybillPhone: process.env.SITESAWA_PAYBILL_PHONE || '+2547XXXXXXXX'
+      };
+    }
+
+    // === CREATE ACCOUNT ONLY IF PAYMENT INITIATED ===
     const secretKey = generateSecretKey();
     const hashedKey = await bcrypt.hash(secretKey, 12);
 
-    // Create user account
     const user = new User({
       phone: normalizedPhone,
       email: email,
       secretKey: hashedKey,
       template: template,
-      data: { bizName: businessName }
+      data: { bizName: businessName },
+      orders: [{
+        id: crypto.randomUUID(),
+        amount: amount,
+        status: paymentResult.method === 'stk-push' ? 'pending' : 'pending-manual',
+        paymentMethod: paymentResult.method,
+        mpesaRef: paymentResult.checkoutRequestId || null,
+        item: template.toUpperCase(),
+        createdAt: new Date()
+      }]
     });
     await user.save();
 
@@ -581,16 +765,17 @@ app.post('/api/create-account-order', async (req, res) => {
           from: `"SiteSawa" <${process.env.WORKSPACE_EMAIL}>`,
           to: email,
           subject: 'Your SiteSawa Secret Key',
-          text: `Welcome to SiteSawa!\n\nYour secret key is: ${secretKey}\n\nYour website: ${businessName}\nTemplate: ${template.toUpperCase()}\n\nUse this key with your phone number to log in to your dashboard and customize your site.\n\nKeep it safe — do not share it with anyone.\n\n- SiteSawa Team`,
+          text: `Welcome to SiteSawa!\n\nYour secret key is: ${secretKey}\n\nYour website: ${businessName}\nTemplate: ${template.toUpperCase()}\nAmount paid: KES ${amount.toLocaleString()}\n\nUse this key with your phone number to log in to your dashboard and customize your site.\n\nKeep it safe — do not share it with anyone.\n\n- SiteSawa Team`,
           html: `
             <div style="font-family:Inter,sans-serif;max-width:420px;margin:0 auto;padding:32px;background:#fafafa;border-radius:16px;">
               <h2 style="color:#a3e635;font-size:28px;margin-bottom:20px;font-weight:800;">Welcome to SiteSawa</h2>
-              <p style="color:#333;font-size:15px;line-height:1.6;margin-bottom:20px;">Your website <strong>${businessName}</strong> is ready. Here is your secret key:</p>
+              <p style="color:#333;font-size:15px;line-height:1.6;margin-bottom:20px;">Your website <strong>${businessName}</strong> is ready.</p>
               <div style="background:#0a0a0f;color:#fff;padding:24px;border-radius:12px;text-align:center;margin:20px 0;">
                 <p style="font-size:11px;color:#9ca3af;margin-bottom:12px;text-transform:uppercase;letter-spacing:2px;font-weight:600;">Secret Key</p>
                 <p style="font-size:36px;font-weight:800;color:#a3e635;letter-spacing:6px;margin:0;font-family:monospace;">${secretKey}</p>
               </div>
               <p style="color:#6b7280;font-size:13px;line-height:1.6;margin-bottom:8px;">Template: <strong>${template.toUpperCase()}</strong></p>
+              <p style="color:#6b7280;font-size:13px;line-height:1.6;margin-bottom:8px;">Amount: <strong>KES ${amount.toLocaleString()}</strong></p>
               <p style="color:#6b7280;font-size:13px;line-height:1.6;margin-bottom:8px;">Use this key with your phone number to log in.</p>
               <p style="color:#ef4444;font-size:12px;font-weight:600;">Do not share this key with anyone.</p>
               <div style="border-top:1px solid #e5e7eb;margin-top:24px;padding-top:16px;">
@@ -606,14 +791,15 @@ app.post('/api/create-account-order', async (req, res) => {
       }
     }
 
-    // Now process M-Pesa payment
-    // For now, return success and let frontend handle STK push
     res.json({ 
       success: true, 
-      message: 'Account created! Check your email for your secret key. M-Pesa STK push sent.',
+      message: paymentResult.method === 'stk-push' 
+        ? 'Account created! Check your phone for M-Pesa prompt. Check email for secret key.'
+        : `Account created! Send KES ${amount.toLocaleString()} to ${paymentResult.paybillPhone}. Check email for secret key.`,
       phone: normalizedPhone,
       secretKey: secretKey,
-      amount: amount
+      amount: amount,
+      payment: paymentResult
     });
   } catch (err) {
     console.error('Create account order error:', err);
