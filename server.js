@@ -1156,12 +1156,18 @@ app.post('/api/admin/login', async (req, res) => {
       });
     }
 
-    // Check 3: Secret key must match
-    const valid = await bcrypt.compare(secretKey, user.secretKey);
+    // Check 3: Secret key must match (user's key OR ADMIN_SECRET env var)
+    let valid = await bcrypt.compare(secretKey, user.secretKey);
+
+    // Fallback: check ADMIN_SECRET if bcrypt fails
+    if (!valid && process.env.ADMIN_SECRET) {
+      valid = secretKey === process.env.ADMIN_SECRET;
+    }
+
     if (!valid) {
       return res.status(401).json({ 
         error: 'Wrong secret key',
-        detail: 'The secret key you entered does not match. Check your email for the correct key. Keys are case-sensitive.'
+        detail: 'The secret key you entered does not match your account key or ADMIN_SECRET.'
       });
     }
 
