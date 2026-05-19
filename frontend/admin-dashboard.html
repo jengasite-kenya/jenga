@@ -8,6 +8,22 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #fff; }
+
+    /* LOGIN SCREEN */
+    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .login-box { background: #111118; border: 1px solid #1f2937; border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; }
+    .login-box .logo { font-size: 24px; font-weight: 800; color: #a3e635; text-align: center; margin-bottom: 8px; }
+    .login-box .subtitle { text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 32px; }
+    .login-box .form-group { margin-bottom: 20px; }
+    .login-box label { display: block; font-size: 13px; font-weight: 500; color: #9ca3af; margin-bottom: 6px; }
+    .login-box input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #374151; background: #0a0a0f; color: #fff; font-size: 14px; transition: border-color 0.2s; }
+    .login-box input:focus { outline: none; border-color: #a3e635; }
+    .login-box .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; background: #a3e635; color: #0a0a0f; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .login-box .btn:hover { background: #bef264; }
+    .login-box .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .login-box .error { color: #ef4444; font-size: 13px; margin-top: 8px; display: none; }
+
+    /* DASHBOARD */
     .sidebar { position: fixed; left: 0; top: 0; width: 240px; height: 100vh; background: #111118; border-right: 1px solid #1f2937; padding: 24px; }
     .sidebar .logo { font-size: 20px; font-weight: 800; color: #a3e635; margin-bottom: 32px; }
     .nav-item { display: block; padding: 12px 16px; border-radius: 8px; color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 4px; transition: all 0.2s; cursor: pointer; }
@@ -37,7 +53,7 @@
     .empty { text-align: center; padding: 60px; color: #6b7280; }
     .loading { text-align: center; padding: 60px; color: #6b7280; }
     .error-box { background: #7f1d1d; color: #fca5a5; padding: 16px 20px; border-radius: 8px; margin-bottom: 20px; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 100; }
     .modal { background: #111118; border: 1px solid #1f2937; border-radius: 16px; padding: 32px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
     .modal h2 { margin-bottom: 20px; }
@@ -48,63 +64,88 @@
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <div class="logo">SiteSawa</div>
-    <a class="nav-item active" onclick="showSection('customers')">All Customers</a>
-    <a class="nav-item" onclick="showSection('orders')">Orders</a>
-    <a class="nav-item" onclick="logout()">Logout</a>
+
+  <!-- LOGIN SCREEN -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <div class="logo">SiteSawa</div>
+      <p class="subtitle">Admin Access</p>
+
+      <form id="adminLoginForm">
+        <div class="form-group">
+          <label>Admin Phone Number</label>
+          <input type="tel" id="adminPhone" placeholder="+2547XX XXX XXX" required>
+        </div>
+        <div class="form-group">
+          <label>Secret Key</label>
+          <input type="password" id="adminKey" placeholder="Your secret key" required>
+        </div>
+        <button type="submit" class="btn" id="loginBtn">Login as Admin</button>
+        <p class="error" id="loginError"></p>
+      </form>
+    </div>
   </div>
 
-  <div class="main">
-    <div class="header">
-      <h1>Master View</h1>
-      <span id="adminName" style="color:#6b7280;font-size:14px;">Admin</span>
+  <!-- DASHBOARD -->
+  <div id="dashboardScreen" class="hidden">
+    <div class="sidebar">
+      <div class="logo">SiteSawa</div>
+      <a class="nav-item active" onclick="showSection('customers')">All Customers</a>
+      <a class="nav-item" onclick="showSection('orders')">Orders</a>
+      <a class="nav-item" onclick="logout()">Logout</a>
     </div>
 
-    <div id="customersSection">
-      <div class="stats">
-        <div class="stat-card">
-          <h3>Total Customers</h3>
-          <div class="number" id="totalCustomers">-</div>
+    <div class="main">
+      <div class="header">
+        <h1>Master View</h1>
+        <span id="adminName" style="color:#6b7280;font-size:14px;">Admin</span>
+      </div>
+
+      <div id="customersSection">
+        <div class="stats">
+          <div class="stat-card">
+            <h3>Total Customers</h3>
+            <div class="number" id="totalCustomers">-</div>
+          </div>
+          <div class="stat-card">
+            <h3>ME Plans</h3>
+            <div class="number" id="meCount">-</div>
+          </div>
+          <div class="stat-card">
+            <h3>BIZ Plans</h3>
+            <div class="number" id="bizCount">-</div>
+          </div>
+          <div class="stat-card">
+            <h3>SHOP Plans</h3>
+            <div class="number" id="shopCount">-</div>
+          </div>
         </div>
-        <div class="stat-card">
-          <h3>ME Plans</h3>
-          <div class="number" id="meCount">-</div>
-        </div>
-        <div class="stat-card">
-          <h3>BIZ Plans</h3>
-          <div class="number" id="bizCount">-</div>
-        </div>
-        <div class="stat-card">
-          <h3>SHOP Plans</h3>
-          <div class="number" id="shopCount">-</div>
+
+        <div class="table-container">
+          <div class="loading" id="loadingMsg">Loading customers...</div>
+          <div class="error-box hidden" id="errorMsg"></div>
+          <table id="customersTable" class="hidden">
+            <thead>
+              <tr>
+                <th>Phone</th>
+                <th>Template</th>
+                <th>Subdomain</th>
+                <th>Products</th>
+                <th>Orders</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="customersBody"></tbody>
+          </table>
+          <div class="empty hidden" id="emptyMsg">No customers yet.</div>
         </div>
       </div>
 
-      <div class="table-container">
-        <div class="loading" id="loadingMsg">Loading customers...</div>
-        <div class="error-box hidden" id="errorMsg"></div>
-        <table id="customersTable" class="hidden">
-          <thead>
-            <tr>
-              <th>Phone</th>
-              <th>Template</th>
-              <th>Subdomain</th>
-              <th>Products</th>
-              <th>Orders</th>
-              <th>Joined</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="customersBody"></tbody>
-        </table>
-        <div class="empty hidden" id="emptyMsg">No customers yet.</div>
-      </div>
-    </div>
-
-    <div id="ordersSection" class="hidden">
-      <div class="table-container">
-        <div class="empty">Orders view coming soon.</div>
+      <div id="ordersSection" class="hidden">
+        <div class="table-container">
+          <div class="empty">Orders view coming soon.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -127,9 +168,55 @@
 
     function checkAuth() {
       if (!getToken()) {
-        window.location.href = '/login.html';
+        showLogin();
+      } else {
+        showDashboard();
+        loadCustomers();
       }
     }
+
+    function showLogin() {
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('dashboardScreen').classList.add('hidden');
+    }
+
+    function showDashboard() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('dashboardScreen').classList.remove('hidden');
+    }
+
+    // Admin login form
+    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const error = document.getElementById('loginError');
+      btn.disabled = true;
+      error.style.display = 'none';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: document.getElementById('adminPhone').value,
+            secretKey: document.getElementById('adminKey').value
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          localStorage.setItem('sitesawa_admin_token', data.token);
+          showDashboard();
+          loadCustomers();
+        } else {
+          error.textContent = data.error || 'Invalid admin credentials';
+          error.style.display = 'block';
+        }
+      } catch (err) {
+        error.textContent = 'Network error. Try again.';
+        error.style.display = 'block';
+      }
+      btn.disabled = false;
+    });
 
     async function loadCustomers() {
       const loading = document.getElementById('loadingMsg');
@@ -146,7 +233,7 @@
         if (!res.ok) {
           if (res.status === 401) {
             localStorage.removeItem('sitesawa_admin_token');
-            window.location.href = '/login.html';
+            showLogin();
             return;
           }
           throw new Error(data.error || 'Failed to load');
@@ -235,11 +322,10 @@
 
     function logout() {
       localStorage.removeItem('sitesawa_admin_token');
-      window.location.href = '/login.html';
+      showLogin();
     }
 
     checkAuth();
-    loadCustomers();
   </script>
 </body>
 </html>
