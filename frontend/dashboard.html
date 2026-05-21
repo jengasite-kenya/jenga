@@ -146,7 +146,7 @@
         </button>
       </div>
 
-      <div class="nav-section" id="shopNav" style="display:none;">
+      <div class="nav-section hidden" id="shopNav">
         <div class="nav-section-title">Shop</div>
         <button class="nav-item" onclick="showTab('products')" id="nav-products">
           <span class="icon">📦</span> Products
@@ -164,6 +164,9 @@
 
       <div class="nav-section">
         <div class="nav-section-title">Settings</div>
+        <button class="nav-item" onclick="showTab('location')" id="nav-location">
+          <span class="icon">📍</span> Location
+        </button>
         <button class="nav-item" onclick="showTab('domain')" id="nav-domain">
           <span class="icon">🔗</span> Domain
         </button>
@@ -438,6 +441,37 @@
         </div>
       </div>
 
+      <!-- TAB: LOCATION -->
+      <div id="tab-location" class="hidden">
+        <div class="card">
+          <h3>Your Business Address</h3>
+          <div class="form-row">
+            <label>Full Address</label>
+            <textarea id="businessAddress" placeholder="e.g. Moi Avenue, Nairobi CBD, Nairobi, Kenya" style="min-height:60px;"></textarea>
+            <p class="hint">Enter your full street address. This will show a Google Map on your website.</p>
+          </div>
+          <button class="btn-sm btn-primary" onclick="generateMap()">📍 Generate Map</button>
+        </div>
+
+        <div class="card hidden" id="mapPreviewCard">
+          <h3>Map Preview</h3>
+          <div id="mapPreview" style="border-radius:8px;overflow:hidden;height:300px;background:#0a0a0f;"></div>
+          <p class="hint" style="margin-top:8px;">This is how it will look on your website.</p>
+        </div>
+
+        <div class="card">
+          <h3>Map Settings</h3>
+          <div class="toggle-row">
+            <span>Show map on website</span>
+            <div class="toggle-switch on" id="toggleMap" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <span>Show "Get Directions" button</span>
+            <div class="toggle-switch on" id="toggleDirections" onclick="toggleSwitch(this)"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- TAB: DOMAIN -->
       <div id="tab-domain" class="hidden">
         <div class="card">
@@ -576,9 +610,12 @@
 
         userData = data;
 
-        // Show shop tabs if template is shop
+        // Show/hide shop tabs based on template
+        const shopNav = document.getElementById('shopNav');
         if (data.template === 'shop') {
-          document.getElementById('shopNav').style.display = 'block';
+          shopNav.classList.remove('hidden');
+        } else {
+          shopNav.classList.add('hidden');
         }
 
         // Fill form fields
@@ -600,6 +637,12 @@
         document.getElementById('service2Desc').value = d.service2Desc || '';
         document.getElementById('service3').value = d.service3 || '';
         document.getElementById('service3Desc').value = d.service3Desc || '';
+
+        // Location
+        document.getElementById('businessAddress').value = d.businessAddress || '';
+        setToggle('toggleMap', d.showMap !== false);
+        setToggle('toggleDirections', d.showDirections !== false);
+        if (d.businessAddress) generateMap();
 
         // Social
         const s = d.social || {};
@@ -657,6 +700,7 @@
       editor: ['Content Editor', 'Edit your website content'],
       design: ['Design', 'Colors, fonts, and layout'],
       preview: ['Live Preview', 'See your live website'],
+      location: ['Location', 'Add your business address on a map'],
       products: ['Products', 'Manage your shop items'],
       mpesa: ['M-Pesa Setup', 'Configure payments'],
       shipping: ['Shipping', 'Delivery options'],
@@ -709,6 +753,9 @@
           nationwideFee: parseInt(document.getElementById('nationwideFee').value) || 500,
           googleAnalytics: document.getElementById('googleAnalytics').value,
           tiktokPixel: document.getElementById('tiktokPixel').value,
+          businessAddress: document.getElementById('businessAddress').value,
+          showMap: document.getElementById('toggleMap').classList.contains('on'),
+          showDirections: document.getElementById('toggleDirections').classList.contains('on'),
           social: {
             whatsapp: document.getElementById('socialWhatsapp').value,
             instagram: document.getElementById('socialInstagram').value,
@@ -884,6 +931,24 @@
         } catch (err) {}
       };
       reader.readAsDataURL(input.files[0]);
+    }
+
+    // ── GOOGLE MAPS ──
+    function generateMap() {
+      const address = document.getElementById('businessAddress').value.trim();
+      if (!address) { showStatus('Enter an address first', 'error'); return; }
+
+      const encoded = encodeURIComponent(address);
+      const embedUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1000!2d36.8!3d-1.3!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z${encoded}!5e0!3m2!1sen!2ske!4v1`;
+
+      // Use a simpler approach - just embed the search query
+      const simpleEmbed = `https://maps.google.com/maps?q=${encoded}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+
+      const preview = document.getElementById('mapPreview');
+      preview.innerHTML = `<iframe width="100%" height="300" style="border:0;" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src="${simpleEmbed}"></iframe>`;
+
+      document.getElementById('mapPreviewCard').classList.remove('hidden');
+      showStatus('Map generated!', 'success');
     }
 
     // ── LOGOUT ──
