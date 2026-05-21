@@ -3,66 +3,107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - SiteSawa</title>
+  <title>My Website — SiteSawa</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #fff; }
 
-    /* LOGIN SCREEN */
+    /* LOGIN */
     .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
     .login-box { background: #111118; border: 1px solid #1f2937; border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; }
     .login-box .logo { font-size: 24px; font-weight: 800; color: #a3e635; text-align: center; margin-bottom: 8px; }
     .login-box .subtitle { text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 32px; }
     .login-box .form-group { margin-bottom: 20px; }
     .login-box label { display: block; font-size: 13px; font-weight: 500; color: #9ca3af; margin-bottom: 6px; }
-    .login-box input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #374151; background: #0a0a0f; color: #fff; font-size: 14px; transition: border-color 0.2s; }
+    .login-box input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #374151; background: #0a0a0f; color: #fff; font-size: 14px; }
     .login-box input:focus { outline: none; border-color: #a3e635; }
-    .login-box .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; background: #a3e635; color: #0a0a0f; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .login-box .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; background: #a3e635; color: #0a0a0f; font-size: 15px; font-weight: 600; cursor: pointer; }
     .login-box .btn:hover { background: #bef264; }
     .login-box .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .login-box .error { color: #ef4444; font-size: 13px; margin-top: 8px; display: none; }
 
-    /* DASHBOARD */
-    .sidebar { position: fixed; left: 0; top: 0; width: 240px; height: 100vh; background: #111118; border-right: 1px solid #1f2937; padding: 24px; }
-    .sidebar .logo { font-size: 20px; font-weight: 800; color: #a3e635; margin-bottom: 32px; }
-    .nav-item { display: block; padding: 12px 16px; border-radius: 8px; color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 4px; transition: all 0.2s; cursor: pointer; }
-    .nav-item:hover, .nav-item.active { background: #1f2937; color: #fff; }
-    .main { margin-left: 240px; padding: 32px; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-    .header h1 { font-size: 28px; font-weight: 700; }
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
-    .stat-card { background: #111118; border: 1px solid #1f2937; border-radius: 12px; padding: 24px; }
-    .stat-card h3 { font-size: 13px; color: #6b7280; font-weight: 500; margin-bottom: 8px; }
-    .stat-card .number { font-size: 32px; font-weight: 800; color: #a3e635; }
-    .table-container { background: #111118; border: 1px solid #1f2937; border-radius: 12px; overflow: hidden; }
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 14px 20px; font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #1f2937; }
-    td { padding: 14px 20px; font-size: 14px; border-bottom: 1px solid #1f2937; }
-    td:last-child { border-bottom: none; }
-    tr:hover td { background: #1f2937; }
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-    .badge-me { background: #fef3c7; color: #92400e; }
-    .badge-biz { background: #dbeafe; color: #1e40af; }
-    .badge-shop { background: #dcfce7; color: #166534; }
-    .btn-sm { padding: 6px 14px; border-radius: 6px; border: none; font-size: 12px; font-weight: 500; cursor: pointer; }
-    .btn-view { background: #1f2937; color: #fff; }
-    .btn-view:hover { background: #374151; }
-    .btn-delete { background: #7f1d1d; color: #fca5a5; }
-    .btn-delete:hover { background: #991b1b; }
-    .empty { text-align: center; padding: 60px; color: #6b7280; }
-    .loading { text-align: center; padding: 60px; color: #6b7280; }
-    .error-box { background: #7f1d1d; color: #fca5a5; padding: 16px 20px; border-radius: 8px; margin-bottom: 20px; }
+    /* DASHBOARD LAYOUT */
     .hidden { display: none !important; }
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 100; }
-    .modal { background: #111118; border: 1px solid #1f2937; border-radius: 16px; padding: 32px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
-    .modal h2 { margin-bottom: 20px; }
-    .modal-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1f2937; font-size: 14px; }
-    .modal-row:last-child { border-bottom: none; }
-    .modal-row span:first-child { color: #6b7280; }
-    .close-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #6b7280; font-size: 20px; cursor: pointer; }
+    .sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: #111118; border-right: 1px solid #1f2937; padding: 24px; overflow-y: auto; }
+    .sidebar .logo { font-size: 20px; font-weight: 800; color: #a3e635; margin-bottom: 32px; }
+    .nav-section { margin-bottom: 24px; }
+    .nav-section-title { font-size: 10px; font-weight: 700; color: #4b5563; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .nav-item { display: block; padding: 10px 14px; border-radius: 8px; color: #9ca3af; text-decoration: none; font-size: 13px; font-weight: 500; margin-bottom: 2px; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; }
+    .nav-item:hover, .nav-item.active { background: #1f2937; color: #fff; }
+    .nav-item .icon { display: inline-block; width: 20px; margin-right: 8px; }
+
+    .main { margin-left: 260px; padding: 32px; max-width: 900px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+    .header h1 { font-size: 24px; font-weight: 700; }
+    .header .sub { color: #6b7280; font-size: 13px; }
+
+    /* CARDS */
+    .card { background: #111118; border: 1px solid #1f2937; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+    .card h3 { font-size: 14px; font-weight: 600; margin-bottom: 16px; color: #e5e7eb; }
+
+    /* FORM ELEMENTS */
+    .form-row { margin-bottom: 16px; }
+    .form-row label { display: block; font-size: 12px; font-weight: 500; color: #9ca3af; margin-bottom: 6px; }
+    .form-row input, .form-row textarea, .form-row select {
+      width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #374151;
+      background: #0a0a0f; color: #fff; font-size: 14px; font-family: 'Inter', sans-serif;
+    }
+    .form-row input:focus, .form-row textarea:focus, .form-row select:focus { outline: none; border-color: #a3e635; }
+    .form-row textarea { min-height: 80px; resize: vertical; }
+    .form-row .hint { font-size: 11px; color: #4b5563; margin-top: 4px; }
+
+    .btn-sm { padding: 8px 16px; border-radius: 6px; border: none; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .btn-primary { background: #a3e635; color: #0a0a0f; }
+    .btn-primary:hover { background: #bef264; }
+    .btn-secondary { background: #1f2937; color: #fff; }
+    .btn-secondary:hover { background: #374151; }
+    .btn-danger { background: #7f1d1d; color: #fca5a5; }
+    .btn-danger:hover { background: #991b1b; }
+
+    /* COLOR PICKER */
+    .color-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .color-item { flex: 1; min-width: 120px; }
+    .color-item label { font-size: 11px; color: #9ca3af; margin-bottom: 6px; display: block; }
+    .color-item input[type="color"] { width: 100%; height: 40px; border: none; border-radius: 8px; cursor: pointer; }
+
+    /* TOGGLE */
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1f2937; }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-row span { font-size: 13px; }
+    .toggle-switch { width: 44px; height: 24px; background: #374151; border-radius: 12px; position: relative; cursor: pointer; transition: background 0.3s; }
+    .toggle-switch.on { background: #a3e635; }
+    .toggle-switch::after { content: ''; position: absolute; width: 20px; height: 20px; background: #fff; border-radius: 50%; top: 2px; left: 2px; transition: transform 0.3s; }
+    .toggle-switch.on::after { transform: translateX(20px); }
+
+    /* PRODUCT LIST */
+    .product-item { display: flex; gap: 12px; align-items: center; padding: 12px; background: #0a0a0f; border-radius: 8px; margin-bottom: 8px; }
+    .product-item img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }
+    .product-item .info { flex: 1; }
+    .product-item .name { font-size: 13px; font-weight: 600; }
+    .product-item .price { font-size: 12px; color: #a3e635; }
+
+    /* PREVIEW */
+    .preview-box { background: #0a0a0f; border: 1px solid #1f2937; border-radius: 12px; padding: 16px; text-align: center; }
+    .preview-box a { color: #a3e635; text-decoration: none; font-size: 14px; font-weight: 500; }
+    .preview-box a:hover { text-decoration: underline; }
+
+    /* M-PESA SETUP */
+    .mpesa-mode { display: flex; gap: 12px; margin-bottom: 16px; }
+    .mpesa-mode-btn { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #374151; background: #0a0a0f; color: #9ca3af; cursor: pointer; font-size: 13px; text-align: center; }
+    .mpesa-mode-btn.active { border-color: #a3e635; color: #a3e635; background: rgba(163,230,53,0.05); }
+
+    /* SAVE STATUS */
+    .save-status { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 100; transition: all 0.3s; }
+    .save-status.success { background: #166534; color: #86efac; }
+    .save-status.error { background: #7f1d1d; color: #fca5a5; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .sidebar { width: 100%; position: relative; height: auto; border-right: none; border-bottom: 1px solid #1f2937; }
+      .main { margin-left: 0; }
+    }
   </style>
-<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -71,18 +112,17 @@
   <div class="login-screen" id="loginScreen">
     <div class="login-box">
       <div class="logo">SiteSawa</div>
-      <p class="subtitle">Admin Access</p>
-
-      <form id="adminLoginForm">
+      <p class="subtitle">Sign in to edit your website</p>
+      <form id="loginForm">
         <div class="form-group">
-          <label>Admin Phone Number</label>
-          <input type="tel" id="adminPhone" placeholder="+2547XX XXX XXX" required>
+          <label>Phone Number</label>
+          <input type="tel" id="loginPhone" placeholder="+2547XX XXX XXX" required>
         </div>
         <div class="form-group">
           <label>Secret Key</label>
-          <input type="password" id="adminKey" placeholder="Your secret key" required>
+          <input type="password" id="loginKey" placeholder="Your 8-character key" required>
         </div>
-        <button type="submit" class="btn" id="loginBtn">Login as Admin</button>
+        <button type="submit" class="btn" id="loginBtn">Sign In</button>
         <p class="error" id="loginError"></p>
       </form>
     </div>
@@ -92,126 +132,396 @@
   <div id="dashboardScreen" class="hidden">
     <div class="sidebar">
       <div class="logo">SiteSawa</div>
-      <a class="nav-item active" onclick="showSection('customers')">All Customers</a>
-      <a class="nav-item" onclick="showSection('orders')">Orders</a>
-      <a class="nav-item" onclick="logout()">Logout</a>
+
+      <div class="nav-section">
+        <div class="nav-section-title">My Site</div>
+        <button class="nav-item active" onclick="showTab('editor')" id="nav-editor">
+          <span class="icon">✏️</span> Content Editor
+        </button>
+        <button class="nav-item" onclick="showTab('design')" id="nav-design">
+          <span class="icon">🎨</span> Design
+        </button>
+        <button class="nav-item" onclick="showTab('preview')" id="nav-preview">
+          <span class="icon">👁️</span> Live Preview
+        </button>
+      </div>
+
+      <div class="nav-section" id="shopNav" style="display:none;">
+        <div class="nav-section-title">Shop</div>
+        <button class="nav-item" onclick="showTab('products')" id="nav-products">
+          <span class="icon">📦</span> Products
+        </button>
+        <button class="nav-item" onclick="showTab('mpesa')" id="nav-mpesa">
+          <span class="icon">💰</span> M-Pesa Setup
+        </button>
+        <button class="nav-item" onclick="showTab('shipping')" id="nav-shipping">
+          <span class="icon">🚚</span> Shipping
+        </button>
+        <button class="nav-item" onclick="showTab('orders')" id="nav-orders">
+          <span class="icon">📋</span> Orders
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Settings</div>
+        <button class="nav-item" onclick="showTab('domain')" id="nav-domain">
+          <span class="icon">🔗</span> Domain
+        </button>
+        <button class="nav-item" onclick="showTab('seo')" id="nav-seo">
+          <span class="icon">🔍</span> SEO & Analytics
+        </button>
+        <button class="nav-item" onclick="showTab('social')" id="nav-social">
+          <span class="icon">📱</span> Social Links
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <button class="nav-item" onclick="logout()" style="color:#ef4444;">
+          <span class="icon">🚪</span> Logout
+        </button>
+      </div>
     </div>
 
     <div class="main">
+      <!-- HEADER -->
       <div class="header">
-        <h1>Master View</h1>
-        <div style="display:flex;gap:12px;align-items:center;">
-          <button onclick="viewRevenue()" class="btn-sm btn-view" style="background:#a3e635;color:#0a0a0f;font-weight:600;">View Revenue</button>
-          <span id="adminName" style="color:#6b7280;font-size:14px;">Admin</span>
+        <div>
+          <h1 id="pageTitle">Content Editor</h1>
+          <p class="sub" id="pageSub">Edit your website content</p>
+        </div>
+        <button class="btn-sm btn-primary" onclick="saveAll()">💾 Save Changes</button>
+      </div>
+
+      <!-- TAB: EDITOR -->
+      <div id="tab-editor">
+        <div class="card">
+          <h3>Business Info</h3>
+          <div class="form-row">
+            <label>Business Name</label>
+            <input type="text" id="bizName" placeholder="Your business name">
+          </div>
+          <div class="form-row">
+            <label>Tagline / Hero Text</label>
+            <input type="text" id="heroText" placeholder="What you do in one sentence">
+            <p class="hint">This appears as the big headline on your homepage</p>
+          </div>
+          <div class="form-row">
+            <label>About Text</label>
+            <textarea id="aboutText" placeholder="Tell visitors about your business..."></textarea>
+          </div>
+          <div class="form-row">
+            <label>Phone Number</label>
+            <input type="tel" id="phone" placeholder="+2547XX XXX XXX">
+          </div>
+          <div class="form-row">
+            <label>Location</label>
+            <input type="text" id="location" placeholder="e.g. Nairobi, Kenya">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Services</h3>
+          <div class="form-row">
+            <label>Service 1</label>
+            <input type="text" id="service1" placeholder="Service name">
+            <textarea id="service1Desc" placeholder="Description" style="margin-top:8px;min-height:50px;"></textarea>
+          </div>
+          <div class="form-row">
+            <label>Service 2</label>
+            <input type="text" id="service2" placeholder="Service name">
+            <textarea id="service2Desc" placeholder="Description" style="margin-top:8px;min-height:50px;"></textarea>
+          </div>
+          <div class="form-row">
+            <label>Service 3</label>
+            <input type="text" id="service3" placeholder="Service name">
+            <textarea id="service3Desc" placeholder="Description" style="margin-top:8px;min-height:50px;"></textarea>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Logo</h3>
+          <div class="form-row">
+            <label>Upload Logo</label>
+            <input type="file" id="logoUpload" accept="image/*" onchange="uploadLogo(this)">
+            <p class="hint">Recommended: square image, at least 200x200px</p>
+          </div>
+          <div id="logoPreview" style="margin-top:12px;"></div>
         </div>
       </div>
 
-      <div id="customersSection">
-        <div class="stats">
-          <div class="stat-card">
-            <h3>Total Customers</h3>
-            <div class="number" id="totalCustomers">-</div>
-          </div>
-          <div class="stat-card">
-            <h3>ME Plans</h3>
-            <div class="number" id="meCount">-</div>
-          </div>
-          <div class="stat-card">
-            <h3>BIZ Plans</h3>
-            <div class="number" id="bizCount">-</div>
-          </div>
-          <div class="stat-card">
-            <h3>SHOP Plans</h3>
-            <div class="number" id="shopCount">-</div>
-          </div>
-          <div class="stat-card">
-            <h3>Total Revenue</h3>
-            <div class="number" id="totalRevenue">-</div>
-          </div>
-          <div class="stat-card">
-            <h3>This Month</h3>
-            <div class="number" id="monthRevenue">-</div>
-          </div>
-          <div class="stat-card">
-            <h3>Avg Order</h3>
-            <div class="number" id="avgOrder">-</div>
+      <!-- TAB: DESIGN -->
+      <div id="tab-design" class="hidden">
+        <div class="card">
+          <h3>Colors</h3>
+          <div class="color-row">
+            <div class="color-item">
+              <label>Primary Color</label>
+              <input type="color" id="colorPrimary" value="#a3e635">
+            </div>
+            <div class="color-item">
+              <label>Background</label>
+              <input type="color" id="colorBg" value="#ffffff">
+            </div>
+            <div class="color-item">
+              <label>Text Color</label>
+              <input type="color" id="colorText" value="#1e293b">
+            </div>
           </div>
         </div>
 
-        <div class="table-container">
-          <div class="loading" id="loadingMsg">Loading customers...</div>
-          <div class="error-box hidden" id="errorMsg"></div>
-          <table id="customersTable" class="hidden">
-            <thead>
-              <tr>
-                <th>Phone</th>
-                <th>Template</th>
-                <th>Subdomain</th>
-                <th>Products</th>
-                <th>Orders</th>
-                <th>Joined</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="customersBody"></tbody>
-          </table>
-          <div class="empty hidden" id="emptyMsg">No customers yet.</div>
+        <div class="card">
+          <h3>Font Style</h3>
+          <div class="form-row">
+            <select id="fontSelect">
+              <option value="inter">Inter (Clean & Modern)</option>
+              <option value="playfair">Playfair Display (Elegant)</option>
+              <option value="space">Space Grotesk (Geometric)</option>
+              <option value="dm">DM Sans (Friendly)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Section Visibility</h3>
+          <div class="toggle-row">
+            <span>Show Stats/Numbers</span>
+            <div class="toggle-switch on" id="toggleStats" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <span>Show Process/Timeline</span>
+            <div class="toggle-switch on" id="toggleProcess" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <span>Show Pricing Section</span>
+            <div class="toggle-switch on" id="togglePricing" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <span>Show Testimonials</span>
+            <div class="toggle-switch on" id="toggleTestimonials" onclick="toggleSwitch(this)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: PREVIEW -->
+      <div id="tab-preview" class="hidden">
+        <div class="card">
+          <h3>Your Live Website</h3>
+          <div class="preview-box">
+            <p style="color:#9ca3af;margin-bottom:12px;">Your website is live at:</p>
+            <a href="#" id="liveLink" target="_blank">https://yourname.sitesawa.com</a>
+            <p style="color:#4b5563;font-size:12px;margin-top:12px;">Open this link in a new tab to see your site</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Quick Actions</h3>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn-sm btn-secondary" onclick="window.open(document.getElementById('liveLink').href, '_blank')">Open Site ↗</button>
+            <button class="btn-sm btn-secondary" onclick="copyLink()">Copy Link</button>
+            <button class="btn-sm btn-secondary" onclick="shareWhatsApp()">Share on WhatsApp</button>
+          </div>
         </div>
       </div>
 
-      <div id="ordersSection" class="hidden">
-        <div class="table-container">
-          <div class="empty">Orders view coming soon.</div>
+      <!-- TAB: PRODUCTS (SHOP ONLY) -->
+      <div id="tab-products" class="hidden">
+        <div class="card">
+          <h3>Add Product</h3>
+          <div class="form-row">
+            <label>Product Name</label>
+            <input type="text" id="prodName" placeholder="e.g. Leather Wallet">
+          </div>
+          <div class="form-row">
+            <label>Price (KES)</label>
+            <input type="number" id="prodPrice" placeholder="1500">
+          </div>
+          <div class="form-row">
+            <label>Product Image</label>
+            <input type="file" id="prodImage" accept="image/*">
+          </div>
+          <button class="btn-sm btn-primary" onclick="addProduct()">+ Add Product</button>
+        </div>
+
+        <div class="card">
+          <h3>Your Products</h3>
+          <div id="productList">
+            <p style="color:#6b7280;font-size:13px;">No products yet. Add your first one above.</p>
+          </div>
         </div>
       </div>
+
+      <!-- TAB: M-PESA (SHOP ONLY) -->
+      <div id="tab-mpesa" class="hidden">
+        <div class="card">
+          <h3>Payment Mode</h3>
+          <div class="mpesa-mode">
+            <button class="mpesa-mode-btn active" id="modeSimple" onclick="setMpesaMode('simple')">
+              <div style="font-size:18px;margin-bottom:4px;">📱</div>
+              <div><strong>Simple</strong></div>
+              <div style="font-size:11px;color:#6b7280;margin-top:4px;">Customers send to your M-Pesa number</div>
+            </button>
+            <button class="mpesa-mode-btn" id="modeApi" onclick="setMpesaMode('api')">
+              <div style="font-size:18px;margin-bottom:4px;">⚡</div>
+              <div><strong>API (STK Push)</strong></div>
+              <div style="font-size:11px;color:#6b7280;margin-top:4px;">Automatic popup on customer phone</div>
+            </button>
+          </div>
+        </div>
+
+        <div class="card" id="simpleConfig">
+          <h3>Your M-Pesa Number</h3>
+          <div class="form-row">
+            <label>Paybill / Phone Number</label>
+            <input type="tel" id="paybillPhone" placeholder="+2547XX XXX XXX">
+            <p class="hint">Customers will send money to this number</p>
+          </div>
+        </div>
+
+        <div class="card hidden" id="apiConfig">
+          <h3>Daraja API Credentials</h3>
+          <div class="form-row">
+            <label>Consumer Key</label>
+            <input type="text" id="consumerKey" placeholder="Your Daraja consumer key">
+          </div>
+          <div class="form-row">
+            <label>Consumer Secret</label>
+            <input type="password" id="consumerSecret" placeholder="Your consumer secret">
+          </div>
+          <div class="form-row">
+            <label>Passkey</label>
+            <input type="password" id="passkey" placeholder="Your M-Pesa passkey">
+          </div>
+          <div class="form-row">
+            <label>Shortcode</label>
+            <input type="text" id="shortcode" placeholder="e.g. 174379">
+          </div>
+          <div class="form-row">
+            <label>Environment</label>
+            <select id="mpesaEnv">
+              <option value="sandbox">Sandbox (Test)</option>
+              <option value="live">Live (Production)</option>
+            </select>
+          </div>
+          <p class="hint">Get these from <a href="https://developer.safaricom.co.ke" target="_blank" style="color:#a3e635;">Safaricom Daraja Portal</a></p>
+        </div>
+      </div>
+
+      <!-- TAB: SHIPPING (SHOP ONLY) -->
+      <div id="tab-shipping" class="hidden">
+        <div class="card">
+          <h3>Delivery Options</h3>
+          <div class="toggle-row">
+            <span>Enable Shipping</span>
+            <div class="toggle-switch" id="toggleShipping" onclick="toggleSwitch(this)"></div>
+          </div>
+        </div>
+
+        <div class="card" id="shippingConfig">
+          <h3>Shipping Fees</h3>
+          <div class="form-row">
+            <label>Local Delivery (KES)</label>
+            <input type="number" id="localFee" value="200">
+          </div>
+          <div class="form-row">
+            <label>Nationwide Delivery (KES)</label>
+            <input type="number" id="nationwideFee" value="500">
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: ORDERS (SHOP ONLY) -->
+      <div id="tab-orders" class="hidden">
+        <div class="card">
+          <h3>Recent Orders</h3>
+          <div id="ordersList">
+            <p style="color:#6b7280;font-size:13px;">No orders yet. They will appear here when customers buy.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: DOMAIN -->
+      <div id="tab-domain" class="hidden">
+        <div class="card">
+          <h3>Your Site Address</h3>
+          <div class="form-row">
+            <label>Subdomain</label>
+            <input type="text" id="subdomain" placeholder="yourname">
+            <p class="hint">Your site: https://<span id="subPreview">yourname</span>.sitesawa.com</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Custom Domain (Optional)</h3>
+          <div class="form-row">
+            <label>Your Own Domain</label>
+            <input type="text" id="customDomain" placeholder="e.g. mystore.co.ke">
+            <p class="hint">Buy a domain from a registrar, then point it here. We will help you set it up.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: SEO -->
+      <div id="tab-seo" class="hidden">
+        <div class="card">
+          <h3>Google Analytics</h3>
+          <div class="form-row">
+            <label>Tracking ID</label>
+            <input type="text" id="googleAnalytics" placeholder="G-XXXXXXXXXX">
+            <p class="hint">Find this in your Google Analytics account</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3>TikTok Pixel</h3>
+          <div class="form-row">
+            <label>Pixel ID</label>
+            <input type="text" id="tiktokPixel" placeholder="e.g. 7630892299157143560">
+            <p class="hint">For tracking TikTok ad conversions</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3>SEO Actions</h3>
+          <button class="btn-sm btn-secondary" onclick="runSEO()">🚀 Submit to Google Search</button>
+          <p class="hint" style="margin-top:8px;">This tells Google to index your site</p>
+        </div>
+      </div>
+
+      <!-- TAB: SOCIAL -->
+      <div id="tab-social" class="hidden">
+        <div class="card">
+          <h3>Social Media Links</h3>
+          <div class="form-row">
+            <label>WhatsApp Number</label>
+            <input type="tel" id="socialWhatsapp" placeholder="2547XX XXX XXX">
+          </div>
+          <div class="form-row">
+            <label>Instagram URL</label>
+            <input type="url" id="socialInstagram" placeholder="https://instagram.com/yourname">
+          </div>
+          <div class="form-row">
+            <label>Facebook URL</label>
+            <input type="url" id="socialFacebook" placeholder="https://facebook.com/yourname">
+          </div>
+          <div class="form-row">
+            <label>Twitter/X URL</label>
+            <input type="url" id="socialTwitter" placeholder="https://twitter.com/yourname">
+          </div>
+          <div class="form-row">
+            <label>LinkedIn URL</label>
+            <input type="url" id="socialLinkedin" placeholder="https://linkedin.com/in/yourname">
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <div id="customerModal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
-    <div class="modal" style="position:relative;">
-      <button class="close-btn" onclick="closeModal()">&times;</button>
-      <h2>Customer Details</h2>
-      <div id="modalContent"></div>
-    </div>
-  </div>
-
-  <div id="revenueModal" class="modal-overlay hidden" onclick="if(event.target===this)closeRevenueModal()">
-    <div class="modal" style="position:relative;max-width:600px;">
-      <button class="close-btn" onclick="closeRevenueModal()">&times;</button>
-      <h2>Revenue Breakdown</h2>
-      <div id="revenueContent"></div>
-    </div>
-  </div>
+  <div id="saveStatus" class="save-status hidden"></div>
 
   <script>
     const API_BASE = '';
-    let customers = [];
+    let userData = {};
+    let currentTab = 'editor';
 
-    function getToken() {
-      return localStorage.getItem('sitesawa_admin_token');
-    }
-
-    function checkAuth() {
-      if (!getToken()) {
-        showLogin();
-      } else {
-        showDashboard();
-        loadCustomers();
-      }
-    }
-
-    function showLogin() {
-      document.getElementById('loginScreen').classList.remove('hidden');
-      document.getElementById('dashboardScreen').classList.add('hidden');
-    }
-
-    function showDashboard() {
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('dashboardScreen').classList.remove('hidden');
-    }
-
-    // Admin login form
-    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+    // ── LOGIN ──
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('loginBtn');
       const error = document.getElementById('loginError');
@@ -219,21 +529,22 @@
       error.style.display = 'none';
 
       try {
-        const res = await fetch(`${API_BASE}/api/admin/login`, {
+        const res = await fetch(`${API_BASE}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            phone: document.getElementById('adminPhone').value,
-            secretKey: document.getElementById('adminKey').value
+            phone: document.getElementById('loginPhone').value,
+            secretKey: document.getElementById('loginKey').value
           })
         });
         const data = await res.json();
         if (data.success) {
-          localStorage.setItem('sitesawa_admin_token', data.token);
+          localStorage.setItem('sitesawa_token', data.token);
+          localStorage.setItem('sitesawa_template', data.template);
           showDashboard();
-          loadCustomers();
+          loadUserData();
         } else {
-          error.textContent = data.error || 'Invalid admin credentials';
+          error.textContent = data.error || 'Login failed';
           error.style.display = 'block';
         }
       } catch (err) {
@@ -243,197 +554,350 @@
       btn.disabled = false;
     });
 
-    async function loadCustomers() {
-      const loading = document.getElementById('loadingMsg');
-      const error = document.getElementById('errorMsg');
-      const table = document.getElementById('customersTable');
-      const empty = document.getElementById('emptyMsg');
+    function showDashboard() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('dashboardScreen').classList.remove('hidden');
+    }
 
+    function showLogin() {
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('dashboardScreen').classList.add('hidden');
+    }
+
+    // ── LOAD USER DATA ──
+    async function loadUserData() {
       try {
-        const res = await fetch(`${API_BASE}/api/admin/customers`, {
-          headers: { 'Authorization': `Bearer ${getToken()}` }
+        const token = localStorage.getItem('sitesawa_token');
+        const res = await fetch(`${API_BASE}/api/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
+        if (data.error) { logout(); return; }
 
-        if (!res.ok) {
-          if (res.status === 401) {
-            localStorage.removeItem('sitesawa_admin_token');
-            showLogin();
-            return;
-          }
-          throw new Error(data.error || 'Failed to load');
+        userData = data;
+
+        // Show shop tabs if template is shop
+        if (data.template === 'shop') {
+          document.getElementById('shopNav').style.display = 'block';
         }
 
-        customers = data.customers || [];
-        loading.classList.add('hidden');
+        // Fill form fields
+        const d = data.data || {};
+        document.getElementById('bizName').value = d.bizName || '';
+        document.getElementById('heroText').value = d.heroText || '';
+        document.getElementById('aboutText').value = d.aboutText || '';
+        document.getElementById('phone').value = data.phone || '';
+        document.getElementById('location').value = d.location || '';
+        document.getElementById('subdomain').value = data.subdomain || '';
+        document.getElementById('customDomain').value = data.customDomain || '';
+        document.getElementById('googleAnalytics').value = d.googleAnalytics || '';
+        document.getElementById('tiktokPixel').value = d.tiktokPixel || '';
 
-        document.getElementById('totalCustomers').textContent = customers.length;
-        document.getElementById('meCount').textContent = customers.filter(c => c.template === 'me').length;
-        document.getElementById('bizCount').textContent = customers.filter(c => c.template === 'biz').length;
-        document.getElementById('shopCount').textContent = customers.filter(c => c.template === 'shop').length;
+        // Services
+        document.getElementById('service1').value = d.service1 || '';
+        document.getElementById('service1Desc').value = d.service1Desc || '';
+        document.getElementById('service2').value = d.service2 || '';
+        document.getElementById('service2Desc').value = d.service2Desc || '';
+        document.getElementById('service3').value = d.service3 || '';
+        document.getElementById('service3Desc').value = d.service3Desc || '';
 
-        // Revenue calculations
-        const pricing = { me: 7000, biz: 8000, shop: 9000 };
-        let totalRev = 0;
-        let monthRev = 0;
-        let orderCount = 0;
-        const now = new Date();
-        const thisMonth = now.getMonth();
-        const thisYear = now.getFullYear();
+        // Social
+        const s = d.social || {};
+        document.getElementById('socialWhatsapp').value = s.whatsapp || '';
+        document.getElementById('socialInstagram').value = s.instagram || '';
+        document.getElementById('socialFacebook').value = s.facebook || '';
+        document.getElementById('socialTwitter').value = s.twitter || '';
+        document.getElementById('socialLinkedin').value = s.linkedin || '';
 
-        customers.forEach(c => {
-          const templatePrice = pricing[c.template] || 0;
-          totalRev += templatePrice;
+        // Colors
+        document.getElementById('colorPrimary').value = d.colorPrimary || '#a3e635';
+        document.getElementById('colorBg').value = d.colorBg || '#ffffff';
+        document.getElementById('colorText').value = d.colorText || '#1e293b';
 
-          const joined = new Date(c.createdAt);
-          if (joined.getMonth() === thisMonth && joined.getFullYear() === thisYear) {
-            monthRev += templatePrice;
-          }
+        // Font
+        document.getElementById('fontSelect').value = d.font || 'inter';
 
-          const orders = c.orders || [];
-          orders.forEach(o => {
-            if (o.status === 'paid' || o.status === 'completed') {
-              totalRev += (o.amount || 0);
-              orderCount++;
-              const orderDate = new Date(o.createdAt);
-              if (orderDate.getMonth() === thisMonth && orderDate.getFullYear() === thisYear) {
-                monthRev += (o.amount || 0);
-              }
-            }
-          });
-        });
+        // Toggles
+        setToggle('toggleStats', d.showStats !== false);
+        setToggle('toggleProcess', d.showProcess !== false);
+        setToggle('togglePricing', d.showPricing !== false);
+        setToggle('toggleTestimonials', d.showTestimonials !== false);
 
-        document.getElementById('totalRevenue').textContent = 'KES ' + totalRev.toLocaleString();
-        document.getElementById('monthRevenue').textContent = 'KES ' + monthRev.toLocaleString();
-        document.getElementById('avgOrder').textContent = orderCount > 0 ? 'KES ' + Math.round(totalRev / orderCount).toLocaleString() : 'KES 0';
+        // M-Pesa
+        const mpesa = data.mpesaConfig || {};
+        if (mpesa.mode) setMpesaMode(mpesa.mode);
+        document.getElementById('paybillPhone').value = mpesa.paybillPhone || '';
+        document.getElementById('consumerKey').value = mpesa.consumerKey || '';
+        document.getElementById('shortcode').value = mpesa.shortcode || '';
+        document.getElementById('mpesaEnv').value = mpesa.environment || 'sandbox';
 
-        if (customers.length === 0) {
-          empty.classList.remove('hidden');
-          return;
-        }
+        // Shipping
+        setToggle('toggleShipping', d.shippingEnabled || false);
+        document.getElementById('localFee').value = d.localDeliveryFee || 200;
+        document.getElementById('nationwideFee').value = d.nationwideFee || 500;
 
-        const tbody = document.getElementById('customersBody');
-        tbody.innerHTML = customers.map(c => `
-          <tr>
-            <td>${c.phone}</td>
-            <td><span class="badge badge-${c.template}">${c.template.toUpperCase()}</span></td>
-            <td>${c.subdomain || '-'}</td>
-            <td>${(c.products || []).length}</td>
-            <td>${(c.orders || []).length}</td>
-            <td>${new Date(c.createdAt).toLocaleDateString()}</td>
-            <td>
-              <button class="btn-sm btn-view" onclick="viewCustomer('${c._id}')">View</button>
-              <button class="btn-sm btn-delete" onclick="deleteCustomer('${c._id}')">Delete</button>
-            </td>
-          </tr>
-        `).join('');
+        // Preview link
+        const domain = data.customDomain || (data.subdomain ? data.subdomain + '.sitesawa.com' : 'yourname.sitesawa.com');
+        document.getElementById('liveLink').href = 'https://' + domain;
+        document.getElementById('liveLink').textContent = 'https://' + domain;
 
-        table.classList.remove('hidden');
+        // Products
+        renderProducts(data.products || []);
+
+        // Orders
+        renderOrders(data.orders || []);
+
       } catch (err) {
-        loading.classList.add('hidden');
-        error.textContent = err.message;
-        error.classList.remove('hidden');
+        console.error('Load error:', err);
       }
     }
 
-    async function viewCustomer(id) {
-      const customer = customers.find(c => c._id === id);
-      if (!customer) return;
-      const content = document.getElementById('modalContent');
-      content.innerHTML = `
-        <div class="modal-row"><span>Phone</span><span>${customer.phone}</span></div>
-        <div class="modal-row"><span>Template</span><span class="badge badge-${customer.template}">${customer.template.toUpperCase()}</span></div>
-        <div class="modal-row"><span>Subdomain</span><span>${customer.subdomain || 'Not set'}</span></div>
-        <div class="modal-row"><span>Custom Domain</span><span>${customer.customDomain || 'Not set'}</span></div>
-        <div class="modal-row"><span>Products</span><span>${(customer.products || []).length}</span></div>
-        <div class="modal-row"><span>Orders</span><span>${(customer.orders || []).length}</span></div>
-        <div class="modal-row"><span>Joined</span><span>${new Date(customer.createdAt).toLocaleString()}</span></div>
-      `;
-      document.getElementById('customerModal').classList.remove('hidden');
-    }
+    // ── TABS ──
+    const tabTitles = {
+      editor: ['Content Editor', 'Edit your website content'],
+      design: ['Design', 'Colors, fonts, and layout'],
+      preview: ['Live Preview', 'See your live website'],
+      products: ['Products', 'Manage your shop items'],
+      mpesa: ['M-Pesa Setup', 'Configure payments'],
+      shipping: ['Shipping', 'Delivery options'],
+      orders: ['Orders', 'View customer orders'],
+      domain: ['Domain', 'Your website address'],
+      seo: ['SEO & Analytics', 'Google, TikTok tracking'],
+      social: ['Social Links', 'Connect your social media']
+    };
 
-    function closeModal() {
-      document.getElementById('customerModal').classList.add('hidden');
-    }
-
-    function viewRevenue() {
-      const pricing = { me: 7000, biz: 8000, shop: 9000 };
-      let byTemplate = { me: 0, biz: 0, shop: 0 };
-      let byMonth = {};
-      let totalOrders = 0;
-      let totalOrderValue = 0;
-
-      customers.forEach(c => {
-        byTemplate[c.template] += (pricing[c.template] || 0);
-
-        const month = new Date(c.createdAt).toLocaleString('en-US', { month: 'short', year: 'numeric' });
-        byMonth[month] = (byMonth[month] || 0) + (pricing[c.template] || 0);
-
-        (c.orders || []).forEach(o => {
-          if (o.status === 'paid' || o.status === 'completed') {
-            totalOrders++;
-            totalOrderValue += (o.amount || 0);
-            const oMonth = new Date(o.createdAt).toLocaleString('en-US', { month: 'short', year: 'numeric' });
-            byMonth[oMonth] = (byMonth[oMonth] || 0) + (o.amount || 0);
-          }
-        });
-      });
-
-      let html = '<div style="margin-bottom:20px;"><h3 style="font-size:16px;margin-bottom:12px;color:#a3e635;">By Template</h3>';
-      html += `<div class="modal-row"><span>ME Plans</span><span>KES ${byTemplate.me.toLocaleString()}</span></div>`;
-      html += `<div class="modal-row"><span>BIZ Plans</span><span>KES ${byTemplate.biz.toLocaleString()}</span></div>`;
-      html += `<div class="modal-row"><span>SHOP Plans</span><span>KES ${byTemplate.shop.toLocaleString()}</span></div>`;
-      html += '</div>';
-
-      html += '<div style="margin-bottom:20px;"><h3 style="font-size:16px;margin-bottom:12px;color:#a3e635;">By Month</h3>';
-      Object.entries(byMonth).sort().reverse().forEach(([month, amount]) => {
-        html += `<div class="modal-row"><span>${month}</span><span>KES ${amount.toLocaleString()}</span></div>`;
-      });
-      html += '</div>';
-
-      html += '<div><h3 style="font-size:16px;margin-bottom:12px;color:#a3e635;">Order Stats</h3>';
-      html += `<div class="modal-row"><span>Total Paid Orders</span><span>${totalOrders}</span></div>`;
-      html += `<div class="modal-row"><span>Avg Order Value</span><span>KES ${totalOrders > 0 ? Math.round(totalOrderValue/totalOrders).toLocaleString() : 0}</span></div>`;
-      html += '</div>';
-
-      document.getElementById('revenueContent').innerHTML = html;
-      document.getElementById('revenueModal').classList.remove('hidden');
-    }
-
-    function closeRevenueModal() {
-      document.getElementById('revenueModal').classList.add('hidden');
-    }
-
-    async function deleteCustomer(id) {
-      if (!confirm('Delete this customer permanently?')) return;
-      try {
-        const res = await fetch(`${API_BASE}/api/admin/customers/${id}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${getToken()}` }
-        });
-        if (res.ok) {
-          loadCustomers();
-        } else {
-          alert('Delete failed');
-        }
-      } catch (err) {
-        alert('Network error');
-      }
-    }
-
-    function showSection(section) {
+    function showTab(tab) {
+      currentTab = tab;
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      event.target.classList.add('active');
-      document.getElementById('customersSection').classList.toggle('hidden', section !== 'customers');
-      document.getElementById('ordersSection').classList.toggle('hidden', section !== 'orders');
+      document.getElementById('nav-' + tab)?.classList.add('active');
+
+      document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.add('hidden'));
+      document.getElementById('tab-' + tab)?.classList.remove('hidden');
+
+      const [title, sub] = tabTitles[tab] || ['', ''];
+      document.getElementById('pageTitle').textContent = title;
+      document.getElementById('pageSub').textContent = sub;
     }
 
+    // ── SAVE ──
+    async function saveAll() {
+      const token = localStorage.getItem('sitesawa_token');
+      if (!token) { showStatus('Not logged in', 'error'); return; }
+
+      const updates = {
+        data: {
+          bizName: document.getElementById('bizName').value,
+          heroText: document.getElementById('heroText').value,
+          aboutText: document.getElementById('aboutText').value,
+          location: document.getElementById('location').value,
+          service1: document.getElementById('service1').value,
+          service1Desc: document.getElementById('service1Desc').value,
+          service2: document.getElementById('service2').value,
+          service2Desc: document.getElementById('service2Desc').value,
+          service3: document.getElementById('service3').value,
+          service3Desc: document.getElementById('service3Desc').value,
+          colorPrimary: document.getElementById('colorPrimary').value,
+          colorBg: document.getElementById('colorBg').value,
+          colorText: document.getElementById('colorText').value,
+          font: document.getElementById('fontSelect').value,
+          showStats: document.getElementById('toggleStats').classList.contains('on'),
+          showProcess: document.getElementById('toggleProcess').classList.contains('on'),
+          showPricing: document.getElementById('togglePricing').classList.contains('on'),
+          showTestimonials: document.getElementById('toggleTestimonials').classList.contains('on'),
+          shippingEnabled: document.getElementById('toggleShipping').classList.contains('on'),
+          localDeliveryFee: parseInt(document.getElementById('localFee').value) || 200,
+          nationwideFee: parseInt(document.getElementById('nationwideFee').value) || 500,
+          googleAnalytics: document.getElementById('googleAnalytics').value,
+          tiktokPixel: document.getElementById('tiktokPixel').value,
+          social: {
+            whatsapp: document.getElementById('socialWhatsapp').value,
+            instagram: document.getElementById('socialInstagram').value,
+            facebook: document.getElementById('socialFacebook').value,
+            twitter: document.getElementById('socialTwitter').value,
+            linkedin: document.getElementById('socialLinkedin').value
+          }
+        },
+        subdomain: document.getElementById('subdomain').value,
+        customDomain: document.getElementById('customDomain').value
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/api/me`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify(updates)
+        });
+        const data = await res.json();
+        if (data.success) {
+          showStatus('Saved successfully!', 'success');
+        } else {
+          showStatus(data.error || 'Save failed', 'error');
+        }
+      } catch (err) {
+        showStatus('Network error', 'error');
+      }
+    }
+
+    function showStatus(msg, type) {
+      const el = document.getElementById('saveStatus');
+      el.textContent = msg;
+      el.className = 'save-status ' + type;
+      setTimeout(() => el.classList.add('hidden'), 3000);
+    }
+
+    // ── TOGGLES ──
+    function toggleSwitch(el) {
+      el.classList.toggle('on');
+    }
+    function setToggle(id, on) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('on', on);
+    }
+
+    // ── M-PESA MODE ──
+    function setMpesaMode(mode) {
+      document.getElementById('modeSimple').classList.toggle('active', mode === 'simple');
+      document.getElementById('modeApi').classList.toggle('active', mode === 'api');
+      document.getElementById('simpleConfig').classList.toggle('hidden', mode !== 'simple');
+      document.getElementById('apiConfig').classList.toggle('hidden', mode !== 'api');
+    }
+
+    // ── PRODUCTS ──
+    async function addProduct() {
+      const token = localStorage.getItem('sitesawa_token');
+      const name = document.getElementById('prodName').value;
+      const price = parseInt(document.getElementById('prodPrice').value);
+      if (!name || !price) { showStatus('Enter name and price', 'error'); return; }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/products`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ name, price })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('prodName').value = '';
+          document.getElementById('prodPrice').value = '';
+          showStatus('Product added!', 'success');
+          loadUserData();
+        }
+      } catch (err) {
+        showStatus('Failed to add product', 'error');
+      }
+    }
+
+    function renderProducts(products) {
+      const list = document.getElementById('productList');
+      if (!products.length) {
+        list.innerHTML = '<p style="color:#6b7280;font-size:13px;">No products yet. Add your first one above.</p>';
+        return;
+      }
+      list.innerHTML = products.map(p => `
+        <div class="product-item">
+          <img src="${p.image || 'https://via.placeholder.com/48'}" alt="">
+          <div class="info">
+            <div class="name">${p.name}</div>
+            <div class="price">KES ${p.price?.toLocaleString()}</div>
+          </div>
+          <button class="btn-sm btn-danger" onclick="deleteProduct('${p.id}')">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Delete this product?')) return;
+      const token = localStorage.getItem('sitesawa_token');
+      try {
+        await fetch(`${API_BASE}/api/products/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        loadUserData();
+      } catch (err) {}
+    }
+
+    // ── ORDERS ──
+    function renderOrders(orders) {
+      const list = document.getElementById('ordersList');
+      if (!orders.length) {
+        list.innerHTML = '<p style="color:#6b7280;font-size:13px;">No orders yet. They will appear here when customers buy.</p>';
+        return;
+      }
+      list.innerHTML = orders.map(o => `
+        <div style="padding:12px;background:#0a0a0f;border-radius:8px;margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;font-weight:600;">Order #${o.id?.slice(0,8)}</span>
+            <span style="font-size:11px;padding:3px 10px;border-radius:12px;background:${o.status==='paid'?'#166534':o.status==='pending'?'#92400e':'#1f2937'};color:${o.status==='paid'?'#86efac':o.status==='pending'?'#fbbf24':'#9ca3af'}">${o.status?.toUpperCase()}</span>
+          </div>
+          <p style="font-size:12px;color:#6b7280;margin-top:4px;">KES ${o.amount?.toLocaleString()} · ${new Date(o.createdAt).toLocaleDateString()}</p>
+        </div>
+      `).join('');
+    }
+
+    // ─- PREVIEW ACTIONS ──
+    function copyLink() {
+      const link = document.getElementById('liveLink').href;
+      navigator.clipboard.writeText(link);
+      showStatus('Link copied!', 'success');
+    }
+    function shareWhatsApp() {
+      const link = document.getElementById('liveLink').href;
+      window.open(`https://wa.me/?text=Check%20out%20my%20website:%20${encodeURIComponent(link)}`, '_blank');
+    }
+
+    // ── SEO ──
+    async function runSEO() {
+      const token = localStorage.getItem('sitesawa_token');
+      try {
+        const res = await fetch(`${API_BASE}/api/seo/setup`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          showStatus('Submitted to Google!', 'success');
+        } else {
+          showStatus(data.error || 'SEO setup failed', 'error');
+        }
+      } catch (err) {
+        showStatus('SEO request failed', 'error');
+      }
+    }
+
+    // ── LOGO UPLOAD ──
+    async function uploadLogo(input) {
+      if (!input.files[0]) return;
+      const token = localStorage.getItem('sitesawa_token');
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const res = await fetch(`${API_BASE}/api/me`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ data: { logo: e.target.result } })
+          });
+          if (res.ok) {
+            document.getElementById('logoPreview').innerHTML = `<img src="${e.target.result}" style="max-width:120px;border-radius:8px;">`;
+            showStatus('Logo uploaded!', 'success');
+          }
+        } catch (err) {}
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+
+    // ── LOGOUT ──
     function logout() {
-      localStorage.removeItem('sitesawa_admin_token');
+      localStorage.removeItem('sitesawa_token');
+      localStorage.removeItem('sitesawa_template');
       showLogin();
     }
 
-    checkAuth();
+    // ── INIT ──
+    if (localStorage.getItem('sitesawa_token')) {
+      showDashboard();
+      loadUserData();
+    }
   </script>
 </body>
 </html>
