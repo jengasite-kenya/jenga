@@ -963,6 +963,97 @@
       showDashboard();
       loadUserData();
     }
+    // ── SUPPORT CHAT ──
+    let chatOpen = false;
+
+    function toggleChat() {
+      chatOpen = !chatOpen;
+      document.getElementById('chatWidget').classList.toggle('open', chatOpen);
+      if (chatOpen) loadChatMessages();
+    }
+
+    async function loadChatMessages() {
+      const token = localStorage.getItem('sitesawa_token');
+      try {
+        const res = await fetch(`${API_BASE}/api/support/messages`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        renderChatMessages(data.messages || []);
+      } catch (err) { console.log('Chat load error:', err); }
+    }
+
+    function renderChatMessages(messages) {
+      const container = document.getElementById('chatMessagesList');
+      if (!messages.length) {
+        container.innerHTML = '<p style="color:#6b7280;font-size:12px;text-align:center;padding:20px;">No messages yet. Start a conversation below.</p>';
+        return;
+      }
+      container.innerHTML = messages.map(m => `
+        <div style="display:flex;${m.from === 'customer' ? 'justify-content:flex-end;' : 'justify-content:flex-start;'}margin-bottom:8px;">
+          <div style="max-width:80%;padding:8px 12px;border-radius:12px;font-size:13px;line-height:1.4;${m.from === 'customer' ? 'background:#a3e635;color:#0a0a0f;border-bottom-right-radius:4px;' : 'background:#1f2937;color:#fff;border-bottom-left-radius:4px;'}">
+            ${m.text}
+            <p style="font-size:10px;opacity:0.6;margin-top:2px;">${new Date(m.time).toLocaleTimeString()}</p>
+          </div>
+        </div>
+      `).join('');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chatInputField');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const token = localStorage.getItem('sitesawa_token');
+      try {
+        const res = await fetch(`${API_BASE}/api/support/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ text })
+        });
+        if (res.ok) {
+          input.value = '';
+          loadChatMessages();
+        }
+      } catch (err) { alert('Failed to send message'); }
+    }
   </script>
+
+  <!-- CHAT WIDGET -->
+  <div id="chatWidget" style="position:fixed;bottom:24px;right:24px;z-index:1000;">
+    <!-- Chat Button -->
+    <button onclick="toggleChat()" id="chatButton" style="width:56px;height:56px;border-radius:50%;background:#a3e635;color:#0a0a0f;border:none;cursor:pointer;font-size:24px;box-shadow:0 4px 20px rgba(163,230,53,0.3);transition:all 0.3s;display:flex;align-items:center;justify-content:center;">
+      💬
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chatWindow" style="position:absolute;bottom:70px;right:0;width:340px;height:450px;background:#111118;border:1px solid #1f2937;border-radius:16px;overflow:hidden;display:none;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+      <!-- Header -->
+      <div style="padding:16px;background:#1f2937;border-bottom:1px solid #374151;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <h4 style="font-size:14px;font-weight:600;">SiteSawa Support</h4>
+          <p style="font-size:11px;color:#6b7280;">We reply within 24 hours</p>
+        </div>
+        <button onclick="toggleChat()" style="background:none;border:none;color:#9ca3af;font-size:18px;cursor:pointer;">&times;</button>
+      </div>
+
+      <!-- Messages -->
+      <div id="chatMessagesList" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;">
+        <p style="color:#6b7280;font-size:12px;text-align:center;padding:20px;">No messages yet. Start a conversation below.</p>
+      </div>
+
+      <!-- Input -->
+      <div style="padding:12px;border-top:1px solid #1f2937;display:flex;gap:8px;">
+        <input type="text" id="chatInputField" placeholder="Describe your problem..." style="flex:1;padding:10px 14px;border-radius:8px;border:1px solid #374151;background:#0a0a0f;color:#fff;font-size:13px;" onkeypress="if(event.key==='Enter')sendChatMessage()">
+        <button onclick="sendChatMessage()" style="padding:10px 16px;border-radius:8px;border:none;background:#a3e635;color:#0a0a0f;font-size:13px;font-weight:600;cursor:pointer;">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #chatWidget.open #chatWindow { display: flex !important; }
+    #chatWidget.open #chatButton { transform: scale(0.9); }
+  </style>
 </body>
 </html>
