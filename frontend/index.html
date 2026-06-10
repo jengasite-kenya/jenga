@@ -779,10 +779,9 @@ let selectedTemplate = null;
 
 // ── RENDER GRIDS ──
 function renderGrids() {
-  if (!window.TEMPLATES) return;
   ['personal','business','ecommerce'].forEach(cat => {
     const grid = document.getElementById('grid-'+cat);
-    if (!grid) return;
+    if (!grid || !TEMPLATES[cat]) return;
     grid.innerHTML = TEMPLATES[cat].map((t,i) => `
       <div class="t-card${selectedTemplate?.id===t.id?' selected':''}" onclick="openPreview('${cat}',${i})">
         <div class="t-preview">
