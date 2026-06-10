@@ -183,7 +183,7 @@ nav{
 
 /* live preview modal */
 .preview-modal{
-  display:none;position:fixed;inset:0;z-index:500;
+  display:none;position:fixed;inset:0;z-index:9999;
   background:rgba(0,0,0,.9);backdrop-filter:blur(8px);
   flex-direction:column;
 }
@@ -256,8 +256,10 @@ nav{
 .plan-feats{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
 .plan-feats li{font-size:12px;color:#666;display:flex;align-items:center;gap:8px}
 .plan-feats li::before{content:'';width:14px;height:14px;border-radius:50%;background:rgba(190,242,100,.08);border:1px solid rgba(190,242,100,.15);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 7l2.5 2.5L11 4.5' stroke='%23c8ff00' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-size:10px;background-position:center;background-repeat:no-repeat;flex-shrink:0}
+.plan.selected{border-color:var(--lime);box-shadow:0 0 0 1px var(--lime)}
 .plan-btn{width:100%;padding:10px;border-radius:7px;font-size:12px;font-weight:700;border:1px solid #333;background:transparent;color:#666;transition:all .2s;cursor:pointer}
-.plan.featured .plan-btn{background:var(--lime);color:var(--black);border-color:var(--lime)}
+.plan.featured .plan.selected{border-color:var(--lime);box-shadow:0 0 0 1px var(--lime)}
+.plan-btn{background:var(--lime);color:var(--black);border-color:var(--lime)}
 .plan-btn:hover{border-color:var(--lime);color:var(--lime)}
 .plan.featured .plan-btn:hover{background:#d4f57a}
 
@@ -345,12 +347,23 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   .nav-mid{display:none}
   .nav-end .btn-ghost{display:none}
   #burger{display:block}
+  .hero{min-height:auto;padding-bottom:0}
+  .hero-left{padding:72px 20px 48px}
+  .hero h1{font-size:clamp(2.4rem,10vw,3.6rem)}
+  .hero-sub{font-size:15px;max-width:100%}
+  .hero-btns{gap:8px}
+  .btn-big{padding:12px 20px;font-size:14px}
+  .hero-pills{gap:6px}
+  .hero-pill{font-size:10px;padding:4px 10px}
   .template-grid{grid-template-columns:repeat(2,1fr)}
   .cat-tabs{overflow-x:auto}
   .plans-grid{grid-template-columns:1fr}
+  .plan{padding:28px 20px}
   footer{grid-template-columns:1fr;padding:28px 20px}
   .ft-bottom{padding:14px 20px}
   .preview-topbar{flex-wrap:wrap;height:auto;padding:10px 12px;gap:8px}
+  .checkout-inner{padding:0 16px}
+  .co-form{gap:10px}
 }
 </style>
 </head>
@@ -520,7 +533,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
     </div>
   </div>
   <div class="preview-frame-wrap" id="pFrameWrap">
-    <iframe class="preview-iframe" id="pFrame" src="about:blank" title="Template preview" sandbox="allow-scripts allow-same-origin"></iframe>
+    <iframe class="preview-iframe" id="pFrame" src="about:blank" title="Template preview" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation"></iframe>
   </div>
 </div>
 
@@ -766,8 +779,10 @@ let selectedTemplate = null;
 
 // ── RENDER GRIDS ──
 function renderGrids() {
+  if (!window.TEMPLATES) return;
   ['personal','business','ecommerce'].forEach(cat => {
     const grid = document.getElementById('grid-'+cat);
+    if (!grid) return;
     grid.innerHTML = TEMPLATES[cat].map((t,i) => `
       <div class="t-card${selectedTemplate?.id===t.id?' selected':''}" onclick="openPreview('${cat}',${i})">
         <div class="t-preview">
@@ -788,11 +803,17 @@ function renderGrids() {
 function showCat(cat, btn) {
   activeCat = cat;
   ['personal','business','ecommerce'].forEach(c => {
-    document.getElementById('grid-'+c).classList.toggle('hidden', c !== cat);
+    const g = document.getElementById('grid-'+c);
+    if (g) g.classList.toggle('hidden', c !== cat);
   });
+  // Update active tab — find it if btn not passed
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
   if (btn) {
-    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
+  } else {
+    const tabs = document.querySelectorAll('.cat-tab');
+    const idx = ['personal','business','ecommerce'].indexOf(cat);
+    if (tabs[idx]) tabs[idx].classList.add('active');
   }
   // Re-apply search filter
   const q = document.getElementById('tmplSearch')?.value || '';
@@ -863,7 +884,7 @@ function selectTemplate() {
   selectPlan(plan);
   closePreview();
   renderGrids();
-  document.getElementById('checkout').scrollIntoView({ behavior: 'smooth' });
+  const co = document.getElementById('checkout'); if(co) co.scrollIntoView({ behavior: 'smooth' });
   // Update selected plan name to show template
   document.getElementById('planName').textContent = `${plan} · ${t.name}`;
 }
@@ -916,11 +937,15 @@ const PLANS = {
 let tier = 'PERSONAL';
 function selectPlan(t) {
   tier = t;
+  document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
+  const planMap = {'PERSONAL':0,'BUSINESS':1,'ECOMMERCE':2};
+  const planEls = document.querySelectorAll('.plan');
+  if (planEls[planMap[t]]) planEls[planMap[t]].classList.add('selected');
   document.getElementById('planName').textContent = selectedTemplate?.cat === t.toLowerCase().replace('ecommerce','ecommerce')
     ? `${t} · ${selectedTemplate.name}`
     : PLANS[t].name;
   document.getElementById('planPrice').textContent = 'KES ' + PLANS[t].price.toLocaleString();
-  document.getElementById('checkout').scrollIntoView({ behavior: 'smooth' });
+  const co = document.getElementById('checkout'); if(co) co.scrollIntoView({ behavior: 'smooth' });
 }
 
 // ── CHECKOUT ──
