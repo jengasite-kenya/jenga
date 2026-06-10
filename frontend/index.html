@@ -203,8 +203,8 @@ nav{
   display:flex;align-items:center;gap:5px;
 }
 .prev-btn:hover,.next-btn:hover{border-color:#555;color:var(--white)}
-.preview-close{padding:10px 18px;border-radius:6px;background:transparent;border:1px solid #333;color:#888;font-size:13px;cursor:pointer;transition:all .15s;min-height:40px}
-.preview-close:hover,.preview-close:active{border-color:#ef4444;color:#ef4444}
+.preview-close{padding:7px 14px;border-radius:6px;background:transparent;border:1px solid #333;color:#888;font-size:12px;cursor:pointer;transition:all .15s}
+.preview-close:hover{border-color:#ef4444;color:#ef4444}
 .preview-select-btn{
   padding:8px 18px;border-radius:6px;background:var(--lime);color:var(--black);
   font-size:13px;font-weight:700;border:none;cursor:pointer;transition:all .15s;
@@ -364,8 +364,6 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   footer{grid-template-columns:1fr;padding:28px 20px}
   .ft-bottom{padding:14px 20px}
   .preview-topbar{flex-wrap:wrap;height:auto;padding:10px 12px;gap:8px}
-  .preview-close{margin-left:auto}
-  .preview-select-btn,.preview-close{min-height:44px;min-width:44px}
   .checkout-inner{padding:0 16px}
   .co-form{gap:10px}
 }
@@ -387,14 +385,14 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   <div class="nav-end">
     <a href="/login.html" class="btn-ghost">Sign in</a>
     <a href="#checkout" class="btn-lime">Get your website →</a>
-    <button id="burger" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h14M2 9h14M2 14h14"/></svg></button>
+    <button id="burger" onclick="document.getElementById('mob').classList.toggle('on')" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h14M2 9h14M2 14h14"/></svg></button>
   </div>
 </nav>
 <div id="mob">
-  <button id="mob-x" aria-label="Close"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3l12 12M15 3L3 15"/></svg></button>
-  <a href="#templates" class="mob-link">Templates</a>
-  <a href="#pricing" class="mob-link">Pricing</a>
-  <a href="#checkout" class="mob-link">Get started</a>
+  <button id="mob-x" onclick="document.getElementById('mob').classList.remove('on')" aria-label="Close"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3l12 12M15 3L3 15"/></svg></button>
+  <a href="#templates" onclick="document.getElementById('mob').classList.remove('on')">Templates</a>
+  <a href="#pricing" onclick="document.getElementById('mob').classList.remove('on')">Pricing</a>
+  <a href="#checkout" onclick="document.getElementById('mob').classList.remove('on')">Get started</a>
   <a href="/login.html" style="color:var(--lime)">Sign in →</a>
 </div>
 
@@ -423,22 +421,22 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   <div class="hero-right">
     <div class="hero-preview-label">30 templates — click to preview</div>
     <div class="hero-screens">
-      <div class="hero-screen" id="heroScreen0" data-cat="personal" data-idx="0">
+      <div class="hero-screen" onclick="openPreview('personal',0)">
         <img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=600&q=80" alt="Personal template">
         <span class="hero-screen-label">Personal · Studio</span>
         <span class="hero-screen-badge">Personal</span>
       </div>
-      <div class="hero-screen" id="heroScreen1" data-cat="business" data-idx="0">
+      <div class="hero-screen" onclick="openPreview('business',0)">
         <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80" alt="Business template">
         <span class="hero-screen-label">Business · Agency</span>
         <span class="hero-screen-badge">Business</span>
       </div>
-      <div class="hero-screen" id="heroScreen2" data-cat="ecommerce" data-idx="0">
+      <div class="hero-screen" onclick="openPreview('ecommerce',0)">
         <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&q=80" alt="E-Commerce template">
         <span class="hero-screen-label">E-Commerce · Boutique</span>
         <span class="hero-screen-badge">E-Commerce</span>
       </div>
-      <div class="hero-screen" id="heroScreen3" data-cat="personal" data-idx="4">
+      <div class="hero-screen" onclick="openPreview('personal',4)">
         <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&q=80" alt="Personal dark">
         <span class="hero-screen-label">Personal · Dark</span>
         <span class="hero-screen-badge">Personal</span>
@@ -488,9 +486,9 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
       </div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <div class="cat-tabs">
-          <button class="cat-tab active" id="tabPersonal">Personal <span style="opacity:.5;font-size:11px">12</span></button>
-          <button class="cat-tab" id="tabBusiness">Business <span style="opacity:.5;font-size:11px">15</span></button>
-          <button class="cat-tab" id="tabEcommerce">E-Commerce <span style="opacity:.5;font-size:11px">6</span></button>
+          <button class="cat-tab active" onclick="showCat('personal',this)">Personal <span style="opacity:.5;font-size:11px">12</span></button>
+          <button class="cat-tab" onclick="showCat('business',this)">Business <span style="opacity:.5;font-size:11px">15</span></button>
+          <button class="cat-tab" onclick="showCat('ecommerce',this)">E-Commerce <span style="opacity:.5;font-size:11px">6</span></button>
         </div>
         <input id="tmplSearch" type="search" placeholder="Search templates..." oninput="filterTemplates(this.value)"
           style="padding:9px 14px;background:#111;border:1px solid #222;border-radius:7px;color:#fff;font-size:13px;width:200px;outline:none;transition:border .15s"
@@ -522,18 +520,18 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
         <div class="preview-style" id="pStyle">Style description</div>
       </div>
       <div class="preview-nav-btns">
-        <button class="prev-btn" id="btnPrev">← Prev</button>
-        <button class="next-btn" id="btnNext">Next →</button>
+        <button class="prev-btn" onclick="navPreview(-1)">← Prev</button>
+        <button class="next-btn" onclick="navPreview(1)">Next →</button>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
       <div class="device-btns">
-        <button class="dev-btn active" id="btnDesktp">Desktop</button>
-        <button class="dev-btn" id="btnTablet">Tablet</button>
-        <button class="dev-btn" id="btnMobile">Mobile</button>
+        <button class="dev-btn active" onclick="setDevice('desktop',this)">Desktop</button>
+        <button class="dev-btn" onclick="setDevice('tablet',this)">Tablet</button>
+        <button class="dev-btn" onclick="setDevice('mobile',this)">Mobile</button>
       </div>
-      <button class="preview-select-btn" id="pSelectBtn">Select this template →</button>
-      <button class="preview-close" id="btnClose">Close ✕</button>
+      <button class="preview-select-btn" id="pSelectBtn" onclick="selectTemplate()">Select this template →</button>
+      <button class="preview-close" onclick="closePreview()">Close ✕</button>
     </div>
   </div>
   <div class="preview-frame-wrap" id="pFrameWrap">
@@ -594,7 +592,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
     <div class="section-tag reveal">Pricing</div>
     <div class="section-title reveal">One price. Yours forever.</div>
     <div class="plans-grid">
-      <div class="plan reveal" id="planPersonal">
+      <div class="plan reveal" onclick="selectPlan('PERSONAL')">
         <span class="plan-badge pb-personal">Personal</span>
         <div class="plan-name">Personal</div>
         <div class="plan-who">Artists · Doctors · Lawyers · Freelancers · Consultants</div>
@@ -607,9 +605,9 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
           <li>yourname.sitesawa.com</li>
           <li>Google Analytics + SEO</li>
         </ul>
-        <button class="plan-btn" id="btnPersonal">Choose →</button>
+        <button class="plan-btn" onclick="event.stopPropagation();selectPlan('PERSONAL')">Choose →</button>
       </div>
-      <div class="plan reveal d1" id="planBusiness">
+      <div class="plan reveal d1" onclick="selectPlan('BUSINESS')">
         <span class="plan-badge pb-business">Business</span>
         <div class="plan-name">Business</div>
         <div class="plan-who">Salons · Restaurants · Gyms · Garages · Hardware</div>
@@ -622,9 +620,9 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
           <li>TikTok Pixel + Analytics</li>
           <li>SEO + sitemap</li>
         </ul>
-        <button class="plan-btn" id="btnBusiness">Choose →</button>
+        <button class="plan-btn" onclick="event.stopPropagation();selectPlan('BUSINESS')">Choose →</button>
       </div>
-      <div class="plan reveal d2" id="planEcommerce">
+      <div class="plan reveal d2" onclick="selectPlan('ECOMMERCE')">
         <span class="plan-badge pb-ecommerce">E-Commerce</span>
         <div class="plan-name">Shop</div>
         <div class="plan-who">Clothes · Electronics · Beauty · Any product</div>
@@ -637,7 +635,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
           <li>Order dashboard</li>
           <li>Delivery options</li>
         </ul>
-        <button class="plan-btn" id="btnEcommerce">Choose →</button>
+        <button class="plan-btn" onclick="event.stopPropagation();selectPlan('ECOMMERCE')">Choose →</button>
       </div>
     </div>
 </section>
@@ -717,9 +715,9 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   </div>
   <div class="ft-col">
     <h4>Templates</h4>
-    <a href="#templates" id="ftPersonal">Personal (12)</a>
-    <a href="#templates" id="ftBusiness">Business (12)</a>
-    <a href="#templates" id="ftEcommerce">E-Commerce (6)</a>
+    <a href="#templates" onclick="showCat('personal')">Personal (12)</a>
+    <a href="#templates" onclick="showCat('business')">Business (12)</a>
+    <a href="#templates" onclick="showCat('ecommerce')">E-Commerce (6)</a>
   </div>
   <div class="ft-col">
     <h4>Account</h4>
@@ -902,73 +900,19 @@ window.setDevice = function(mode, btn) {
 // ESC to close preview
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePreview(); });
 
-// ── ALL BUTTON WIRING ── single place, no inline onclick anywhere
-(function() {
-  function on(id, fn, stopProp) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    ['click','touchend'].forEach(function(evt) {
-      el.addEventListener(evt, function(e) {
-        if (evt === 'touchend') e.preventDefault();
-        if (stopProp) e.stopPropagation();
-        fn(el);
-      }, { passive: false });
-    });
+// ── TEMPLATE CARD CLICKS (event delegation — more reliable on mobile) ──
+document.addEventListener('click', function(e) {
+  const card = e.target.closest('.t-card[data-cat]');
+  if (card) {
+    openPreview(card.dataset.cat, parseInt(card.dataset.idx));
   }
-
-  // Burger menu
-  on('burger',  function() { document.getElementById('mob').classList.toggle('on'); });
-  on('mob-x',   function() { document.getElementById('mob').classList.remove('on'); });
-
-  // Mobile nav links — close menu on tap
-  document.querySelectorAll('.mob-link').forEach(function(a) {
-    a.addEventListener('click', function() { document.getElementById('mob').classList.remove('on'); });
-  });
-
-  // Hero screens
-  [['heroScreen0','personal',0],['heroScreen1','business',0],
-   ['heroScreen2','ecommerce',0],['heroScreen3','personal',4]].forEach(function(s) {
-    on(s[0], function() { openPreview(s[1], s[2]); });
-  });
-
-  // Category tabs
-  on('tabPersonal',  function(el) { showCat('personal',  el); });
-  on('tabBusiness',  function(el) { showCat('business',  el); });
-  on('tabEcommerce', function(el) { showCat('ecommerce', el); });
-
-  // Preview modal
-  on('btnClose',   function() { closePreview(); });
-  on('btnPrev',    function() { navPreview(-1); });
-  on('btnNext',    function() { navPreview(1); });
-  on('pSelectBtn', function() { selectTemplate(); });
-  on('btnDesktp',  function(el) { setDevice('desktop', el); });
-  on('btnTablet',  function(el) { setDevice('tablet',  el); });
-  on('btnMobile',  function(el) { setDevice('mobile',  el); });
-
-  // Plan cards + buttons
-  on('planPersonal',  function() { selectPlan('PERSONAL'); });
-  on('planBusiness',  function() { selectPlan('BUSINESS'); });
-  on('planEcommerce', function() { selectPlan('ECOMMERCE'); });
-  on('btnPersonal',  function() { selectPlan('PERSONAL'); },  true);
-  on('btnBusiness',  function() { selectPlan('BUSINESS'); },  true);
-  on('btnEcommerce', function() { selectPlan('ECOMMERCE'); }, true);
-
-  // Footer template links
-  on('ftPersonal',  function() { showCat('personal'); });
-  on('ftBusiness',  function() { showCat('business'); });
-  on('ftEcommerce', function() { showCat('ecommerce'); });
-
-  // Template card clicks (event delegation)
-  document.addEventListener('click', function(e) {
-    var card = e.target.closest ? e.target.closest('.t-card[data-cat]') : null;
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const card = e.target.closest('.t-card[data-cat]');
     if (card) openPreview(card.dataset.cat, parseInt(card.dataset.idx));
-  });
-  document.addEventListener('touchend', function(e) {
-    var card = e.target.closest ? e.target.closest('.t-card[data-cat]') : null;
-    if (card) { e.preventDefault(); openPreview(card.dataset.cat, parseInt(card.dataset.idx)); }
-  }, { passive: false });
-
-})();
+  }
+});
 
 // ── SCROLL REVEAL ──
 const io = new IntersectionObserver(e => {
@@ -1025,10 +969,10 @@ window.selectPlan = function(t) {
 
 // ── CHECKOUT ──
 const STEPS = ['stepForm','stepProcessing','stepStk','stepManual','stepSuccess','stepError'];
-function show(id) { STEPS.forEach(s => { const el = document.getElementById(s); el.style.display = s===id?'block':'none'; el.classList.toggle('on', s===id); }); }
+window.show = function(id) { STEPS.forEach(s => { const el = document.getElementById(s); el.style.display = s===id?'block':'none'; el.classList.toggle('on', s===id); }); }
 window.resetCO = function() { show('stepForm'); const b=document.getElementById('payBtn'); b.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5L2.5 5.5v5l5.5 3.5 5.5-3.5v-5L8 1.5z"/></svg> Pay with M-Pesa'; b.disabled=false; }
 
-async window.doPay = function() {
+async window.doPay = async function() {
   const biz   = document.getElementById('bizIn').value.trim();
   const email = document.getElementById('emailIn').value.trim();
   const phone = document.getElementById('phoneIn').value.trim();
@@ -1126,7 +1070,7 @@ async window.doPay = function() {
   }
 }
 
-function showCOError(msg) {
+window.showCOError = function(msg) {
   document.getElementById('errMsg').textContent = msg;
   show('stepError');
   const btn = document.getElementById('payBtn');
