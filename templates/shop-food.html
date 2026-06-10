@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mlango — Food Delivery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff8f1;--card:#ffffff;--ink:#26170f;--mut:#7c6a5e;--line:#f0e3d6;--orange:#f5391e;--orange-d:#d92c12;--amber:#ff9e2c;--green:#1ea05a}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font:400 16px/1.6 'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}img{display:block;max-width:100%}
+.disp{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+nav{position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(255,248,241,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:18px}
+.logo{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:21px;display:flex;align-items:center;gap:8px}
+.logo .m{width:32px;height:32px;border-radius:10px;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px}
+.loc{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--mut)}
+.cart{position:relative;width:42px;height:42px;border-radius:12px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cart .c{position:absolute;top:-6px;right:-6px;background:var(--orange);color:#fff;font-size:11px;font-weight:700;width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+/* hero */
+.hero{padding:118px 0 40px}
+.hero-card{border-radius:28px;background:linear-gradient(120deg,var(--orange),var(--amber));color:#fff;padding:48px;position:relative;overflow:hidden;display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
+.hero-card::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.16);top:-100px;right:20%}
+.hero-card .c-in{position:relative;z-index:1}
+.hero-card .pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.2);font-weight:600;font-size:13px;padding:7px 14px;border-radius:999px;margin-bottom:18px}
+.hero-card h1{font-size:clamp(36px,5vw,60px);margin-bottom:14px}
+.hero-card p{font-size:18px;opacity:.95;margin-bottom:24px;max-width:380px}
+.searchbox{display:flex;background:#fff;border-radius:14px;padding:6px;max-width:440px;box-shadow:0 16px 36px rgba(0,0,0,.16)}
+.searchbox input{flex:1;border:none;outline:none;padding:12px 16px;font-family:'Plus Jakarta Sans';font-size:15px;color:var(--ink)}
+.searchbox button{background:var(--orange);color:#fff;border:none;border-radius:10px;padding:0 24px;font-family:'Plus Jakarta Sans';font-weight:700;cursor:pointer;transition:.2s}
+.searchbox button:hover{background:var(--orange-d)}
+.hero-foodimg{position:relative;z-index:1;aspect-ratio:1;border-radius:24px;overflow:hidden;border:5px solid rgba(255,255,255,.3)}
+.hero-foodimg img{width:100%;height:100%;object-fit:cover}
+/* categories */
+.cats{display:flex;gap:12px;overflow-x:auto;padding:26px 0 6px}
+.catchip{flex:none;display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 22px;cursor:pointer;transition:.18s;min-width:96px}
+.catchip:hover,.catchip.on{border-color:var(--orange);background:#fff4ef}
+.catchip .e{font-size:26px}
+.catchip span{font-size:13px;font-weight:600}
+/* dishes */
+.sec{padding:30px 0 70px}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px;flex-wrap:wrap;gap:10px}
+.sec-head h2{font-size:clamp(26px,4vw,40px)}
+.sec-head span{color:var(--mut);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.dish{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:.2s}
+.dish:hover{transform:translateY(-5px);box-shadow:0 22px 46px rgba(38,23,15,.12)}
+.dish-img{aspect-ratio:16/10;overflow:hidden;position:relative}
+.dish-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.dish:hover .dish-img img{transform:scale(1.06)}
+.dish .tag{position:absolute;top:10px;left:10px;background:#fff;color:var(--orange-d);font-weight:700;font-size:11px;padding:4px 11px;border-radius:999px}
+.dish .time{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;backdrop-filter:blur(4px)}
+.dish-b{padding:16px;flex:1;display:flex;flex-direction:column}
+.dish .rest{font-size:12px;color:var(--mut);margin-bottom:4px}
+.dish h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px}
+.dish .rate{font-size:12px;color:var(--green);font-weight:700;margin-bottom:12px}
+.dish-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+.dish .price{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px}
+.dish .add{width:38px;height:38px;border-radius:11px;background:var(--orange);color:#fff;border:none;font-size:20px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center}
+.dish .add:hover{background:var(--orange-d);transform:scale(1.08)}
+/* steps */
+.band{background:var(--ink);color:#fff;border-radius:28px;margin:0 24px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:54px 36px;text-align:center}
+.step .e{font-size:34px;margin-bottom:12px}
+.step h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;margin-bottom:6px}
+.step p{color:#bdb0a6;font-size:14px}
+footer{padding:44px 0;color:var(--mut);font-size:14px}
+.ft-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:200}
+.ribbon a{text-decoration:underline}
+.toast{position:fixed;top:74px;right:24px;background:var(--green);color:#fff;font-weight:700;font-size:14px;padding:13px 22px;border-radius:12px;z-index:300;opacity:0;transform:translateX(30px);transition:.3s;pointer-events:none;box-shadow:0 12px 30px rgba(30,160,90,.3)}
+.toast.show{opacity:1;transform:none}
+.reveal{opacity:0;transform:translateY(22px);transition:.6s cubic-bezier(.22,1,.36,1)}.reveal.in{opacity:1;transform:none}
+@media(max-width:860px){.hero-card{grid-template-columns:1fr}.hero-foodimg{display:none}.grid{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.loc{display:none}}
+</style>
+</head>
+<body>
+<nav><div class="nav-in">
+  <div class="logo"><span class="m">🍽</span>Mlango</div>
+  <div class="loc">📍 Delivering to <b>&nbsp;Kilimani</b></div>
+  <div class="cart">🛒<span class="c" id="cc">0</span></div>
+</div></nav>
+
+<header class="hero wrap">
+  <div class="hero-card">
+    <div class="c-in">
+      <div class="pill">🛵 Free delivery over KES 1,500</div>
+      <h1 class="disp">Hungry?<br>We're on the way.</h1>
+      <p>Your favourite Nairobi restaurants, delivered hot to your door in 30 minutes.</p>
+      <div class="searchbox"><input placeholder="Search dishes or restaurants…"><button>Find food</button></div>
+    </div>
+    <div class="hero-foodimg"><img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=700&q=80" alt=""></div>
+  </div>
+  <div class="cats">
+    <div class="catchip on"><span class="e">🍔</span><span>Burgers</span></div>
+    <div class="catchip"><span class="e">🍕</span><span>Pizza</span></div>
+    <div class="catchip"><span class="e">🍗</span><span>Chicken</span></div>
+    <div class="catchip"><span class="e">🍛</span><span>Local</span></div>
+    <div class="catchip"><span class="e">🥗</span><span>Healthy</span></div>
+    <div class="catchip"><span class="e">🍰</span><span>Dessert</span></div>
+    <div class="catchip"><span class="e">🥤</span><span>Drinks</span></div>
+  </div>
+</header>
+
+<section class="sec wrap">
+  <div class="sec-head"><h2 class="disp reveal">Popular near you</h2><span class="reveal">42 places delivering now</span></div>
+  <div class="grid" id="grid">
+    <div class="dish reveal"><div class="dish-img"><span class="tag">Popular</span><span class="time">25 min</span><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=700&q=80" alt=""></div><div class="dish-b"><div class="rest">Burger Joint · Westlands</div><h3>Double Smash Burger</h3><div class="rate">★ 4.8 · 1.2k orders</div><div class="dish-foot"><span class="price">KES 850</span><button class="add" data-id="smash-burger" data-n="Smash Burger" data-name="Smash Burger" data-price="850">+</button></div></div></div>
+    <div class="dish reveal"><div class="dish-img"><span class="time">30 min</span><img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=700&q=80" alt=""></div><div class="dish-b"><div class="rest">Napoli · Kilimani</div><h3>Margherita Pizza</h3><div class="rate">★ 4.7 · 980 orders</div><div class="dish-foot"><span class="price">KES 1,150</span><button class="add" data-id="margherita" data-n="Margherita" data-name="Margherita" data-price="1150">+</button></div></div></div>
+    <div class="dish reveal"><div class="dish-img"><span class="tag">-15%</span><span class="time">20 min</span><img src="https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=700&q=80" alt=""></div><div class="dish-b"><div class="rest">Mama's Kitchen · CBD</div><h3>Nyama & Ugali</h3><div class="rate">★ 4.9 · 2.1k orders</div><div class="dish-foot"><span class="price">KES 620</span><button class="add" data-id="nyama---ugali" data-n="Nyama & Ugali" data-name="Nyama & Ugali" data-price="620">+</button></div></div></div>
+    <div class="dish reveal"><div class="dish-img"><span class="time">28 min</span><img src="https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=700&q=80" alt=""></div><div class="dish-b"><div class="rest">Crispy Co · Lavington</div><h3>Fried Chicken Bucket</h3><div class="rate">★ 4.6 · 760 orders</div><div class="dish-foot"><span class="price">KES 1,400</span><button class="add" data-id="chicken-bucket" data-n="Chicken Bucket" data-name="Chicken Bucket" data-price="1400">+</button></div></div></div>
+    <div class="dish reveal"><div class="dish-img"><span class="tag">Healthy</span><span class="time">22 min</span><img src="https://images.unsplash.com/photo-1546793665-c74683f339c1?w=700&q=80" alt=""></div><div class="dish-b"><div class="rest">Green Bowl · Karen</div><h3>Garden Power Bowl</h3><div class="rate">★ 4.8 · 540 orders</div><div class="dish-foot"><span class="price">KES 780</span><button class="add" data-id="power-bowl" data-n="Power Bowl" data-name="Power Bowl" data-price="780">+</button></div></div></div>
+    <div class="dish reveal"><div class="dish-img"><span class="time">18 min</span><img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=700&q=80" alt=""></div><div class="dish-b"><div class="rest">Sweet Tooth · Westlands</div><h3>Cheesecake Slice</h3><div class="rate">★ 4.9 · 410 orders</div><div class="dish-foot"><span class="price">KES 450</span><button class="add" data-id="cheesecake" data-n="Cheesecake" data-name="Cheesecake" data-price="450">+</button></div></div></div>
+  </div>
+</section>
+
+<section class="sec"><div class="band wrap-band"><div class="steps">
+  <div class="step reveal"><div class="e">🔎</div><h3>Browse</h3><p>Pick from 200+ restaurants near you.</p></div>
+  <div class="step reveal"><div class="e">📱</div><h3>Pay with M-Pesa</h3><p>One-tap checkout, no cash needed.</p></div>
+  <div class="step reveal"><div class="e">🛵</div><h3>Track & enjoy</h3><p>Live tracking till it's at your door.</p></div>
+</div></div></section>
+
+<footer><div class="wrap ft-in"><span>© 2026 Mlango · Food delivery · Nairobi</span><span>order@mlango.co.ke · 0700 600 700</span></div></footer>
+
+<div class="toast" id="toast">Added to cart</div>
+<div class="ribbon">Template: Ecommerce · Food Delivery — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+let cart=0; // counter only — full cart managed by sitesawa-connect.jsconst cc=document.getElementById('cc'),toast=document.getElementById('toast');
+// Cart delegated to sitesawa-connect.js
+document.querySelectorAll('.catchip').forEach(c=>c.addEventListener('click',()=>{document.querySelectorAll('.catchip').forEach(x=>x.classList.remove('on'));c.classList.add('on')}));
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.1});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%3*.05)+'s';io.observe(el)});
+setTimeout(()=>document.querySelectorAll('.reveal:not(.in)').forEach(e=>{e.style.opacity=1;e.style.transform='none'}),5000);
+</script>
+</body>
+</html>

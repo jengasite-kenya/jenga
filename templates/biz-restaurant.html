@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="theme-color" content="#ffffff">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ember — Modern Kenyan Kitchen, Nairobi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<style>
+:root{--accent:#b9603a}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font:400 14px/1.85 'Open Sans',sans-serif;color:#6b6b6b;background:#fdfbf7;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none;transition:all .15s}
+.container{max-width:1160px;margin:0 auto;padding:0 24px}
+.section{padding:104px 0}
+.sec-sub{text-align:center;font-family:'Roboto Condensed',sans-serif;font-size:12px;color:var(--accent);letter-spacing:4px;text-transform:uppercase;margin-bottom:12px}
+.sec-title{font-family:'Roboto Condensed',sans-serif;font-size:32px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:#2a2320;text-align:center;margin-bottom:18px}
+.divider{width:44px;height:2px;background:var(--accent);margin:0 auto 54px}
+.btn{display:inline-block;font-family:'Roboto Condensed',sans-serif;text-transform:uppercase;letter-spacing:2px;font-size:12px;padding:14px 46px;cursor:pointer;border:none}
+.btn-accent{background:var(--accent);color:#fff;border:2px solid var(--accent)}.btn-accent:hover{background:transparent;color:var(--accent)}
+.btn-w{border:2px solid #fff;color:#fff;background:transparent}.btn-w:hover{background:#fff;color:#2a2320}
+/* NAV */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:20px 0;background:linear-gradient(to bottom,rgba(0,0,0,.55),transparent);transition:all .3s}
+.navbar.sc{background:#fff;padding:13px 0;box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.ni{display:flex;align-items:center;justify-content:space-between}
+.nb{font-family:'Roboto Condensed',sans-serif;font-size:23px;font-weight:700;letter-spacing:6px;color:#fff;text-transform:uppercase}
+.navbar.sc .nb{color:#2a2320}
+.nm{display:flex;gap:32px}
+.nm a{font-family:'Roboto Condensed',sans-serif;text-transform:uppercase;letter-spacing:2px;font-size:11px;color:rgba(255,255,255,.85)}
+.navbar.sc .nm a{color:#8a7f78}
+.nm a:hover{color:var(--accent)!important}
+.nav-cta{font-family:'Roboto Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:9px 22px;border:1px solid rgba(255,255,255,.5);color:#fff}
+.navbar.sc .nav-cta{border-color:var(--accent);color:var(--accent)}
+.nav-cta:hover{background:var(--accent);border-color:var(--accent);color:#fff!important}
+.hbg{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer}
+.hbg span{display:block;width:23px;height:2px;background:#fff}
+.navbar.sc .hbg span{background:#2a2320}
+/* HERO */
+.hero{min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&q=80') center/cover no-repeat}
+.hero-ov{position:absolute;inset:0;background:rgba(20,12,8,.55)}
+.hero-c{position:relative;z-index:1;padding:120px 24px 0;max-width:780px}
+.hero-tag{font-family:'Roboto Condensed',sans-serif;font-size:12px;letter-spacing:6px;text-transform:uppercase;color:#e8c9a0;margin-bottom:20px}
+.hero h1{font-family:'Roboto Condensed',sans-serif;font-size:clamp(42px,7vw,86px);font-weight:700;text-transform:uppercase;letter-spacing:3px;color:#fff;line-height:1;margin-bottom:22px}
+.hero p{color:rgba(255,255,255,.82);font-size:15px;letter-spacing:.5px;margin-bottom:38px;line-height:1.9}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+/* STORY */
+.story-inner{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.story-img{position:relative}
+.story-img img{width:100%;aspect-ratio:4/5;object-fit:cover}
+.story-img::after{content:'';position:absolute;inset:14px;border:1px solid rgba(185,96,58,.4);pointer-events:none}
+.story-text h2{font-family:'Roboto Condensed',sans-serif;font-size:30px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#2a2320;margin-bottom:8px}
+.story-text .sub{font-family:'Roboto Condensed',sans-serif;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:24px}
+.story-text p{margin-bottom:16px;color:#776e68;line-height:2}
+/* MENU */
+.menu{background:#fff}
+.menu-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:44px;flex-wrap:wrap}
+.menu-tab{font-family:'Roboto Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:9px 24px;border:1px solid #e7ded4;color:#9a9089;cursor:pointer;background:#fff}
+.menu-tab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.dish{background:#fdfbf7;border:1px solid #efe7dc;overflow:hidden;transition:all .25s}
+.dish:hover{transform:translateY(-5px);box-shadow:0 18px 40px rgba(42,35,32,.1)}
+.dish-img{aspect-ratio:4/3;overflow:hidden}
+.dish-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.dish:hover .dish-img img{transform:scale(1.07)}
+.dish-b{padding:20px 22px}
+.dish-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}
+.dish-name{font-family:'Roboto Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#2a2320}
+.dish-price{font-family:'Roboto Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--accent);white-space:nowrap}
+.dish p{font-size:12.5px;color:#8a8079;line-height:1.7}
+/* QUOTE */
+.quote{position:relative;padding:120px 0;text-align:center;overflow:hidden}
+.quote-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=80') center/cover no-repeat;filter:brightness(.4)}
+.quote-c{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 24px}
+.quote i{font-size:30px;color:var(--accent);margin-bottom:24px}
+.quote p{font-family:'Roboto Condensed',sans-serif;font-size:clamp(22px,3vw,34px);font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#fff;line-height:1.4;margin-bottom:18px}
+.quote .by{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6)}
+/* HOURS / CONTACT */
+.contact{background:#fff}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#efe7dc;border:1px solid #efe7dc}
+.cinfo{background:#fff;padding:48px}
+.cinfo h3{font-family:'Roboto Condensed',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#2a2320;margin-bottom:24px}
+.crow{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start}
+.crow i{color:var(--accent);width:18px;margin-top:3px}
+.crow b{color:#2a2320;font-family:'Roboto Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;font-size:13px;display:block;margin-bottom:2px}
+.hours-row{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid #f3ece2}
+.hours-row span:first-child{font-family:'Roboto Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#2a2320}
+.form-control{width:100%;padding:13px 15px;border:1px solid #e7ded4;font-family:'Roboto Condensed',sans-serif;text-transform:uppercase;letter-spacing:1.5px;font-size:11px;color:#2a2320;outline:none;margin-bottom:12px;background:#fdfbf7}
+.form-control:focus{border-color:var(--accent)}
+/* FOOTER */
+footer{background:#2a2320;color:rgba(255,255,255,.55);padding:54px 0 28px;text-align:center}
+.footer .nb{color:#fff;margin-bottom:18px}
+.ft-soc{display:flex;gap:14px;justify-content:center;margin:22px 0}
+.ft-soc a{width:38px;height:38px;border:1px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.6)}
+.ft-soc a:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.ft-c{font-family:'Roboto Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:24px}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Roboto Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:2000}
+.ribbon a{font-weight:700;text-decoration:underline}
+/* MOTION */
+@media (prefers-reduced-motion: no-preference){
+  .hero-bg{animation:kenburns 22s ease-out both}
+  .hero-c>*{animation:heroUp .9s cubic-bezier(.22,1,.36,1) both}
+  .hero-c>*:nth-child(1){animation-delay:.15s}.hero-c>*:nth-child(2){animation-delay:.3s}
+  .hero-c>*:nth-child(3){animation-delay:.45s}.hero-c>*:nth-child(4){animation-delay:.6s}
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
+  .reveal.in{opacity:1;transform:none}
+  .story-img.reveal{transform:translateY(28px) scale(.98)}.story-img.reveal.in{transform:none}
+}
+@keyframes kenburns{from{transform:scale(1.16)}to{transform:scale(1.03)}}
+@keyframes heroUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+@media(max-width:860px){.nm,.nav-cta{display:none}.story-inner,.contact-grid{grid-template-columns:1fr}.menu-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="nav">
+  <div class="container ni">
+    <div class="nb">EMBER</div>
+    <div class="nm"><a href="#story">Story</a><a href="#menu">Menu</a><a href="#hours">Visit</a><a href="#contact">Contact</a></div>
+    <a href="#contact" class="nav-cta">Reserve</a>
+    <button class="hbg"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-ov"></div>
+  <div class="hero-c">
+    <div class="hero-tag">Modern Kenyan Kitchen · Nairobi</div>
+    <h1>Cooked with fire,<br>served with soul.</h1>
+    <p>Coastal spice, highland produce and the slow craft of the open flame — Ember is Nairobi's table for modern Kenyan cooking.</p>
+    <div class="hero-btns">
+      <a href="#menu" class="btn btn-accent">View the menu</a>
+      <a href="#contact" class="btn btn-w">Book a table</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="story">
+  <div class="container">
+    <div class="story-inner">
+      <div class="story-img"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80" alt=""></div>
+      <div class="story-text">
+        <div class="sub">Our story</div>
+        <h2>From the coast<br>to your table</h2>
+        <p>Ember began with a simple idea: that Kenyan food deserves a modern stage. We work with farms in the highlands and fishers on the coast to bring the freshest of the country onto one plate.</p>
+        <p>Every dish is fired over charcoal, plated with care, and built around the produce of the season. No shortcuts — just honest cooking.</p>
+        <a href="#menu" class="btn btn-accent" style="margin-top:8px">Explore the menu</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="menu section" id="menu">
+  <div class="container">
+    <div class="sec-sub">What's cooking</div>
+    <div class="sec-title">The Menu</div>
+    <div class="divider"></div>
+    <div class="menu-tabs">
+      <button class="menu-tab on">Mains</button><button class="menu-tab">Small plates</button><button class="menu-tab">Sweet</button>
+    </div>
+    <div class="menu-grid">
+      <div class="dish"><div class="dish-img"><img src="https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=700&q=80" alt=""></div><div class="dish-b"><div class="dish-h"><span class="dish-name">Nyama Choma Platter</span><span class="dish-price">1,450</span></div><p>Charcoal-grilled goat, kachumbari and ugali. The Sunday classic, elevated.</p></div></div>
+      <div class="dish"><div class="dish-img"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=700&q=80" alt=""></div><div class="dish-b"><div class="dish-h"><span class="dish-name">Highland Bowl</span><span class="dish-price">980</span></div><p>Roast vegetables, sukuma pesto, avocado and toasted millet.</p></div></div>
+      <div class="dish"><div class="dish-img"><img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=700&q=80" alt=""></div><div class="dish-b"><div class="dish-h"><span class="dish-name">Coast Wood-Pizza</span><span class="dish-price">1,150</span></div><p>Swahili-spiced tomato, mozzarella and slow-cooked beef.</p></div></div>
+      <div class="dish"><div class="dish-img"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&q=80" alt=""></div><div class="dish-b"><div class="dish-h"><span class="dish-name">Pilau of the Day</span><span class="dish-price">890</span></div><p>Fragrant coastal rice, slow-braised meat, fresh coriander.</p></div></div>
+      <div class="dish"><div class="dish-img"><img src="https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=700&q=80" alt=""></div><div class="dish-b"><div class="dish-h"><span class="dish-name">Ember Burger</span><span class="dish-price">1,050</span></div><p>Grass-fed beef, caramelised onion, chilli mayo, hand-cut chips.</p></div></div>
+      <div class="dish"><div class="dish-img"><img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=700&q=80" alt=""></div><div class="dish-b"><div class="dish-h"><span class="dish-name">Mandazi & Honey</span><span class="dish-price">520</span></div><p>Warm cardamom mandazi, wild honey, dusted sugar.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="quote">
+  <div class="quote-bg"></div>
+  <div class="quote-c">
+    <i class="fa fa-quote-left"></i>
+    <p>The best Kenyan plate in Nairobi — and the warmest welcome.</p>
+    <div class="by">— Nairobi Eats, 2025</div>
+  </div>
+</section>
+
+<section class="contact section" id="contact">
+  <div class="container">
+    <div class="sec-sub" id="hours">Find us</div>
+    <div class="sec-title">Visit & Reserve</div>
+    <div class="divider"></div>
+    <div class="contact-grid">
+      <div class="cinfo">
+        <h3>Hours & location</h3>
+        <div class="crow"><i class="fa fa-map-marker"></i><div><b>Address</b>General Mathenge Drive, Westlands, Nairobi</div></div>
+        <div class="crow"><i class="fa fa-phone"></i><div><b>Bookings</b>0712 345 678 · WhatsApp welcome</div></div>
+        <div style="margin-top:20px">
+          <div class="hours-row"><span>Mon – Thu</span><span>12:00 – 22:00</span></div>
+          <div class="hours-row"><span>Fri – Sat</span><span>12:00 – 23:30</span></div>
+          <div class="hours-row"><span>Sunday</span><span>11:00 – 21:00</span></div>
+        </div>
+      </div>
+      <div class="cinfo">
+        <h3>Book a table</h3>
+        <input class="form-control" placeholder="Your name">
+        <input class="form-control" placeholder="Phone number">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><input class="form-control" placeholder="Date" style="margin-bottom:0"><input class="form-control" placeholder="Guests" style="margin-bottom:0"></div>
+        <a href="#" class="btn btn-accent" style="width:100%;text-align:center;margin-top:14px">Request reservation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="nb">EMBER</div>
+    <div style="font-family:'Roboto Condensed',sans-serif;letter-spacing:3px;text-transform:uppercase;font-size:11px">Modern Kenyan Kitchen · Nairobi</div>
+    <div class="ft-soc">
+      <a href="#"><i class="fa fa-instagram"></i></a><a href="#"><i class="fa fa-facebook"></i></a><a href="#"><i class="fa fa-whatsapp"></i></a>
+    </div>
+    <div class="ft-c">© 2026 Ember Restaurant · All rights reserved</div>
+  </div>
+</footer>
+
+<div class="ribbon">Template: BIZ · Restaurant — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('sc',scrollY>40));
+document.querySelectorAll('.menu-tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.menu-tab').forEach(x=>x.classList.remove('on'));t.classList.add('on')});
+(function(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const groups=['.sec-sub','.sec-title','.divider','.story-text','.story-img','.menu-tabs','.dish','.quote-c>*','.cinfo'];
+  const els=[];
+  groups.forEach(s=>document.querySelectorAll(s).forEach(el=>{el.classList.add('reveal');els.push(el)}));
+  document.querySelectorAll('.dish').forEach((el,i)=>el.style.transitionDelay=(i%3*0.09)+'s');
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15,rootMargin:'0px 0px -8% 0px'});
+  els.forEach(el=>io.observe(el));
+  setTimeout(()=>{els.forEach(el=>{el.style.transition='none';el.style.opacity='1';el.style.transform='none';el.classList.add('in')});document.querySelectorAll('.hero-c>*,.hero-bg').forEach(el=>{el.style.animation='none';el.style.opacity='1'});},5000);
+})();
+</script>
+</body>
+</html>

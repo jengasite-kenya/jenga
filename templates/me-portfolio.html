@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Kitonga Studio — Architectural Photography, Nairobi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font:400 14px/1.8 'Open Sans',sans-serif;color:#888;background:#0a0a0a;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none;transition:all .15s}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.section{padding:110px 0}
+.sec-sub{text-align:center;font-family:'Roboto Condensed',sans-serif;font-size:11px;color:#c8a96e;letter-spacing:4px;text-transform:uppercase;margin-bottom:12px}
+.sec-title{font-family:'Roboto Condensed',sans-serif;font-size:30px;font-weight:700;text-transform:uppercase;letter-spacing:5px;color:#fff;text-align:center;margin-bottom:18px}
+.divider{width:30px;height:1px;background:#c8a96e;margin:0 auto 56px}
+.btn{display:inline-block;font-family:'Roboto Condensed',sans-serif;text-transform:uppercase;letter-spacing:2px;font-size:11px;padding:13px 44px;cursor:pointer;border:none}
+.btn-w{border:1px solid rgba(255,255,255,.35);color:#fff;background:transparent}.btn-w:hover{background:#fff;color:#111}
+.btn-g{border:1px solid #c8a96e;color:#c8a96e;background:transparent}.btn-g:hover{background:#c8a96e;color:#0a0a0a}
+/* NAV */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;background:linear-gradient(to bottom,rgba(0,0,0,.75),transparent);transition:all .3s}
+.navbar.sc{background:rgba(10,10,10,.96);padding:14px 0;border-bottom:1px solid #1a1a1a}
+.ni{display:flex;align-items:center;justify-content:space-between}
+.nb{font-family:'Roboto Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:5px;color:#fff;text-transform:uppercase}
+.nb span{color:#c8a96e}
+.nm{display:flex;gap:34px}
+.nm a{font-family:'Roboto Condensed',sans-serif;text-transform:uppercase;letter-spacing:2px;font-size:11px;color:rgba(255,255,255,.65)}
+.nm a:hover{color:#c8a96e}
+.hbg{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.hbg span{display:block;width:22px;height:1px;background:#fff}
+/* HERO */
+.hero{height:100vh;min-height:620px;position:relative;display:flex;align-items:flex-end;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1600&q=80') center/cover no-repeat;transform:scale(1.05)}
+.hero-fade{position:absolute;inset:0;background:linear-gradient(to top,#0a0a0a 2%,rgba(10,10,10,.35) 55%,rgba(10,10,10,.15) 100%)}
+.hero-c{position:relative;z-index:1;padding:0 24px 72px;width:100%;max-width:1200px;margin:0 auto}
+.hero-tag{font-family:'Roboto Condensed',sans-serif;font-size:11px;letter-spacing:6px;text-transform:uppercase;color:#c8a96e;margin-bottom:18px}
+.hero h1{font-family:'Roboto Condensed',sans-serif;font-size:clamp(44px,7vw,92px);font-weight:700;text-transform:uppercase;letter-spacing:3px;color:#fff;line-height:.98;margin-bottom:22px}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.6);letter-spacing:.5px;margin-bottom:34px;max-width:460px;line-height:1.9}
+.hero-scroll{display:flex;align-items:center;gap:14px;font-family:'Roboto Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:44px}
+.hero-scroll::before{content:'';width:46px;height:1px;background:rgba(255,255,255,.3)}
+/* GALLERY */
+.gallery{background:#0a0a0a;padding:90px 0}
+.gallery-cols{columns:3;column-gap:8px}
+.gal-item{break-inside:avoid;margin-bottom:8px;position:relative;overflow:hidden;cursor:pointer}
+.gal-item img{width:100%;transition:transform .5s}
+.gal-item:hover img{transform:scale(1.06)}
+.gal-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.8),transparent 60%);opacity:0;display:flex;align-items:flex-end;padding:22px;transition:opacity .35s}
+.gal-item:hover .gal-ov{opacity:1}
+.gal-cat{font-family:'Roboto Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#c8a96e;margin-bottom:4px}
+.gal-title{font-family:'Roboto Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#fff}
+/* ABOUT */
+.about{background:#0a0a0a;border-top:1px solid #1a1a1a;padding:110px 0}
+.about-inner{max-width:680px;margin:0 auto;text-align:center}
+.about-inner p{font-size:15px;color:#999;line-height:2;margin-bottom:18px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1a1a1a;border:1px solid #1a1a1a;margin-top:50px}
+.stat{background:#0a0a0a;padding:36px 16px}
+.stat-n{font-family:'Roboto Condensed',sans-serif;font-size:38px;font-weight:700;color:#c8a96e;line-height:1}
+.stat-l{font-family:'Roboto Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#666;margin-top:8px}
+/* SERVICES */
+.services{background:#0f0f0f;padding:110px 0}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1a1a1a;border:1px solid #1a1a1a}
+.svc{background:#0f0f0f;padding:44px 32px;transition:background .25s}
+.svc:hover{background:#141414}
+.svc i{font-size:26px;color:#c8a96e;margin-bottom:18px}
+.svc h3{font-family:'Roboto Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#fff;margin-bottom:12px}
+.svc p{font-size:13px;color:#777;line-height:1.85}
+/* CTA */
+.cta{position:relative;padding:130px 0;text-align:center;overflow:hidden}
+.cta-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?w=1600&q=80') center/cover no-repeat}
+.cta-ov{position:absolute;inset:0;background:rgba(10,10,10,.8)}
+.cta-c{position:relative;z-index:1}
+.cta h2{font-family:'Roboto Condensed',sans-serif;font-size:clamp(28px,4vw,46px);font-weight:700;text-transform:uppercase;letter-spacing:3px;color:#fff;margin-bottom:18px}
+.cta p{color:rgba(255,255,255,.6);margin-bottom:34px;letter-spacing:1px}
+/* FOOTER */
+footer{background:#080808;border-top:1px solid #1a1a1a;padding:50px 0 30px}
+.ft-in{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+.ft-soc{display:flex;gap:18px}
+.ft-soc a{width:38px;height:38px;border:1px solid #2a2a2a;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#888}
+.ft-soc a:hover{border-color:#c8a96e;color:#c8a96e}
+.ft-c{text-align:center;font-family:'Roboto Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444;margin-top:32px}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Roboto Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:2000}
+.ribbon a{font-weight:700;text-decoration:underline}
+/* MOTION */
+@media (prefers-reduced-motion: no-preference){
+  .hero-bg{animation:kenburns 20s ease-out both}
+  .hero-c>*{animation:heroUp .9s cubic-bezier(.22,1,.36,1) both}
+  .hero-c>*:nth-child(1){animation-delay:.15s}.hero-c>*:nth-child(2){animation-delay:.28s}
+  .hero-c>*:nth-child(3){animation-delay:.4s}.hero-c>*:nth-child(4){animation-delay:.52s}.hero-c>*:nth-child(5){animation-delay:.64s}
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
+  .reveal.in{opacity:1;transform:none}
+}
+@keyframes kenburns{from{transform:scale(1.16)}to{transform:scale(1.02)}}
+@keyframes heroUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+@media(max-width:860px){.nm{display:none}.gallery-cols{columns:2}.svc-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr;gap:1px}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="nav">
+  <div class="container ni">
+    <div class="nb">KITONGA<span>.</span></div>
+    <div class="nm">
+      <a href="#work">Work</a><a href="#about">Studio</a><a href="#services">Services</a><a href="#contact">Contact</a>
+    </div>
+    <button class="hbg"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-fade"></div>
+  <div class="hero-c">
+    <div class="hero-tag">Architectural & Interior Photography · Nairobi</div>
+    <h1>Spaces,<br>told in light.</h1>
+    <p class="hero-sub">Kitonga Studio captures the architecture, interiors and stillness of East Africa's most considered buildings.</p>
+    <a href="#work" class="btn btn-g">View the work</a>
+    <div class="hero-scroll">Scroll to explore</div>
+  </div>
+</section>
+
+<section class="gallery section" id="work" style="padding-top:90px;padding-bottom:90px">
+  <div class="container">
+    <div class="sec-sub">Selected work</div>
+    <div class="sec-title">Portfolio</div>
+    <div class="divider"></div>
+    <div class="gallery-cols">
+      <div class="gal-item"><img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=700&q=80" alt=""><div class="gal-ov"><div><div class="gal-cat">Exterior</div><div class="gal-title">Westlands Tower</div></div></div></div>
+      <div class="gal-item"><img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=700&q=80" alt=""><div class="gal-ov"><div><div class="gal-cat">Interior</div><div class="gal-title">The Reading Room</div></div></div></div>
+      <div class="gal-item"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=700&q=80" alt=""><div class="gal-ov"><div><div class="gal-cat">Workspace</div><div class="gal-title">Studio Offices</div></div></div></div>
+      <div class="gal-item"><img src="https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?w=700&q=80" alt=""><div class="gal-ov"><div><div class="gal-cat">Facade</div><div class="gal-title">Concrete & Glass</div></div></div></div>
+      <div class="gal-item"><img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=80" alt=""><div class="gal-ov"><div><div class="gal-cat">Detail</div><div class="gal-title">Courtyard Green</div></div></div></div>
+      <div class="gal-item"><img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=700&q=80" alt=""><div class="gal-ov"><div><div class="gal-cat">Facade</div><div class="gal-title">Glass &amp; Steel</div></div></div></div>
+      <div class="gal-item"><img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=700&q=80" alt=""><div class="gal-ov"><div><div class="gal-cat">Exterior</div><div class="gal-title">House, Karen</div></div></div></div>
+      <div class="gal-item"><img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=700&q=80" alt=""><div class="gal-ov"><div><div class="gal-cat">Exterior</div><div class="gal-title">Skyline, CBD</div></div></div></div>
+      <div class="gal-item"><img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=700&q=80" alt=""><div class="gal-ov"><div><div class="gal-cat">Landscape</div><div class="gal-title">Aberdare Fog</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="about section" id="about" style="padding-top:100px">
+  <div class="container">
+    <div class="about-inner">
+      <div class="sec-sub">The studio</div>
+      <div class="sec-title">About Kitonga</div>
+      <div class="divider"></div>
+      <p>Founded in Nairobi in 2018, Kitonga Studio is a one-person practice devoted to the quiet drama of built space. No people, no clutter — just structure, material and the way Kenyan light moves across a room.</p>
+      <p>Work spans architecture firms, interior designers, hospitality and property developers across East Africa.</p>
+      <div class="stats">
+        <div class="stat"><div class="stat-n">120+</div><div class="stat-l">Projects shot</div></div>
+        <div class="stat"><div class="stat-n">7</div><div class="stat-l">Years in practice</div></div>
+        <div class="stat"><div class="stat-n">14</div><div class="stat-l">Awards & features</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="services section" id="services">
+  <div class="container">
+    <div class="sec-sub">What I do</div>
+    <div class="sec-title">Services</div>
+    <div class="divider"></div>
+    <div class="svc-grid">
+      <div class="svc"><i class="fa fa-building-o"></i><h3>Architecture</h3><p>Exterior and facade photography for firms, developers and awards submissions.</p></div>
+      <div class="svc"><i class="fa fa-home"></i><h3>Interiors</h3><p>Editorial interior sets for designers, hotels and high-end residential spaces.</p></div>
+      <div class="svc"><i class="fa fa-camera"></i><h3>Spaces & Stills</h3><p>Detail studies, materials and product-in-place stills for portfolios and press.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="contact">
+  <div class="cta-bg"></div>
+  <div class="cta-ov"></div>
+  <div class="container cta-c">
+    <h2>Let's shoot your space</h2>
+    <p>Booking projects across Nairobi & East Africa for the coming season.</p>
+    <a href="#" class="btn btn-g">Start a project →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="ft-in">
+      <div class="nb">KITONGA<span>.</span></div>
+      <div class="ft-soc">
+        <a href="#"><i class="fa fa-instagram"></i></a>
+        <a href="#"><i class="fa fa-behance"></i></a>
+        <a href="#"><i class="fa fa-whatsapp"></i></a>
+      </div>
+    </div>
+    <div class="ft-c">© 2026 Kitonga Studio · Nairobi, Kenya</div>
+  </div>
+</footer>
+
+<div class="ribbon">Template: ME · Grayscale — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('sc',scrollY>40));
+(function(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const groups=['.sec-sub','.sec-title','.divider','.gal-item','.about-inner p','.stat','.svc','.cta-c>*'];
+  const els=[];
+  groups.forEach(s=>document.querySelectorAll(s).forEach(el=>{el.classList.add('reveal');els.push(el)}));
+  // stagger items within their rows
+  document.querySelectorAll('.gal-item').forEach((el,i)=>el.style.transitionDelay=(i%3*0.08)+'s');
+  document.querySelectorAll('.stat').forEach((el,i)=>el.style.transitionDelay=(i*0.1)+'s');
+  document.querySelectorAll('.svc').forEach((el,i)=>el.style.transitionDelay=(i*0.1)+'s');
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15,rootMargin:'0px 0px -8% 0px'});
+  els.forEach(el=>io.observe(el));
+  setTimeout(()=>{els.forEach(el=>{el.style.transition='none';el.style.opacity='1';el.style.transform='none';el.classList.add('in')});document.querySelectorAll('.hero-c>*,.hero-bg').forEach(el=>{el.style.animation='none';el.style.opacity='1'});},5000);
+})();
+</script>
+</body>
+</html>

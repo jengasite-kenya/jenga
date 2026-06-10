@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FORGE — Construction & Civil Works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800&family=Saira:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#161514;--card:#211f1d;--line:#33302c;--txt:#ececea;--mut:#9a948c;--orange:#ff6a00;--steel:#3a4654;--paper:#f4f2ee}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font:400 16px/1.65 'Saira',sans-serif;background:var(--ink);color:var(--txt);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.cond{font-family:'Saira Condensed',sans-serif;text-transform:uppercase;font-weight:800;letter-spacing:.01em;line-height:.92}
+.wrap{max-width:1200px;margin:0 auto;padding:0 26px}
+nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(22,21,20,.94);backdrop-filter:blur(8px);border-bottom:2px solid var(--orange)}
+.nav-in{max-width:1200px;margin:0 auto;padding:14px 26px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Saira Condensed',sans-serif;font-weight:800;text-transform:uppercase;font-size:26px;display:flex;align-items:center;gap:10px}
+.logo .b{background:var(--orange);color:var(--ink);padding:0 8px;clip-path:polygon(0 0,100% 0,92% 100%,8% 100%)}
+.nav-links{display:flex;gap:24px;font-family:'Saira Condensed',sans-serif;font-weight:600;text-transform:uppercase;font-size:15px;letter-spacing:.04em;color:var(--mut)}
+.nav-links a:hover{color:var(--orange)}
+.quote{background:var(--orange);color:var(--ink);font-family:'Saira Condensed',sans-serif;font-weight:700;text-transform:uppercase;padding:10px 22px;font-size:15px;clip-path:polygon(0 0,100% 0,94% 100%,6% 100%);transition:.15s}
+.quote:hover{filter:brightness(1.1)}
+/* hero */
+.hero{min-height:96vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:60px}
+.hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,#1c1b19 0 22px,#1f1d1b 22px 44px)}
+.hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:14px;background:repeating-linear-gradient(45deg,var(--orange) 0 22px,var(--ink) 22px 44px)}
+.hero-c{position:relative;z-index:1}
+.hero .pre{font-family:'Saira Condensed',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.2em;color:var(--orange);font-size:15px;margin-bottom:18px}
+.hero h1{font-size:clamp(54px,12vw,170px)}
+.hero h1 .o{color:var(--orange)}
+.hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-top:22px;flex-wrap:wrap}
+.hero-row p{max-width:440px;color:var(--mut);font-size:18px}
+.btn{background:var(--orange);color:var(--ink);font-family:'Saira Condensed',sans-serif;font-weight:800;text-transform:uppercase;font-size:20px;padding:17px 38px;display:inline-block;clip-path:polygon(0 0,100% 0,95% 100%,5% 100%);transition:.15s}
+.btn:hover{filter:brightness(1.1);transform:translateY(-2px)}
+/* stats */
+.stats{background:var(--orange);color:var(--ink)}
+.stats-in{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:34px 0;text-align:center}
+.stats b{font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:48px;display:block;line-height:1}
+.stats span{font-weight:600;text-transform:uppercase;font-size:13px;letter-spacing:.06em}
+/* services */
+.sec{padding:80px 0}
+.sec h2{font-size:clamp(36px,6vw,76px);margin-bottom:34px}
+.sec h2 .o{color:var(--orange)}
+.svc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.s{background:var(--card);border:1px solid var(--line);padding:30px 26px;border-left:4px solid var(--orange);transition:.18s}
+.s:hover{background:#28251f;transform:translateX(4px)}
+.s .no{font-family:'Saira Condensed',sans-serif;font-weight:800;color:var(--orange);font-size:16px}
+.s h3{font-family:'Saira Condensed',sans-serif;font-weight:700;text-transform:uppercase;font-size:24px;margin:8px 0}
+.s p{color:var(--mut);font-size:15px}
+/* projects */
+.proj{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pj{background:var(--steel);border:1px solid var(--line);aspect-ratio:4/3;display:flex;flex-direction:column;justify-content:flex-end;padding:22px;position:relative;overflow:hidden;cursor:pointer;transition:.2s}
+.pj:nth-child(2){background:#46362a}.pj:nth-child(3){background:#2e3d33}.pj:nth-child(5){background:#3d2e3a}.pj:nth-child(6){background:#3a3a2e}
+.pj:hover{transform:translateY(-5px)}
+.pj .cat{font-family:'Saira Condensed',sans-serif;font-weight:600;text-transform:uppercase;color:var(--orange);font-size:13px;letter-spacing:.1em}
+.pj h3{font-family:'Saira Condensed',sans-serif;font-weight:700;text-transform:uppercase;font-size:24px;color:#fff}
+/* cta */
+.cta{background:var(--orange);color:var(--ink);text-align:center;padding:80px 0}
+.cta h2{font-size:clamp(36px,7vw,90px)}
+.cta a{display:inline-block;margin-top:18px;background:var(--ink);color:var(--orange);font-family:'Saira Condensed',sans-serif;font-weight:800;text-transform:uppercase;font-size:20px;padding:18px 42px;clip-path:polygon(0 0,100% 0,95% 100%,5% 100%)}
+footer{padding:36px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:var(--mut);font-family:'Saira Condensed',sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Saira',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:200}
+.ribbon a{text-decoration:underline}
+.reveal{opacity:0;transform:translateY(24px);transition:.55s cubic-bezier(.22,1,.36,1)}.reveal.in{opacity:1;transform:none}
+@media(max-width:880px){.nav-links{display:none}.stats-in{grid-template-columns:1fr 1fr}.svc,.proj{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav><div class="nav-in">
+  <div class="logo"><span class="b">M</span>FORGE</div>
+  <div class="nav-links"><a href="#services">Services</a><a href="#projects">Projects</a><a href="#contact">Contact</a></div>
+  <a class="quote" href="#contact">Get a quote</a>
+</div></nav>
+
+<header class="hero"><div class="wrap hero-c">
+  <div class="pre">Construction &amp; Civil Works · Since 2009</div>
+  <h1 class="cond">WE BUILD<br><span class="o">IT RIGHT.</span></h1>
+  <div class="hero-row">
+    <p>From foundations to finishes — commercial, residential and civil projects delivered on time, on budget, to spec.</p>
+    <a class="btn" href="#contact">Request a quote</a>
+  </div>
+</div></header>
+
+<div class="stats"><div class="wrap stats-in">
+  <div><b>200+</b><span>Projects delivered</span></div>
+  <div><b>17</b><span>Years building</span></div>
+  <div><b>0</b><span>Safety incidents '25</span></div>
+  <div><b>100%</b><span>On-spec handover</span></div>
+</div></div>
+
+<section class="sec wrap" id="services">
+  <h2 class="cond reveal">What we <span class="o">do</span></h2>
+  <div class="svc">
+    <div class="s reveal"><div class="no">01</div><h3>Building Construction</h3><p>Commercial and residential builds, from groundwork to handover.</p></div>
+    <div class="s reveal"><div class="no">02</div><h3>Civil & Roads</h3><p>Roads, drainage, water and infrastructure works at any scale.</p></div>
+    <div class="s reveal"><div class="no">03</div><h3>Renovation</h3><p>Refurbishment and structural upgrades done cleanly and safely.</p></div>
+    <div class="s reveal"><div class="no">04</div><h3>Project Management</h3><p>End-to-end management keeping cost, time and quality in line.</p></div>
+    <div class="s reveal"><div class="no">05</div><h3>Design & Build</h3><p>One accountable team from drawings to keys in hand.</p></div>
+    <div class="s reveal"><div class="no">06</div><h3>Steel & Fabrication</h3><p>Structural steel, frames and bespoke metalwork.</p></div>
+  </div>
+</section>
+
+<section class="sec wrap" id="projects">
+  <h2 class="cond reveal">Recent <span class="o">work</span></h2>
+  <div class="proj">
+    <div class="pj reveal"><span class="cat">Commercial</span><h3>Riverside Plaza</h3></div>
+    <div class="pj reveal"><span class="cat">Residential</span><h3>Karen Estate</h3></div>
+    <div class="pj reveal"><span class="cat">Civil</span><h3>Thika Bypass</h3></div>
+    <div class="pj reveal"><span class="cat">Industrial</span><h3>Athi Warehouse</h3></div>
+    <div class="pj reveal"><span class="cat">Renovation</span><h3>CBD Tower Refit</h3></div>
+    <div class="pj reveal"><span class="cat">Steel</span><h3>Stadium Roof</h3></div>
+  </div>
+</section>
+
+<section class="cta" id="contact"><div class="wrap">
+  <h2 class="cond">Got a project?<br>Let's build it.</h2>
+  <a href="#">Get your free quote →</a>
+</div></section>
+
+<footer><div class="wrap" style="display:flex;justify-content:space-between;width:100%;flex-wrap:wrap;gap:10px"><span>FORGE © 2026</span><span>Mombasa Road, Nairobi · +254 733 400 500</span></div></footer>
+
+<div class="ribbon">Template: BIZ · Construction — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.13});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%3*.05)+'s';io.observe(el)});
+setTimeout(()=>document.querySelectorAll('.reveal:not(.in)').forEach(e=>{e.style.opacity=1;e.style.transform='none'}),5000);
+</script>
+</body>
+</html>

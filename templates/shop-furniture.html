@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Nyumbani — Furniture & Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f1ea;--card:#fbf9f4;--ink:#2a2620;--mut:#7a7268;--line:#e3ddd0;--clay:#9a6b4f;--clay-d:#7d5640;--deep:#33312b}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font:400 16px/1.65 'Inter',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}img{display:block;max-width:100%}
+.fr{font-family:'Fraunces',serif}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+.bar{background:var(--deep);color:#e8e2d6;text-align:center;font-size:12px;letter-spacing:.1em;padding:9px}
+nav{position:sticky;top:0;z-index:40;background:rgba(244,241,234,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1240px;margin:0 auto;padding:18px 28px;display:flex;align-items:center;gap:20px}
+.logo{font-family:'Fraunces',serif;font-size:25px;font-weight:500;letter-spacing:.02em}
+.nav-links{display:flex;gap:28px;font-size:14px;color:var(--mut);margin:0 auto}
+.nav-links a:hover{color:var(--clay)}
+.nav-ic{display:flex;gap:16px;font-size:17px}
+.nav-ic span{cursor:pointer;position:relative}
+.nav-ic .c{position:absolute;top:-7px;right:-9px;background:var(--clay);color:#fff;font-size:10px;font-weight:600;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Inter'}
+/* hero */
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:84vh}
+.hero-l{display:flex;flex-direction:column;justify-content:center;padding:60px 56px}
+.hero-l .pre{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--clay);margin-bottom:18px}
+.hero-l h1{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(44px,5.5vw,76px);line-height:1.02;letter-spacing:-.01em;margin-bottom:22px}
+.hero-l h1 em{font-style:italic;color:var(--clay)}
+.hero-l p{font-size:18px;color:var(--mut);max-width:400px;margin-bottom:30px}
+.hero-l .cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn-a{background:var(--ink);color:var(--bg);font-weight:500;padding:15px 32px;border-radius:4px;transition:.2s}
+.btn-a:hover{background:var(--clay-d)}
+.btn-g{font-weight:500;color:var(--ink);padding:15px 6px;border-bottom:1px solid var(--ink);border-radius:0}
+.btn-g:hover{color:var(--clay);border-color:var(--clay)}
+.hero-r{position:relative;overflow:hidden;background:#e6e0d4}
+.hero-r img{width:100%;height:100%;object-fit:cover}
+.hero-r .float{position:absolute;bottom:30px;left:30px;background:rgba(251,249,244,.95);backdrop-filter:blur(6px);border-radius:8px;padding:14px 18px;box-shadow:0 14px 34px rgba(42,38,32,.16)}
+.hero-r .float .n{font-family:'Fraunces',serif;font-size:17px}
+.hero-r .float .p{color:var(--clay);font-weight:600;font-size:14px;margin-top:2px}
+/* category tiles */
+.sec{padding:80px 0}
+.sec-head{text-align:center;margin-bottom:44px}
+.sec-head .lab{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--clay);margin-bottom:10px}
+.sec-head h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(28px,4vw,46px)}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.cat{position:relative;aspect-ratio:4/5;border-radius:8px;overflow:hidden;cursor:pointer}
+.cat img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.cat:hover img{transform:scale(1.05)}
+.cat .ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(30,26,20,.6),transparent 55%);display:flex;align-items:flex-end;padding:22px}
+.cat .ov span{color:#fff;font-family:'Fraunces',serif;font-size:24px}
+/* products */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.prod{cursor:pointer}
+.prod-img{aspect-ratio:1;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative;margin-bottom:14px}
+.prod-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.prod:hover .prod-img img{transform:scale(1.05)}
+.prod .tag{position:absolute;top:12px;left:12px;background:var(--card);color:var(--clay-d);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:4px 11px;border-radius:999px}
+.prod .add{position:absolute;left:14px;right:14px;bottom:14px;background:var(--ink);color:var(--bg);border:none;font-family:'Inter';font-size:13px;letter-spacing:.04em;padding:12px;border-radius:4px;cursor:pointer;opacity:0;transform:translateY(8px);transition:.25s}
+.prod:hover .add{opacity:1;transform:none}
+.prod .add:hover{background:var(--clay-d)}
+.prod .cat-l{font-size:12px;color:var(--mut)}
+.prod h3{font-family:'Fraunces',serif;font-size:19px;margin:3px 0 4px}
+.prod .price{font-weight:600;color:var(--clay-d)}
+/* editorial band */
+.band{background:var(--deep);color:#ece6da}
+.band-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch}
+.band-img{min-height:420px;background:url('https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=1000&q=80') center/cover}
+.band-txt{padding:80px 60px;display:flex;flex-direction:column;justify-content:center}
+.band-txt .lab{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--clay);margin-bottom:14px}
+.band-txt h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(28px,3.5vw,44px);line-height:1.1;margin-bottom:18px;color:#fff}
+.band-txt p{color:#b6ad9f;margin-bottom:16px}
+.band-txt a{align-self:flex-start;margin-top:8px;background:var(--bg);color:var(--ink);font-weight:500;padding:14px 30px;border-radius:4px;transition:.2s}
+.band-txt a:hover{background:var(--clay);color:#fff}
+/* values */
+.vals{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.val{background:var(--bg);padding:28px;text-align:center}
+.val .e{font-size:24px;margin-bottom:8px}
+.val b{font-family:'Fraunces',serif;font-weight:500;font-size:16px;display:block;margin-bottom:3px}
+.val span{font-size:13px;color:var(--mut)}
+footer{background:var(--deep);color:#9c9486;padding:44px 0;font-size:14px}
+.ft-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Inter',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:200}
+.ribbon a{text-decoration:underline}
+.toast{position:fixed;top:90px;right:24px;background:var(--ink);color:var(--bg);font-size:13px;letter-spacing:.04em;padding:14px 22px;border-radius:6px;z-index:300;opacity:0;transform:translateX(30px);transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.reveal{opacity:0;transform:translateY(22px);transition:.7s cubic-bezier(.22,1,.36,1)}.reveal.in{opacity:1;transform:none}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.hero-r{min-height:340px}.hero-l{padding:50px 28px}.grid{grid-template-columns:repeat(2,1fr)}.cats{grid-template-columns:1fr}.band-grid{grid-template-columns:1fr}.band-img{min-height:280px}.band-txt{padding:50px 28px}.vals{grid-template-columns:1fr 1fr}.nav-links{display:none}}
+</style>
+</head>
+<body>
+<div class="bar">Free delivery within Nairobi on orders over KES 20,000</div>
+<nav><div class="nav-in">
+  <div class="logo fr">Nyumbani</div>
+  <div class="nav-links"><a href="#shop">Living</a><a href="#shop">Bedroom</a><a href="#shop">Dining</a><a href="#shop">Decor</a></div>
+  <div class="nav-ic"><span>🔍</span><span>♡</span><span>🛍<span class="c" id="cc">0</span></span></div>
+</div></nav>
+
+<header class="hero">
+  <div class="hero-l">
+    <div class="pre">New · The Warm Minimal collection</div>
+    <h1 class="fr">Pieces that make a house feel <em>like home.</em></h1>
+    <p>Thoughtfully made furniture and decor — natural materials, honest craft, built to last a lifetime.</p>
+    <div class="cta"><a class="btn-a" href="#shop">Shop the collection</a><a class="btn-g" href="#story">Our story</a></div>
+  </div>
+  <div class="hero-r">
+    <img src="https://images.unsplash.com/photo-1567016432779-094069958ea5?w=1000&q=80" alt="">
+    <div class="float"><div class="n fr">The Mara Lounge Chair</div><div class="p">KES 38,500</div></div>
+  </div>
+</header>
+
+<section class="sec wrap">
+  <div class="sec-head"><div class="lab">Shop by room</div><h2 class="fr">Find your corner</h2></div>
+  <div class="cats">
+    <div class="cat reveal"><img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=700&q=80" alt=""><div class="ov"><span class="fr">Living Room</span></div></div>
+    <div class="cat reveal"><img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=700&q=80" alt=""><div class="ov"><span class="fr">Bedroom</span></div></div>
+    <div class="cat reveal"><img src="https://images.unsplash.com/photo-1617806118233-18e1de247200?w=700&q=80" alt=""><div class="ov"><span class="fr">Dining</span></div></div>
+  </div>
+</section>
+
+<section class="sec wrap" id="shop" style="padding-top:0">
+  <div class="sec-head"><div class="lab">Bestsellers</div><h2 class="fr">Loved at home</h2></div>
+  <div class="grid" id="grid">
+    <div class="prod reveal"><div class="prod-img"><span class="tag">New</span><img src="https://images.unsplash.com/photo-1567016432779-094069958ea5?w=600&q=80" alt=""><button class="add" data-id="mara-lounge-chair" data-n="Mara Lounge Chair" data-name="Mara Lounge Chair" data-price="38500">Add to cart</button></div><div class="cat-l">Living</div><h3 class="fr">Mara Lounge Chair</h3><div class="price">KES 38,500</div></div>
+    <div class="prod reveal"><div class="prod-img"><img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&q=80" alt=""><button class="add" data-id="mara-lounge-chair" data-n="Oak Coffee Table" data-name="Oak Coffee Table" data-price="38500">Add to cart</button></div><div class="cat-l">Living</div><h3 class="fr">Oak Coffee Table</h3><div class="price">KES 24,000</div></div>
+    <div class="prod reveal"><div class="prod-img"><span class="tag">-10%</span><img src="https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=600&q=80" alt=""><button class="add" data-id="mara-lounge-chair" data-n="Linen Sofa" data-name="Linen Sofa" data-price="38500">Add to cart</button></div><div class="cat-l">Living</div><h3 class="fr">Linen Three-Seater</h3><div class="price">KES 96,000</div></div>
+    <div class="prod reveal"><div class="prod-img"><img src="https://images.unsplash.com/photo-1503602642458-232111445657?w=600&q=80" alt=""><button class="add" data-id="mara-lounge-chair" data-n="Rattan Pendant" data-name="Rattan Pendant" data-price="38500">Add to cart</button></div><div class="cat-l">Decor</div><h3 class="fr">Rattan Pendant Light</h3><div class="price">KES 7,800</div></div>
+    <div class="prod reveal"><div class="prod-img"><img src="https://images.unsplash.com/photo-1532372320572-cda25653a26d?w=600&q=80" alt=""><button class="add" data-id="mara-lounge-chair" data-n="Woven Basket" data-name="Woven Basket" data-price="38500">Add to cart</button></div><div class="cat-l">Decor</div><h3 class="fr">Woven Storage Basket</h3><div class="price">KES 3,200</div></div>
+    <div class="prod reveal"><div class="prod-img"><img src="https://images.unsplash.com/photo-1611967164521-abae8fba4668?w=600&q=80" alt=""><button class="add" data-id="mara-lounge-chair" data-n="Ceramic Vase Set" data-name="Ceramic Vase Set" data-price="38500">Add to cart</button></div><div class="cat-l">Decor</div><h3 class="fr">Ceramic Vase Set</h3><div class="price">KES 4,500</div></div>
+    <div class="prod reveal"><div class="prod-img"><span class="tag">New</span><img src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=600&q=80" alt=""><button class="add" data-id="mara-lounge-chair" data-n="Oak Bed Frame" data-name="Oak Bed Frame" data-price="38500">Add to cart</button></div><div class="cat-l">Bedroom</div><h3 class="fr">Solid Oak Bed Frame</h3><div class="price">KES 72,000</div></div>
+    <div class="prod reveal"><div class="prod-img"><img src="https://images.unsplash.com/photo-1600369671236-e74521d4b6ad?w=600&q=80" alt=""><button class="add" data-id="mara-lounge-chair" data-n="Wool Throw" data-name="Wool Throw" data-price="38500">Add to cart</button></div><div class="cat-l">Bedroom</div><h3 class="fr">Handwoven Wool Throw</h3><div class="price">KES 5,900</div></div>
+  </div>
+</section>
+
+<section class="band" id="story"><div class="band-grid">
+  <div class="band-img reveal"></div>
+  <div class="band-txt">
+    <div class="lab">Our craft</div>
+    <h2 class="fr reveal">Made by hand, meant to last.</h2>
+    <p class="reveal">Every Nyumbani piece is built in our Nairobi workshop from solid, sustainably-sourced timber and natural fibres — no flat-pack, no fast furniture.</p>
+    <p class="reveal">Designed to age beautifully and stay in the family.</p>
+    <a class="reveal" href="#shop">Discover the makers →</a>
+  </div>
+</div></section>
+
+<section class="sec wrap">
+  <div class="vals">
+    <div class="val"><div class="e">🪵</div><b class="fr">Solid wood</b><span>No particle board, ever</span></div>
+    <div class="val"><div class="e">🚚</div><b class="fr">White-glove delivery</b><span>Assembled in your home</span></div>
+    <div class="val"><div class="e">📱</div><b class="fr">M-Pesa & instalments</b><span>Pay over 3 months</span></div>
+    <div class="val"><div class="e">🛡️</div><b class="fr">10-year warranty</b><span>We stand behind it</span></div>
+  </div>
+</section>
+
+<footer><div class="wrap ft-in"><span>© 2026 Nyumbani Furniture · Nairobi</span><span>hello@nyumbani.co.ke · 0700 800 900</span></div></footer>
+
+<div class="toast" id="toast">Added to cart</div>
+<div class="ribbon">Template: Ecommerce · Furniture & Home — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+let cart=0; // counter only — full cart managed by sitesawa-connect.jsconst cc=document.getElementById('cc'),toast=document.getElementById('toast');
+// Cart delegated to sitesawa-connect.js
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.1});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4*.05)+'s';io.observe(el)});
+setTimeout(()=>document.querySelectorAll('.reveal:not(.in)').forEach(e=>{e.style.opacity=1;e.style.transform='none'}),5000);
+</script>
+</body>
+</html>

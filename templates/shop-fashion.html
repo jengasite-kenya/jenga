@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lulu & Co — Modern Kenyan Boutique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<style>
+:root{--accent:#c8a96e;--bg:#0a0a0a}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font:400 14px/1.8 'Open Sans',sans-serif;color:#777;background:#fff;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none;transition:all .15s}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.section{padding:84px 0}
+.sec-sub{text-align:center;font-family:'Roboto Condensed',sans-serif;font-size:11px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px}
+.sec-title{font-family:'Roboto Condensed',sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:5px;color:#111;text-align:center;margin-bottom:14px}
+.divider{width:30px;height:1px;background:var(--accent);margin:0 auto 48px}
+.btn{display:inline-block;font-family:'Roboto Condensed',sans-serif;text-transform:uppercase;letter-spacing:2px;font-size:11px;padding:12px 42px;cursor:pointer;border:none}
+.btn-w{border:1px solid rgba(255,255,255,.6);color:#fff;background:transparent}.btn-w:hover{background:#fff;color:#111}
+.btn-d{border:1px solid #111;background:#111;color:#fff}.btn-d:hover{background:transparent;color:#111}
+.btn-accent{background:var(--accent);color:#fff;border:1px solid var(--accent)}.btn-accent:hover{opacity:.85}
+/* NAV */
+.navbar{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid #f0f0f0}
+.nav-announce{text-align:center;padding:8px;font-family:'Roboto Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#fff;background:var(--bg)}
+.ni{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;max-width:1200px;margin:0 auto}
+.nb{font-family:'Roboto Condensed',sans-serif;font-size:23px;font-weight:700;letter-spacing:6px;color:#111;text-transform:uppercase}
+.nb span{color:var(--accent)}
+.nm{display:flex;gap:30px}
+.nm a{font-family:'Roboto Condensed',sans-serif;text-transform:uppercase;letter-spacing:2px;font-size:11px;color:#999}
+.nm a:hover{color:#111}
+.nav-icons{display:flex;gap:20px;align-items:center}
+.nav-icon{color:#888;font-size:16px;cursor:pointer;position:relative}
+.nav-icon:hover{color:#111}
+.cart-count{position:absolute;top:-6px;right:-9px;background:var(--accent);color:#fff;font-size:8px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Roboto Condensed',sans-serif}
+.hbg{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer}
+.hbg span{display:block;width:22px;height:1px;background:#111}
+/* HERO */
+.hero{height:78vh;min-height:520px;position:relative;display:flex;align-items:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1445205170230-053b83016050?w=1600&q=80') center/cover no-repeat}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(to right,rgba(10,10,10,.7),rgba(10,10,10,.25))}
+.hero-c{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 24px;width:100%}
+.hero-tag{font-family:'Roboto Condensed',sans-serif;font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.hero h1{font-family:'Roboto Condensed',sans-serif;font-size:clamp(40px,6vw,74px);font-weight:700;text-transform:uppercase;letter-spacing:3px;color:#fff;line-height:1;margin-bottom:20px;max-width:560px}
+.hero p{color:rgba(255,255,255,.78);max-width:420px;margin-bottom:32px;letter-spacing:.5px}
+/* CATEGORY STRIP */
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#eee;border-top:1px solid #eee;border-bottom:1px solid #eee}
+.cat{position:relative;aspect-ratio:16/7;overflow:hidden;cursor:pointer}
+.cat img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.cat:hover img{transform:scale(1.06)}
+.cat-ov{position:absolute;inset:0;background:rgba(10,10,10,.32);display:flex;align-items:center;justify-content:center}
+.cat-ov span{font-family:'Roboto Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#fff}
+/* PRODUCTS */
+.prod-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.prod{cursor:pointer}
+.prod-img{aspect-ratio:3/4;overflow:hidden;background:#f6f4f0;position:relative;margin-bottom:14px}
+.prod-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.prod:hover .prod-img img{transform:scale(1.05)}
+.prod-tag{position:absolute;top:12px;left:12px;background:#111;color:#fff;font-family:'Roboto Condensed',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px}
+.prod-tag.sale{background:var(--accent)}
+.prod-add{position:absolute;left:12px;right:12px;bottom:12px;background:#fff;color:#111;font-family:'Roboto Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;text-align:center;padding:11px;opacity:0;transform:translateY(8px);transition:all .25s}
+.prod:hover .prod-add{opacity:1;transform:translateY(0)}
+.prod-add:hover{background:#111;color:#fff}
+.prod-name{font-family:'Roboto Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#111;margin-bottom:4px}
+.prod-cat{font-size:11px;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.prod-price{font-family:'Roboto Condensed',sans-serif;font-size:15px;font-weight:700;color:#111}
+.prod-price s{color:#bbb;font-weight:400;font-size:12px;margin-left:6px}
+/* PROMO */
+.promo{position:relative;padding:120px 0;text-align:center;overflow:hidden}
+.promo-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=1600&q=80') center/cover no-repeat}
+.promo-ov{position:absolute;inset:0;background:rgba(10,10,10,.6)}
+.promo-c{position:relative;z-index:1}
+.promo h2{font-family:'Roboto Condensed',sans-serif;font-size:clamp(30px,4vw,52px);font-weight:700;text-transform:uppercase;letter-spacing:3px;color:#fff;margin-bottom:14px}
+.promo p{color:rgba(255,255,255,.7);letter-spacing:2px;text-transform:uppercase;font-size:12px;margin-bottom:32px;font-family:'Roboto Condensed',sans-serif}
+/* TRUST */
+.trust{background:#fafafa;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0}
+.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+.trust i{font-size:24px;color:var(--accent);margin-bottom:12px}
+.trust h4{font-family:'Roboto Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#111;margin-bottom:5px}
+.trust p{font-size:12px;color:#999}
+/* FOOTER */
+footer{background:var(--bg);color:rgba(255,255,255,.5);padding:60px 0 28px}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px;margin-bottom:40px}
+.ft-grid .nb{color:#fff;margin-bottom:14px}
+.ft-grid h4{font-family:'Roboto Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#fff;margin-bottom:16px}
+.ft-grid a{display:block;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:9px}
+.ft-grid a:hover{color:var(--accent)}
+.ft-news{display:flex;margin-top:12px}
+.ft-news input{flex:1;padding:11px 14px;background:#161616;border:1px solid #262626;color:#fff;font-size:12px;outline:none}
+.ft-news button{background:var(--accent);border:none;color:#fff;padding:0 16px;cursor:pointer;font-family:'Roboto Condensed',sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:11px}
+.ft-c{border-top:1px solid #1a1a1a;padding-top:24px;text-align:center;font-family:'Roboto Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Roboto Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:2000}
+.ribbon a{font-weight:700;text-decoration:underline}
+/* MOTION */
+@media (prefers-reduced-motion: no-preference){
+  .hero-bg{animation:kenburns 22s ease-out both}
+  .hero-c>*{animation:heroUp .9s cubic-bezier(.22,1,.36,1) both}
+  .hero-c>*:nth-child(1){animation-delay:.15s}.hero-c>*:nth-child(2){animation-delay:.3s}
+  .hero-c>*:nth-child(3){animation-delay:.45s}.hero-c>*:nth-child(4){animation-delay:.6s}
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .75s cubic-bezier(.22,1,.36,1),transform .75s cubic-bezier(.22,1,.36,1)}
+  .reveal.in{opacity:1;transform:none}
+}
+@keyframes kenburns{from{transform:scale(1.14)}to{transform:scale(1.02)}}
+@keyframes heroUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+/* toast */
+.toast{position:fixed;top:80px;right:24px;background:#111;color:#fff;font-family:'Roboto Condensed',sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:14px 22px;z-index:3000;opacity:0;transform:translateX(30px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(0)}
+@media(max-width:980px){.prod-grid{grid-template-columns:repeat(2,1fr)}.ft-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:860px){.nm{display:none}.cats{grid-template-columns:1fr}.trust-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-announce">Free delivery in Nairobi over KES 5,000 · M-Pesa on checkout</div>
+  <div class="ni">
+    <div class="nb">LULU<span>&amp;</span>CO</div>
+    <div class="nm"><a href="#shop">Shop</a><a href="#shop">New In</a><a href="#shop">Sale</a><a href="#">About</a></div>
+    <div class="nav-icons">
+      <span class="nav-icon"><i class="fa fa-search"></i></span>
+      <span class="nav-icon"><i class="fa fa-heart-o"></i></span>
+      <span class="nav-icon"><i class="fa fa-shopping-bag"></i><span class="cart-count" id="cc">0</span></span>
+      <button class="hbg"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-ov"></div>
+  <div class="hero-c">
+    <div class="hero-tag">New season · 2026</div>
+    <h1>Quiet luxury,<br>made in Nairobi.</h1>
+    <p>Considered pieces, leather goods and accessories — designed in Kenya, built to last.</p>
+    <a href="#shop" class="btn btn-w">Shop the collection</a>
+  </div>
+</section>
+
+<div class="cats">
+  <div class="cat"><img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=700&q=80" alt=""><div class="cat-ov"><span>Bags</span></div></div>
+  <div class="cat"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&q=80" alt=""><div class="cat-ov"><span>Footwear</span></div></div>
+  <div class="cat"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=700&q=80" alt=""><div class="cat-ov"><span>Accessories</span></div></div>
+</div>
+
+<section class="section" id="shop">
+  <div class="container">
+    <div class="sec-sub">Just landed</div>
+    <div class="sec-title">New Arrivals</div>
+    <div class="divider"></div>
+    <div class="prod-grid" id="grid">
+      <div class="prod"><div class="prod-img"><span class="prod-tag">New</span><img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=700&q=80" alt=""><div class="add prod-add" data-id="leather-tote" data-name="Leather Tote" data-price="6800"  data-name="Leather Tote">+ Add to bag</div></div><div class="prod-name">Leather Tote</div><div class="prod-cat">Bags</div><div class="prod-price">KES 6,800</div></div>
+      <div class="prod"><div class="prod-img"><span class="prod-tag sale">Sale</span><img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=700&q=80" alt=""><div class="add prod-add" data-id="leather-tote" data-name="Leather Tote" data-price="6800"  data-name="Suede Sneakers">+ Add to bag</div></div><div class="prod-name">Suede Sneakers</div><div class="prod-cat">Footwear</div><div class="prod-price">KES 4,200 <s>5,600</s></div></div>
+      <div class="prod"><div class="prod-img"><img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=700&q=80" alt=""><div class="add prod-add" data-id="leather-tote" data-name="Leather Tote" data-price="6800"  data-name="Matte Sunglasses">+ Add to bag</div></div><div class="prod-name">Matte Sunglasses</div><div class="prod-cat">Accessories</div><div class="prod-price">KES 2,400</div></div>
+      <div class="prod"><div class="prod-img"><span class="prod-tag">New</span><img src="https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=700&q=80" alt=""><div class="add prod-add" data-id="leather-tote" data-name="Leather Tote" data-price="6800"  data-name="Minimal Watch">+ Add to bag</div></div><div class="prod-name">Minimal Watch</div><div class="prod-cat">Accessories</div><div class="prod-price">KES 8,900</div></div>
+      <div class="prod"><div class="prod-img"><img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=700&q=80" alt=""><div class="add prod-add" data-id="leather-tote" data-name="Leather Tote" data-price="6800"  data-name="Runner Pair">+ Add to bag</div></div><div class="prod-name">Runner Pair</div><div class="prod-cat">Footwear</div><div class="prod-price">KES 5,500</div></div>
+      <div class="prod"><div class="prod-img"><img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=700&q=80" alt=""><div class="add prod-add" data-id="leather-tote" data-name="Leather Tote" data-price="6800"  data-name="Canvas Backpack">+ Add to bag</div></div><div class="prod-name">Canvas Backpack</div><div class="prod-cat">Bags</div><div class="prod-price">KES 4,950</div></div>
+      <div class="prod"><div class="prod-img"><span class="prod-tag sale">Sale</span><img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=700&q=80" alt=""><div class="add prod-add" data-id="leather-tote" data-name="Leather Tote" data-price="6800"  data-name="Gold Hoops">+ Add to bag</div></div><div class="prod-name">Gold Hoops</div><div class="prod-cat">Jewellery</div><div class="prod-price">KES 1,800 <s>2,400</s></div></div>
+      <div class="prod"><div class="prod-img"><img src="https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=700&q=80" alt=""><div class="add prod-add" data-id="leather-tote" data-name="Leather Tote" data-price="6800"  data-name="Signature Scent">+ Add to bag</div></div><div class="prod-name">Signature Scent</div><div class="prod-cat">Beauty</div><div class="prod-price">KES 3,600</div></div>
+    </div>
+    <div style="text-align:center;margin-top:48px"><a href="#" class="btn btn-d">View all products</a></div>
+  </div>
+</section>
+
+<section class="promo">
+  <div class="promo-bg"></div>
+  <div class="promo-ov"></div>
+  <div class="container promo-c">
+    <h2>Mid-season sale</h2>
+    <p>Up to 40% off selected pieces</p>
+    <a href="#shop" class="btn btn-accent">Shop the sale</a>
+  </div>
+</section>
+
+<section class="trust section">
+  <div class="container">
+    <div class="trust-grid">
+      <div><i class="fa fa-truck"></i><h4>Nairobi delivery</h4><p>Same-day in the city</p></div>
+      <div><i class="fa fa-mobile"></i><h4>M-Pesa checkout</h4><p>Pay in seconds</p></div>
+      <div><i class="fa fa-refresh"></i><h4>7-day returns</h4><p>No-fuss exchanges</p></div>
+      <div><i class="fa fa-lock"></i><h4>Secure payment</h4><p>Protected at checkout</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="ft-grid">
+      <div>
+        <div class="nb">LULU<span>&amp;</span>CO</div>
+        <p style="font-size:13px;max-width:240px">A modern Kenyan boutique. Considered design, fair prices, made to last.</p>
+      </div>
+      <div><h4>Shop</h4><a href="#shop">New In</a><a href="#shop">Bags</a><a href="#shop">Footwear</a><a href="#shop">Sale</a></div>
+      <div><h4>Help</h4><a href="#">Shipping</a><a href="#">Returns</a><a href="#">Size guide</a><a href="#">Contact</a></div>
+      <div><h4>Newsletter</h4><p style="font-size:13px">Get 10% off your first order.</p>
+        <div class="ft-news"><input placeholder="Email address"><button>Join</button></div>
+      </div>
+    </div>
+    <div class="ft-c">© 2026 Lulu &amp; Co · Nairobi, Kenya</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Added to bag</div>
+<div class="ribbon">Template: SHOP · Fashion — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+let cart=0; // counter only — full cart managed by sitesawa-connect.js
+const cc=document.getElementById('cc'),toast=document.getElementById('toast');
+document.querySelectorAll('.prod-add').forEach(b=>b.addEventListener('click',e=>{
+  e.stopPropagation();cart++;cc.textContent=cart;
+  toast.textContent=(b.dataset.name||'Item')+' added to bag';
+  toast.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>toast.classList.remove('show'),1600);
+}));
+(function(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const groups=['.cat','.sec-sub','.sec-title','.divider','.prod','.promo-c>*','.trust-grid>div'];
+  const els=[];
+  groups.forEach(s=>document.querySelectorAll(s).forEach(el=>{el.classList.add('reveal');els.push(el)}));
+  document.querySelectorAll('.prod').forEach((el,i)=>el.style.transitionDelay=(i%4*0.07)+'s');
+  document.querySelectorAll('.cat').forEach((el,i)=>el.style.transitionDelay=(i*0.1)+'s');
+  document.querySelectorAll('.trust-grid>div').forEach((el,i)=>el.style.transitionDelay=(i*0.08)+'s');
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  els.forEach(el=>io.observe(el));
+  setTimeout(()=>{els.forEach(el=>{el.style.transition='none';el.style.opacity='1';el.style.transform='none';el.classList.add('in')});document.querySelectorAll('.hero-c>*,.hero-bg').forEach(el=>{el.style.animation='none';el.style.opacity='1'});},5000);
+})();
+</script>
+</body>
+</html>

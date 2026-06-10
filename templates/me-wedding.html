@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amani & Joel — We're getting married</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Great+Vibes&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f1ea;--ink:#3a352d;--mut:#8a8174;--gold:#b08d57;--sage:#7f8b6f}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font:300 16px/1.85 'Jost',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.script{font-family:'Great Vibes',cursive}
+.serif{font-family:'Cormorant Garamond',serif}
+.wrap{max-width:920px;margin:0 auto;padding:0 26px}
+nav{position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(246,241,234,.85);backdrop-filter:blur(8px)}
+.nav-in{max-width:920px;margin:0 auto;padding:18px 26px;display:flex;justify-content:center;gap:32px;font-size:13px;letter-spacing:.22em;text-transform:uppercase}
+.nav-in a{color:var(--mut)}.nav-in a:hover{color:var(--gold)}
+/* hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:80px 26px}
+.hero::before,.hero::after{content:'';position:absolute;width:200px;height:200px;border:1px solid var(--gold);opacity:.35}
+.hero::before{top:90px;left:40px;border-right:none;border-bottom:none}
+.hero::after{bottom:60px;right:40px;border-left:none;border-top:none}
+.hero .pre{letter-spacing:.4em;text-transform:uppercase;font-size:13px;color:var(--mut);margin-bottom:24px}
+.hero .names{font-family:'Great Vibes',cursive;font-size:clamp(64px,15vw,160px);line-height:.9;color:var(--gold)}
+.hero .amp{display:block;font-size:.5em;color:var(--sage);margin:6px 0}
+.hero .date{margin-top:30px;font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:.1em}
+.hero .place{letter-spacing:.3em;text-transform:uppercase;font-size:13px;color:var(--mut);margin-top:10px}
+.divider{display:flex;align-items:center;justify-content:center;gap:16px;margin:0 auto;width:200px;color:var(--gold)}
+.divider::before,.divider::after{content:'';height:1px;background:var(--gold);flex:1;opacity:.5}
+/* sections */
+.sec{padding:90px 0;text-align:center}
+.sec .lab{font-family:'Great Vibes',cursive;font-size:46px;color:var(--gold);margin-bottom:6px}
+.sec h2{font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:.3em;text-transform:uppercase;color:var(--mut);margin-bottom:30px}
+.sec p{max-width:560px;margin:0 auto;font-size:17px;color:#544e44}
+.events{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:680px;margin:36px auto 0}
+.ev{border:1px solid #e3dccf;padding:32px 24px;background:#fbf8f3}
+.ev .t{font-family:'Cormorant Garamond',serif;font-size:30px;margin-bottom:6px}
+.ev .h{color:var(--gold);letter-spacing:.1em;font-size:14px;margin-bottom:10px}
+.ev .d{color:var(--mut);font-size:14px}
+.count{display:flex;justify-content:center;gap:28px;margin-top:14px}
+.cu{text-align:center}
+.cu b{font-family:'Cormorant Garamond',serif;font-size:48px;display:block;line-height:1;color:var(--gold)}
+.cu span{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+.rsvp{background:var(--sage);color:#fff;padding:90px 26px;text-align:center}
+.rsvp .lab{color:#e8ecd9}
+.rsvp h2{color:rgba(255,255,255,.75)}
+.rsvp p{color:rgba(255,255,255,.9)}
+.btn{display:inline-block;margin-top:24px;background:#fff;color:var(--sage);letter-spacing:.2em;text-transform:uppercase;font-size:13px;padding:15px 40px;transition:.2s}
+.btn:hover{background:var(--gold);color:#fff}
+footer{padding:40px 26px;text-align:center;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:200}
+.ribbon a{font-weight:600;text-decoration:underline}
+.reveal{opacity:0;transform:translateY(20px);transition:.9s cubic-bezier(.22,1,.36,1)}.reveal.in{opacity:1;transform:none}
+@media(max-width:680px){.events{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav><div class="nav-in"><a href="#story">Our Story</a><a href="#events">Events</a><a href="#rsvp">RSVP</a></div></nav>
+
+<header class="hero">
+  <div class="pre">Together with their families</div>
+  <div class="names">Amani<span class="amp script">&amp;</span>Joel</div>
+  <div class="date serif">14 · 12 · 2026</div>
+  <div class="place">Karen, Nairobi</div>
+</header>
+
+<section class="sec" id="story">
+  <div class="lab reveal">our story</div>
+  <h2 class="reveal">How it began</h2>
+  <p class="reveal">We met on a rainy afternoon in a tiny bookshop off Kimathi Street, both reaching for the last copy of the same novel. Five years, three cities and one very patient dog later, we're saying forever — and we'd love for you to be there.</p>
+  <div class="divider" style="margin-top:40px"><span class="script" style="font-size:28px">♥</span></div>
+</section>
+
+<section class="sec" id="events" style="background:#fbf8f3;border-top:1px solid #e9e2d6;border-bottom:1px solid #e9e2d6">
+  <div class="lab reveal">the day</div>
+  <h2 class="reveal">Celebrations</h2>
+  <div class="events">
+    <div class="ev reveal"><div class="t serif">Ceremony</div><div class="h">2:00 PM</div><div class="d">Karen Country Club<br>Garden Lawn</div></div>
+    <div class="ev reveal"><div class="t serif">Reception</div><div class="h">5:00 PM</div><div class="d">The Pavilion<br>Dinner & dancing</div></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="lab reveal">counting down</div>
+  <h2 class="reveal">Until we say "I do"</h2>
+  <div class="count reveal">
+    <div class="cu"><b>192</b><span>Days</span></div>
+    <div class="cu"><b>06</b><span>Hours</span></div>
+    <div class="cu"><b>41</b><span>Minutes</span></div>
+  </div>
+</section>
+
+<section class="rsvp" id="rsvp">
+  <div class="lab script" style="font-size:46px">join us</div>
+  <h2>kindly respond</h2>
+  <p>We hope you can celebrate with us. Please RSVP by the 1st of November.</p>
+  <a class="btn" href="#">RSVP here</a>
+</section>
+
+<footer>Amani &amp; Joel · 14 December 2026 · Made with love</footer>
+<div class="ribbon">Template: ME · Wedding — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.14});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%3*.08)+'s';io.observe(el)});
+setTimeout(()=>document.querySelectorAll('.reveal:not(.in)').forEach(e=>{e.style.opacity=1;e.style.transform='none'}),5000);
+</script>
+</body>
+</html>

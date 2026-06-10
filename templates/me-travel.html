@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wander with Maya — Travel Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf8f2;--card:#ffffff;--ink:#1a2b2a;--mut:#5e6f6c;--line:#e9e2d4;--teal:#0fa3a3;--teal-d:#0c8585;--coral:#ff6b4a;--sun:#ffb43d}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font:400 16px/1.65 'Outfit',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}img{display:block;max-width:100%}
+.disp{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;letter-spacing:-.02em;line-height:1}
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+nav{position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(251,248,242,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1180px;margin:0 auto;padding:15px 26px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:21px;display:flex;align-items:center;gap:9px}
+.logo .m{width:32px;height:32px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px}
+.nav-links{display:flex;gap:28px;font-size:15px;font-weight:500;color:var(--mut)}
+.nav-links a:hover{color:var(--teal)}
+.sub{background:var(--coral);color:#fff;font-weight:600;font-size:14px;padding:11px 22px;border-radius:999px;transition:.2s}
+.sub:hover{background:#e85636;transform:translateY(-2px)}
+/* hero */
+.hero{padding:120px 0 60px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);font-weight:600;font-size:13px;padding:7px 15px;border-radius:999px;margin-bottom:22px;box-shadow:0 4px 14px rgba(26,43,42,.05)}
+.pill .d{width:7px;height:7px;border-radius:50%;background:var(--coral)}
+.hero h1{font-size:clamp(46px,7vw,92px);margin-bottom:20px}
+.hero h1 .t{color:var(--teal)}.hero h1 .c{color:var(--coral)}
+.hero p{font-size:19px;color:var(--mut);max-width:430px;margin-bottom:28px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn-a{background:var(--teal);color:#fff;font-weight:600;padding:15px 28px;border-radius:999px;box-shadow:0 12px 28px rgba(15,163,163,.28);transition:.2s}
+.btn-a:hover{background:var(--teal-d);transform:translateY(-2px)}
+.btn-g{font-weight:600;color:var(--ink);padding:15px 10px}
+.btn-g:hover{color:var(--teal)}
+.hero-collage{position:relative;height:480px}
+.hero-collage img{position:absolute;border-radius:20px;object-fit:cover;box-shadow:0 20px 50px rgba(26,43,42,.18);border:4px solid #fff}
+.hc1{width:62%;height:62%;top:0;right:0;animation:fl 7s ease-in-out infinite}
+.hc2{width:50%;height:54%;bottom:0;left:0;animation:fl 8s ease-in-out infinite .6s}
+.hc3{width:34%;height:32%;bottom:14%;right:8%;animation:fl 6s ease-in-out infinite 1.2s}
+@keyframes fl{50%{transform:translateY(-12px)}}
+.hc-badge{position:absolute;bottom:10%;left:-10px;background:#fff;border-radius:14px;padding:10px 16px;box-shadow:0 14px 34px rgba(26,43,42,.16);font-weight:600;font-size:14px;z-index:3}
+.hc-badge .e{font-size:18px}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:10px}
+.stat{background:var(--bg);padding:26px;text-align:center}
+.stat b{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:34px;color:var(--teal);display:block;line-height:1}
+.stat span{font-size:13px;color:var(--mut)}
+/* posts */
+.sec{padding:80px 0}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:34px;flex-wrap:wrap;gap:14px}
+.sec-head h2{font-size:clamp(30px,4.6vw,50px)}
+.sec-head a{color:var(--teal);font-weight:600}
+.posts{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.post{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:.25s;cursor:pointer}
+.post:hover{transform:translateY(-6px);box-shadow:0 24px 50px rgba(26,43,42,.14)}
+.post-img{aspect-ratio:4/3;overflow:hidden;position:relative}
+.post-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.post:hover .post-img img{transform:scale(1.07)}
+.post .place{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.92);backdrop-filter:blur(4px);font-weight:600;font-size:12px;padding:5px 12px;border-radius:999px;color:var(--teal-d)}
+.post-b{padding:20px}
+.post .meta{font-size:12px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
+.post h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:20px;line-height:1.2;margin-bottom:6px}
+.post p{color:var(--mut);font-size:14px}
+/* newsletter */
+.news{margin:0 26px;border-radius:28px;background:linear-gradient(135deg,var(--teal),#0d7d8a);color:#fff;text-align:center;padding:70px 30px;position:relative;overflow:hidden}
+.news::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,180,61,.25);filter:blur(70px);top:-100px;right:-60px}
+.news h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(30px,5vw,52px);margin-bottom:12px;position:relative}
+.news p{color:rgba(255,255,255,.9);font-size:18px;margin-bottom:26px;position:relative}
+.news form{display:flex;max-width:420px;margin:0 auto;gap:8px;position:relative;flex-wrap:wrap;justify-content:center}
+.news input{flex:1;min-width:200px;border:none;border-radius:999px;padding:15px 20px;font-family:'Outfit';font-size:15px;outline:none}
+.news button{background:var(--coral);color:#fff;border:none;border-radius:999px;padding:15px 28px;font-family:'Outfit';font-weight:600;font-size:15px;cursor:pointer;transition:.2s}
+.news button:hover{background:#e85636}
+footer{padding:44px 0;color:var(--mut);font-size:14px}
+.ft-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Outfit',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:200}
+.ribbon a{text-decoration:underline}
+.reveal{opacity:0;transform:translateY(22px);transition:.65s cubic-bezier(.22,1,.36,1)}.reveal.in{opacity:1;transform:none}
+@media(max-width:860px){.nav-links{display:none}.hero-grid{grid-template-columns:1fr;gap:36px}.hero-collage{height:360px;max-width:420px}.stats{grid-template-columns:1fr 1fr}.posts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav><div class="nav-in">
+  <div class="logo"><span class="m">✈</span>Wander&nbsp;with&nbsp;Maya</div>
+  <div class="nav-links"><a href="#journal">Journal</a><a href="#guides">Guides</a><a href="#about">About</a></div>
+  <a class="sub" href="#news">Subscribe</a>
+</div></nav>
+
+<header class="hero wrap"><div class="hero-grid">
+  <div>
+    <div class="pill"><span class="d"></span>Currently in: the Rift Valley</div>
+    <h1 class="disp">See more.<br><span class="t">Rush</span> <span class="c">less.</span></h1>
+    <p>Slow-travel stories, honest guides and the quiet corners of East Africa and beyond — one trip at a time.</p>
+    <div class="hero-cta"><a class="btn-a" href="#journal">Read the journal</a><a class="btn-g" href="#guides">Free guides →</a></div>
+  </div>
+  <div class="hero-collage">
+    <img class="hc1" src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&q=80" alt="">
+    <img class="hc2" src="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800&q=80" alt="">
+    <img class="hc3" src="https://images.unsplash.com/photo-1504870712357-65ea720d6078?w=600&q=80" alt="">
+    <div class="hc-badge"><span class="e">🌍</span> 42 countries</div>
+  </div>
+</div>
+<div class="stats">
+  <div class="stat"><b>42</b><span>Countries</span></div>
+  <div class="stat"><b>180+</b><span>Stories written</span></div>
+  <div class="stat"><b>95k</b><span>Readers monthly</span></div>
+  <div class="stat"><b>12</b><span>City guides</span></div>
+</div>
+</header>
+
+<section class="sec wrap" id="journal">
+  <div class="sec-head"><h2 class="disp reveal">Latest from the road</h2><a href="#" class="reveal">All stories →</a></div>
+  <div class="posts">
+    <div class="post reveal"><div class="post-img"><span class="place">Kenya</span><img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=700&q=80" alt=""></div><div class="post-b"><div class="meta">Safari · 8 min read</div><h3>10 days in the Maasai Mara</h3><p>What no one tells you about the great migration season.</p></div></div>
+    <div class="post reveal"><div class="post-img"><span class="place">Zanzibar</span><img src="https://images.unsplash.com/photo-1559825481-12a05cc00344?w=700&q=80" alt=""></div><div class="post-b"><div class="meta">Coast · 6 min read</div><h3>Stone Town, slowly</h3><p>A walking guide to the island's oldest streets.</p></div></div>
+    <div class="post reveal"><div class="post-img"><span class="place">Iceland</span><img src="https://images.unsplash.com/photo-1490650404312-a2175773bbf5?w=700&q=80" alt=""></div><div class="post-b"><div class="meta">Road trip · 11 min read</div><h3>The Ring Road on a budget</h3><p>Everything I'd pack — and skip — next time.</p></div></div>
+    <div class="post reveal"><div class="post-img"><span class="place">Portugal</span><img src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=700&q=80" alt=""></div><div class="post-b"><div class="meta">City · 7 min read</div><h3>Lisbon's quiet hills</h3><p>The miradouros worth the climb at sunset.</p></div></div>
+    <div class="post reveal"><div class="post-img"><span class="place">Japan</span><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=700&q=80" alt=""></div><div class="post-b"><div class="meta">Culture · 9 min read</div><h3>Kyoto off the trail</h3><p>Temples without the crowds, if you go early.</p></div></div>
+    <div class="post reveal"><div class="post-img"><span class="place">Norway</span><img src="https://images.unsplash.com/photo-1601439678777-b2b3c56fa627?w=700&q=80" alt=""></div><div class="post-b"><div class="meta">Nature · 10 min read</div><h3>Chasing the fjords</h3><p>A slow week with a tent, a map and no plan.</p></div></div>
+  </div>
+</section>
+
+<section class="sec" id="news"><div class="news">
+  <h2>The Sunday postcard</h2>
+  <p>One short travel story and a hidden gem in your inbox each week. No spam, ever.</p>
+  <form onsubmit="return false"><input placeholder="your@email.com"><button>Send me postcards</button></form>
+</div></section>
+
+<footer><div class="wrap ft-in"><span>© 2026 Wander with Maya · Travel Journal</span><span>hello@wanderwithmaya.com</span></div></footer>
+
+<div class="ribbon">Template: ME · Travel Blog — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.12});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%3*.06)+'s';io.observe(el)});
+setTimeout(()=>document.querySelectorAll('.reveal:not(.in)').forEach(e=>{e.style.opacity=1;e.style.transform='none'}),5000);
+</script>
+</body>
+</html>

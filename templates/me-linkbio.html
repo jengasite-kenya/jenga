@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>@nia.creates — links</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0b0a12}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font:400 16px/1.6 'Sora',sans-serif;color:#fff;min-height:100vh;-webkit-font-smoothing:antialiased;background:#0b0a12;display:flex;justify-content:center;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.aurora{position:fixed;inset:0;z-index:0;overflow:hidden}
+.au{position:absolute;border-radius:50%;filter:blur(80px);opacity:.65}
+.a1{width:480px;height:480px;background:#7c3aed;top:-140px;left:-100px;animation:dr 16s ease-in-out infinite}
+.a2{width:420px;height:420px;background:#ec4899;bottom:-120px;right:-80px;animation:dr 18s ease-in-out infinite 1s}
+.a3{width:360px;height:360px;background:#06b6d4;top:40%;left:50%;transform:translateX(-50%);animation:dr 20s ease-in-out infinite .5s}
+@keyframes dr{50%{transform:translate(40px,-30px) scale(1.15)}}
+.card{position:relative;z-index:1;width:100%;max-width:480px;padding:64px 26px 90px;text-align:center}
+.avatar{width:104px;height:104px;border-radius:50%;margin:0 auto 18px;background:linear-gradient(135deg,#ec4899,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:800;border:3px solid rgba(255,255,255,.3);box-shadow:0 12px 40px rgba(124,58,237,.4)}
+.handle{font-size:24px;font-weight:800;letter-spacing:-.01em}
+.bio{color:rgba(255,255,255,.7);font-size:15px;margin:8px auto 8px;max-width:340px}
+.verified{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#a5f3fc;margin-bottom:26px}
+.verified::before{content:'✓';background:#06b6d4;color:#06203a;width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
+.socials{display:flex;gap:14px;justify-content:center;margin-bottom:30px}
+.socials a{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:18px;backdrop-filter:blur(6px);transition:.2s}
+.socials a:hover{background:rgba(255,255,255,.22);transform:translateY(-3px)}
+.links{display:flex;flex-direction:column;gap:14px}
+.lnk{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);border-radius:16px;padding:17px 20px;font-weight:600;font-size:16px;transition:.2s;text-align:left}
+.lnk:hover{background:#fff;color:var(--ink);transform:translateY(-3px);box-shadow:0 14px 36px rgba(0,0,0,.35)}
+.lnk .e{font-size:22px;width:26px;text-align:center}
+.lnk .ar{margin-left:auto;opacity:.5;transition:.2s}
+.lnk:hover .ar{transform:translateX(4px);opacity:1}
+.lnk.feat{background:linear-gradient(135deg,#ec4899,#7c3aed);border:none}
+.lnk.feat:hover{color:#fff;filter:brightness(1.08)}
+.foot{margin-top:38px;font-size:12px;color:rgba(255,255,255,.45)}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Sora',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:200}
+.ribbon a{text-decoration:underline}
+.reveal{opacity:0;transform:translateY(16px);transition:.55s cubic-bezier(.22,1,.36,1)}.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="au a1"></div><div class="au a2"></div><div class="au a3"></div></div>
+<main class="card">
+  <div class="avatar reveal">N</div>
+  <div class="handle reveal">@nia.creates</div>
+  <div class="bio reveal">Content creator & photographer 📸 Nairobi → everywhere. Sharing the good stuff below.</div>
+  <div class="verified reveal">Verified creator</div>
+  <div class="socials reveal"><a href="#">📷</a><a href="#">▶</a><a href="#">🎵</a><a href="#">𝕏</a></div>
+  <div class="links">
+    <a class="lnk feat reveal"><span class="e">✨</span> New: My 2026 Preset Pack <span class="ar">→</span></a>
+    <a class="lnk reveal"><span class="e">🎥</span> Latest YouTube video <span class="ar">→</span></a>
+    <a class="lnk reveal"><span class="e">🛍️</span> Shop my gear & faves <span class="ar">→</span></a>
+    <a class="lnk reveal"><span class="e">📅</span> Book a brand collab <span class="ar">→</span></a>
+    <a class="lnk reveal"><span class="e">💌</span> Join my newsletter <span class="ar">→</span></a>
+    <a class="lnk reveal"><span class="e">☕</span> Buy me a coffee <span class="ar">→</span></a>
+  </div>
+  <div class="foot reveal">© 2026 Nia · Nairobi 🇰🇪</div>
+</main>
+<div class="ribbon">Template: ME · Link-in-bio — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.1});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i*.05)+'s';io.observe(el)});
+setTimeout(()=>document.querySelectorAll('.reveal:not(.in)').forEach(e=>{e.style.opacity=1;e.style.transform='none'}),5000);
+</script>
+</body>
+</html>

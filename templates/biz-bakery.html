@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sukari — Bakery & Patisserie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,500;9..144,0,600;9..144,1,500&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff5f0;--card:#fffaf7;--ink:#4a2f33;--mut:#9c7c80;--line:#f3dcd6;--pink:#e8849b;--pink-d:#d96a85;--cream:#fbe9d8;--mint:#9bc9a6}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font:400 16px/1.7 'Quicksand',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}img{display:block;max-width:100%}
+.fr{font-family:'Fraunces',serif}
+.wrap{max-width:1140px;margin:0 auto;padding:0 26px}
+nav{position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(255,245,240,.85);backdrop-filter:blur(10px)}
+.nav-in{max-width:1140px;margin:0 auto;padding:16px 26px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Fraunces',serif;font-weight:600;font-size:25px;display:flex;align-items:center;gap:9px}
+.logo .m{font-size:24px}
+.nav-links{display:flex;gap:28px;font-size:15px;font-weight:600;color:var(--mut)}
+.nav-links a:hover{color:var(--pink-d)}
+.order{background:var(--pink);color:#fff;font-weight:700;font-size:14px;padding:11px 22px;border-radius:999px;transition:.2s;box-shadow:0 8px 18px rgba(232,132,155,.35)}
+.order:hover{background:var(--pink-d);transform:translateY(-2px)}
+/* hero */
+.hero{padding:130px 0 70px;display:grid;grid-template-columns:1.05fr .95fr;gap:46px;align-items:center;position:relative}
+.hero .pre{font-family:'Fraunces',serif;font-style:italic;color:var(--pink-d);font-size:22px;margin-bottom:12px}
+.hero h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(46px,7vw,88px);line-height:.98;margin-bottom:20px}
+.hero p{font-size:18px;color:var(--mut);max-width:420px;margin-bottom:28px}
+.hero-cta{display:flex;gap:13px;flex-wrap:wrap}
+.btn-a{background:var(--pink);color:#fff;font-weight:700;padding:15px 30px;border-radius:999px;box-shadow:0 12px 26px rgba(232,132,155,.35);transition:.2s}
+.btn-a:hover{background:var(--pink-d);transform:translateY(-2px)}
+.btn-g{background:#fff;border:1px solid var(--line);color:var(--ink);font-weight:600;padding:15px 26px;border-radius:999px;transition:.2s}
+.btn-g:hover{border-color:var(--pink)}
+.hero-art{position:relative}
+.hero-art .main{aspect-ratio:1;border-radius:50%;object-fit:cover;width:100%;border:10px solid #fff;box-shadow:0 30px 60px rgba(74,47,51,.18);animation:spin 60s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hero-art .tag{position:absolute;background:#fff;border-radius:18px;padding:12px 18px;box-shadow:0 14px 30px rgba(74,47,51,.14);font-weight:700;font-size:14px;display:flex;align-items:center;gap:9px}
+.hero-art .tag .e{font-size:20px}
+.t1{top:8%;left:-12px;animation:bob 5s ease-in-out infinite}
+.t2{bottom:12%;right:-8px;animation:bob 6s ease-in-out infinite .7s}
+.t2 b{color:var(--pink-d)}
+@keyframes bob{50%{transform:translateY(-12px)}}
+/* scalloped divider */
+.scallop{height:30px;background:radial-gradient(circle at 15px -6px,transparent 15px,var(--cream) 16px);background-size:30px 30px;background-repeat:repeat-x}
+/* menu */
+.menu-band{background:var(--cream)}
+.sec{padding:80px 0}
+.sec-head{text-align:center;margin-bottom:44px}
+.sec-head .lab{font-family:'Fraunces',serif;font-style:italic;color:var(--pink-d);font-size:21px}
+.sec-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(30px,4.6vw,50px)}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.c{background:var(--card);border-radius:24px;overflow:hidden;border:1px solid var(--line);transition:.25s;cursor:pointer}
+.c:hover{transform:translateY(-6px) rotate(-.5deg);box-shadow:0 24px 50px rgba(74,47,51,.14)}
+.c-img{aspect-ratio:4/3;overflow:hidden;position:relative}
+.c-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.c:hover .c-img img{transform:scale(1.07)}
+.c .heart{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;font-size:15px}
+.c-b{padding:20px}
+.c-b .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.c-b h3{font-family:'Fraunces',serif;font-size:21px}
+.c-b .price{font-family:'Fraunces',serif;font-size:19px;color:var(--pink-d);white-space:nowrap}
+.c-b p{color:var(--mut);font-size:14px;margin-top:5px}
+/* features */
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.ft{text-align:center;padding:26px}
+.ft .e{width:64px;height:64px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px}
+.ft h3{font-family:'Fraunces',serif;font-size:22px;margin-bottom:6px}
+.ft p{color:var(--mut);font-size:15px}
+/* cta */
+.cta{margin:0 26px;border-radius:32px;background:linear-gradient(135deg,var(--pink),#f0a5b4);color:#fff;text-align:center;padding:70px 30px}
+.cta h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(30px,5vw,52px);margin-bottom:12px}
+.cta p{color:rgba(255,255,255,.92);font-size:18px;margin-bottom:26px}
+.cta a{display:inline-block;background:#fff;color:var(--pink-d);font-weight:700;padding:15px 36px;border-radius:999px;transition:.2s}
+.cta a:hover{transform:translateY(-3px)}
+footer{padding:44px 0;text-align:center;color:var(--mut);font-size:14px}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Quicksand',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:200}
+.ribbon a{text-decoration:underline}
+.reveal{opacity:0;transform:translateY(22px);transition:.65s cubic-bezier(.34,1.56,.64,1)}.reveal.in{opacity:1;transform:none}
+@media(max-width:860px){.nav-links{display:none}.hero{grid-template-columns:1fr;gap:36px}.hero-art{max-width:360px;margin:0 auto}.cards,.feat{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav><div class="nav-in">
+  <div class="logo"><span class="m">🧁</span>Sukari</div>
+  <div class="nav-links"><a href="#menu">Menu</a><a href="#why">Why Sukari</a><a href="#visit">Visit</a></div>
+  <a class="order" href="#visit">Order a cake</a>
+</div></nav>
+
+<header class="hero wrap">
+  <div>
+    <div class="pre fr">freshly baked, every morning</div>
+    <h1 class="fr">Life's sweeter<br>with cake.</h1>
+    <p>A little neighbourhood bakery in Nairobi making cakes, croissants and warm bread worth the detour.</p>
+    <div class="hero-cta"><a class="btn-a" href="#menu">See the menu</a><a class="btn-g" href="#visit">Find us</a></div>
+  </div>
+  <div class="hero-art">
+    <img class="main" src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&q=80" alt="">
+    <div class="tag t1"><span class="e">🥐</span> Baked at 5am</div>
+    <div class="tag t2"><span class="e">⭐</span> <b>4.9</b> · 800+ reviews</div>
+  </div>
+</header>
+
+<div class="scallop"></div>
+<section class="sec menu-band" id="menu"><div class="wrap">
+  <div class="sec-head"><div class="lab fr">today's counter</div><h2 class="fr">Our favourites</h2></div>
+  <div class="cards">
+    <div class="c reveal"><div class="c-img"><span class="heart">♡</span><img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=700&q=80" alt=""></div><div class="c-b"><div class="row"><h3 class="fr">Strawberry Cake</h3><span class="price">2,800</span></div><p>Vanilla sponge, fresh cream, ripe strawberries.</p></div></div>
+    <div class="c reveal"><div class="c-img"><span class="heart">♡</span><img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=700&q=80" alt=""></div><div class="c-b"><div class="row"><h3 class="fr">Butter Croissants</h3><span class="price">180</span></div><p>Flaky, golden, laminated over three days.</p></div></div>
+    <div class="c reveal"><div class="c-img"><span class="heart">♡</span><img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=700&q=80" alt=""></div><div class="c-b"><div class="row"><h3 class="fr">Cupcake Box</h3><span class="price">1,200</span></div><p>Six little ones, rotating flavours each week.</p></div></div>
+    <div class="c reveal"><div class="c-img"><span class="heart">♡</span><img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=700&q=80" alt=""></div><div class="c-b"><div class="row"><h3 class="fr">Sourdough Loaf</h3><span class="price">450</span></div><p>Slow-fermented, crackly crust, open crumb.</p></div></div>
+    <div class="c reveal"><div class="c-img"><span class="heart">♡</span><img src="https://images.unsplash.com/photo-1607478900766-efe13248b125?w=700&q=80" alt=""></div><div class="c-b"><div class="row"><h3 class="fr">Chocolate Tart</h3><span class="price">320</span></div><p>Dark ganache in a crisp pastry shell.</p></div></div>
+    <div class="c reveal"><div class="c-img"><span class="heart">♡</span><img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=700&q=80" alt=""></div><div class="c-b"><div class="row"><h3 class="fr">Cinnamon Rolls</h3><span class="price">260</span></div><p>Gooey, warm, with cream-cheese glaze.</p></div></div>
+  </div>
+</div></section>
+
+<section class="sec wrap" id="why">
+  <div class="sec-head"><div class="lab fr">made with love</div><h2 class="fr">Why Sukari</h2></div>
+  <div class="feat">
+    <div class="ft reveal"><div class="e">🌾</div><h3 class="fr">Real ingredients</h3><p>Local flour, real butter, no shortcuts or mixes.</p></div>
+    <div class="ft reveal"><div class="e">🎂</div><h3 class="fr">Custom cakes</h3><p>Birthdays, weddings and "just because" — we make it.</p></div>
+    <div class="ft reveal"><div class="e">🛵</div><h3 class="fr">Same-day delivery</h3><p>Order by noon, sweeten someone's day by evening.</p></div>
+  </div>
+</section>
+
+<section class="sec" id="visit" style="padding-top:0"><div class="cta">
+  <h2 class="fr">Got something to celebrate?</h2>
+  <p>Order a custom cake or a box of treats — pay easily with M-Pesa.</p>
+  <a href="#">Order now →</a>
+</div></section>
+
+<footer>© 2026 Sukari Bakery · Lavington, Nairobi · open daily 7am–7pm · 🧁</footer>
+
+<div class="ribbon">Template: BIZ · Bakery — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.12});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%3*.06)+'s';io.observe(el)});
+setTimeout(()=>document.querySelectorAll('.reveal:not(.in)').forEach(e=>{e.style.opacity=1;e.style.transform='none'}),5000);
+</script>
+</body>
+</html>

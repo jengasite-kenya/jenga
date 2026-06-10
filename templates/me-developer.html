@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>mwangi.dev — Software Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#21262d;--txt:#c9d1d9;--mut:#8b949e;--acc:#3fb950;--acc2:#58a6ff}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font:400 15px/1.7 'Space Grotesk',sans-serif;background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.mono{font-family:'JetBrains Mono',monospace}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:980px;margin:0 auto;padding:0 24px}
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(13,17,23,.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:980px;margin:0 auto;padding:14px 24px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'JetBrains Mono',monospace;font-weight:700;color:#fff}
+.logo b{color:var(--acc)}
+.nav-links{display:flex;gap:24px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.nav-links a{color:var(--mut)}.nav-links a:hover{color:var(--acc)}
+.nav-links .c{color:var(--acc)}
+/* hero — code editor */
+.hero{padding:140px 0 80px}
+.term{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.term-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:#0d1117}
+.dot{width:12px;height:12px;border-radius:50%}
+.term-title{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--mut);margin-left:10px}
+.term-body{padding:28px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:2}
+.c-key{color:#ff7b72}.c-fn{color:#d2a8ff}.c-str{color:#a5d6ff}.c-var{color:#79c0ff}.c-com{color:var(--mut)}
+.term-body h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,5vw,52px);font-weight:700;color:#fff;line-height:1.05;margin:14px 0;letter-spacing:-.02em}
+.cursor{display:inline-block;width:9px;height:20px;background:var(--acc);vertical-align:middle;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.tag{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--acc);border:1px solid var(--line);border-radius:6px;padding:5px 11px;background:#0d1117}
+/* section */
+section.blk{padding:70px 0;border-top:1px solid var(--line)}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--acc);margin-bottom:8px}
+.eyebrow::before{content:'// '}
+h2{font-size:28px;font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:28px}
+.proj{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px;transition:.2s}
+.card:hover{border-color:var(--acc);transform:translateY(-4px)}
+.card h3{font-size:17px;color:#fff;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.card h3 .s{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--acc);margin-left:auto}
+.card p{font-size:14px;color:var(--mut);margin-bottom:14px}
+.card .stack{display:flex;gap:6px;flex-wrap:wrap}
+.card .stack span{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--acc2)}
+.skills{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.skill{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;text-align:center;color:var(--txt)}
+.skill:hover{color:var(--acc);border-color:var(--acc)}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.btn{font-family:'JetBrains Mono',monospace;font-size:14px;padding:12px 22px;border-radius:8px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.btn-a{background:var(--acc);color:#0d1117;font-weight:700}.btn-a:hover{background:#46d35a}
+.btn-g{border:1px solid var(--line);color:var(--txt)}.btn-g:hover{border-color:var(--acc);color:var(--acc)}
+footer{border-top:1px solid var(--line);padding:30px 0;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--mut);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:200}
+.ribbon a{font-weight:700;text-decoration:underline}
+.reveal{opacity:0;transform:translateY(22px);transition:.7s cubic-bezier(.22,1,.36,1)}.reveal.in{opacity:1;transform:none}
+@media(max-width:720px){.nav-links{display:none}.proj{grid-template-columns:1fr}.skills{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<nav><div class="nav-in">
+  <div class="logo">~/<b>mwangi</b>.dev</div>
+  <div class="nav-links"><a href="#work">work</a><a href="#stack">stack</a><a href="#contact" class="c">contact</a></div>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="term">
+    <div class="term-bar"><span class="dot" style="background:#ff5f56"></span><span class="dot" style="background:#ffbd2e"></span><span class="dot" style="background:#27c93f"></span><span class="term-title mono">developer.ts</span></div>
+    <div class="term-body">
+      <div class="c-com">// Backend engineer · Nairobi, Kenya</div>
+      <div><span class="c-key">const</span> <span class="c-var">dev</span> = {</div>
+      <h1>I build fast,<br>reliable systems.</h1>
+      <div><span class="c-fn">  role</span>: <span class="c-str">"Software Engineer"</span>,</div>
+      <div><span class="c-fn">  focus</span>: <span class="c-str">"APIs · cloud · payments"</span><span class="cursor"></span></div>
+      <div>}</div>
+      <div class="tags"><span class="tag">Go</span><span class="tag">TypeScript</span><span class="tag">Postgres</span><span class="tag">M-Pesa Daraja</span><span class="tag">AWS</span></div>
+    </div>
+  </div>
+</div></header>
+
+<section class="blk" id="work"><div class="wrap">
+  <div class="eyebrow reveal">selected work</div>
+  <h2 class="reveal">Recent projects</h2>
+  <div class="proj">
+    <div class="card reveal"><h3>PesaFlow API <span class="s">2026</span></h3><p>High-throughput M-Pesa reconciliation engine processing 40k+ daily transactions.</p><div class="stack"><span>Go</span><span>·</span><span>Redis</span><span>·</span><span>Postgres</span></div></div>
+    <div class="card reveal"><h3>Shamba IoT <span class="s">2025</span></h3><p>Realtime sensor pipeline for smart-farming dashboards across 3 counties.</p><div class="stack"><span>TypeScript</span><span>·</span><span>MQTT</span><span>·</span><span>Timescale</span></div></div>
+    <div class="card reveal"><h3>Duka POS <span class="s">2025</span></h3><p>Offline-first point-of-sale for informal retailers, syncing when back online.</p><div class="stack"><span>Flutter</span><span>·</span><span>SQLite</span><span>·</span><span>Go</span></div></div>
+    <div class="card reveal"><h3>Matatu Maps <span class="s">2024</span></h3><p>Crowd-sourced transit routing for Nairobi's matatu network.</p><div class="stack"><span>React</span><span>·</span><span>GraphQL</span><span>·</span><span>PostGIS</span></div></div>
+  </div>
+</div></section>
+
+<section class="blk" id="stack"><div class="wrap">
+  <div class="eyebrow reveal">toolbox</div>
+  <h2 class="reveal">Stack</h2>
+  <div class="skills">
+    <div class="skill reveal">Go</div><div class="skill reveal">TypeScript</div><div class="skill reveal">Python</div><div class="skill reveal">Rust</div>
+    <div class="skill reveal">Postgres</div><div class="skill reveal">Redis</div><div class="skill reveal">Docker</div><div class="skill reveal">Kubernetes</div>
+    <div class="skill reveal">AWS</div><div class="skill reveal">Terraform</div><div class="skill reveal">gRPC</div><div class="skill reveal">React</div>
+  </div>
+</div></section>
+
+<section class="blk" id="contact"><div class="wrap">
+  <div class="eyebrow reveal">get in touch</div>
+  <h2 class="reveal">Let's build something</h2>
+  <div class="cta-row reveal">
+    <a class="btn btn-a" href="#">$ ./hire-me →</a>
+    <a class="btn btn-g" href="#">github.com/mwangi</a>
+    <a class="btn btn-g" href="#">resume.pdf</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap" style="display:flex;justify-content:space-between;width:100%;flex-wrap:wrap;gap:10px"><span>© 2026 J. Mwangi</span><span class="c-com">// built in Nairobi</span></div></footer>
+
+<div class="ribbon">Template: ME · Developer — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.15});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4*.06)+'s';io.observe(el)});
+setTimeout(()=>document.querySelectorAll('.reveal:not(.in)').forEach(e=>{e.style.opacity=1;e.style.transform='none'}),5000);
+</script>
+</body>
+</html>

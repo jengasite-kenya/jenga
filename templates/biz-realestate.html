@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Haven — Property & Real Estate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbfcfb;--ink:#11241f;--mut:#5d706a;--line:#e4ebe7;--teal:#0e8a6e;--teal-d:#0a6b55;--sand:#f1f0e8}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font:400 16px/1.65 'Inter Tight',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.fr{font-family:'Fraunces',serif}
+.wrap{max-width:1200px;margin:0 auto;padding:0 26px}
+nav{position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(251,252,251,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1200px;margin:0 auto;padding:16px 26px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Fraunces',serif;font-weight:600;font-size:23px;display:flex;align-items:center;gap:9px}
+.logo .d{width:12px;height:12px;border-radius:50%;background:var(--teal)}
+.nav-links{display:flex;gap:28px;font-size:15px;font-weight:500;color:var(--mut)}
+.nav-links a:hover{color:var(--teal)}
+.list{background:var(--teal);color:#fff;padding:10px 20px;border-radius:999px;font-weight:600;font-size:14px;transition:.2s}
+.list:hover{background:var(--teal-d)}
+/* hero */
+.hero{padding:128px 0 60px}
+.hero h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(40px,6.5vw,76px);line-height:1.02;letter-spacing:-.02em;max-width:840px;margin-bottom:20px}
+.hero h1 em{font-style:italic;color:var(--teal)}
+.hero p{font-size:19px;color:var(--mut);max-width:520px;margin-bottom:28px}
+.search{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;gap:8px;box-shadow:0 16px 40px rgba(14,138,110,.08);max-width:720px;flex-wrap:wrap}
+.search .f{flex:1;min-width:130px;padding:12px 16px}
+.search .f label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);display:block;margin-bottom:3px;font-weight:600}
+.search .f select,.search .f input{border:none;outline:none;font-family:'Inter Tight';font-size:15px;font-weight:500;width:100%;background:transparent;color:var(--ink)}
+.search button{background:var(--teal);color:#fff;border:none;border-radius:11px;padding:0 26px;font-weight:600;font-size:15px;cursor:pointer;transition:.2s}
+.search button:hover{background:var(--teal-d)}
+/* listings */
+.sec{padding:74px 0}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:30px;flex-wrap:wrap;gap:14px}
+.sec-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(28px,4vw,42px)}
+.sec-head a{color:var(--teal);font-weight:600;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.prop{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s;cursor:pointer}
+.prop:hover{transform:translateY(-6px);box-shadow:0 22px 48px rgba(17,36,31,.12)}
+.prop-img{aspect-ratio:4/3;position:relative;overflow:hidden}
+.prop-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.prop:hover .prop-img img{transform:scale(1.06)}
+.prop .badge{position:absolute;top:12px;left:12px;background:#fff;color:var(--teal-d);font-weight:700;font-size:12px;padding:5px 12px;border-radius:999px}
+.prop .price{position:absolute;bottom:12px;left:12px;background:var(--teal);color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:18px;padding:6px 14px;border-radius:10px}
+.prop-b{padding:18px}
+.prop-b h3{font-family:'Fraunces',serif;font-size:20px;margin-bottom:4px}
+.prop-b .loc{color:var(--mut);font-size:14px;margin-bottom:14px}
+.prop-b .specs{display:flex;gap:16px;border-top:1px solid var(--line);padding-top:13px;font-size:13px;color:var(--mut);font-weight:500}
+.prop-b .specs span{display:flex;align-items:center;gap:6px}
+/* cta band */
+.band{background:var(--sand);border-radius:28px;margin:0 26px;padding:64px;text-align:center}
+.band h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(28px,4.5vw,48px);margin-bottom:12px}
+.band p{color:var(--mut);max-width:480px;margin:0 auto 24px}
+.band a{display:inline-block;background:var(--teal);color:#fff;font-weight:600;padding:15px 36px;border-radius:999px;transition:.2s}
+.band a:hover{background:var(--teal-d)}
+footer{padding:50px 0;border-top:1px solid var(--line);margin-top:60px}
+.ft-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;color:var(--mut);font-size:14px}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Inter Tight',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:200}
+.ribbon a{text-decoration:underline}
+.reveal{opacity:0;transform:translateY(22px);transition:.65s cubic-bezier(.22,1,.36,1)}.reveal.in{opacity:1;transform:none}
+@media(max-width:920px){.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.nav-links{display:none}.grid{grid-template-columns:1fr}.band{padding:40px 24px}}
+</style>
+</head>
+<body>
+<nav><div class="nav-in">
+  <div class="logo"><span class="d"></span>Haven</div>
+  <div class="nav-links"><a href="#buy">Buy</a><a href="#buy">Rent</a><a href="#buy">Commercial</a><a href="#sell">Sell</a></div>
+  <a class="list" href="#sell">List property</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <h1 class="fr">Find a place to <em>call home</em> in Kenya.</h1>
+  <p>Curated homes, apartments and land across Nairobi and beyond — with agents who actually pick up the phone.</p>
+  <div class="search">
+    <div class="f"><label>Location</label><select><option>Nairobi</option><option>Mombasa</option><option>Nakuru</option><option>Kisumu</option></select></div>
+    <div class="f"><label>Type</label><select><option>Any</option><option>Apartment</option><option>House</option><option>Land</option></select></div>
+    <div class="f"><label>Budget</label><select><option>Any</option><option>Up to 10M</option><option>10M – 25M</option><option>25M +</option></select></div>
+    <button>Search</button>
+  </div>
+</div></header>
+
+<section class="sec wrap" id="buy">
+  <div class="sec-head"><h2 class="fr reveal">Featured listings</h2><a href="#" class="reveal">View all →</a></div>
+  <div class="grid">
+    <div class="prop reveal"><div class="prop-img"><span class="badge">For sale</span><span class="price">KES 18.5M</span><img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700&q=80" alt=""></div><div class="prop-b"><h3 class="fr">Garden Villa</h3><div class="loc">Karen, Nairobi</div><div class="specs"><span>🛏 4 bed</span><span>🛁 3 bath</span><span>📐 320 m²</span></div></div></div>
+    <div class="prop reveal"><div class="prop-img"><span class="badge">For rent</span><span class="price">KES 145K/mo</span><img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=700&q=80" alt=""></div><div class="prop-b"><h3 class="fr">Skyline Apartment</h3><div class="loc">Kilimani, Nairobi</div><div class="specs"><span>🛏 3 bed</span><span>🛁 2 bath</span><span>📐 180 m²</span></div></div></div>
+    <div class="prop reveal"><div class="prop-img"><span class="badge">For sale</span><span class="price">KES 32M</span><img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=700&q=80" alt=""></div><div class="prop-b"><h3 class="fr">The Glass House</h3><div class="loc">Runda, Nairobi</div><div class="specs"><span>🛏 5 bed</span><span>🛁 4 bath</span><span>📐 450 m²</span></div></div></div>
+    <div class="prop reveal"><div class="prop-img"><span class="badge">For rent</span><span class="price">KES 90K/mo</span><img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=700&q=80" alt=""></div><div class="prop-b"><h3 class="fr">Loft 22</h3><div class="loc">Westlands, Nairobi</div><div class="specs"><span>🛏 2 bed</span><span>🛁 2 bath</span><span>📐 130 m²</span></div></div></div>
+    <div class="prop reveal"><div class="prop-img"><span class="badge">For sale</span><span class="price">KES 9.8M</span><img src="https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=700&q=80" alt=""></div><div class="prop-b"><h3 class="fr">Coastal Retreat</h3><div class="loc">Nyali, Mombasa</div><div class="specs"><span>🛏 3 bed</span><span>🛁 2 bath</span><span>📐 210 m²</span></div></div></div>
+    <div class="prop reveal"><div class="prop-img"><span class="badge">For sale</span><span class="price">KES 24M</span><img src="https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=700&q=80" alt=""></div><div class="prop-b"><h3 class="fr">Hillside Home</h3><div class="loc">Lavington, Nairobi</div><div class="specs"><span>🛏 4 bed</span><span>🛁 3 bath</span><span>📐 290 m²</span></div></div></div>
+  </div>
+</section>
+
+<section class="sec" id="sell"><div class="band">
+  <h2 class="fr">Thinking of selling?</h2>
+  <p>List with Haven and reach thousands of serious buyers. Free valuation, professional photos, no upfront fees.</p>
+  <a href="#">Get a free valuation →</a>
+</div></section>
+
+<footer><div class="wrap ft-in"><span>© 2026 Haven Properties · Nairobi</span><span>hello@haven.co.ke · +254 700 555 000</span></div></footer>
+
+<div class="ribbon">Template: BIZ · Real Estate — built with <a href="/">SiteSawa</a> 🇰🇪</div>
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.1});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%3*.06)+'s';io.observe(el)});
+setTimeout(()=>document.querySelectorAll('.reveal:not(.in)').forEach(e=>{e.style.opacity=1;e.style.transform='none'}),5000);
+</script>
+</body>
+</html>
