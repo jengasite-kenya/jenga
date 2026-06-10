@@ -326,8 +326,8 @@ button{font-family:var(--ff-body);cursor:pointer}
         <span class="spinner hidden" id="regSpinner"></span>
         <span id="regBtnText">Create my website →</span>
       </button>
-      <div class="form-divider">already have an account?</div>
-      <button type="button" onclick="switchTab('login')" style="width:100%;padding:12px;background:transparent;border:1px solid var(--edge2);border-radius:10px;color:var(--soft);font-size:14px;transition:all .15s" onmouseover="this.style.borderColor='var(--edge)';this.style.color='#eeeef5'" onmouseout="this.style.borderColor='var(--edge2)';this.style.color='var(--soft)'">Sign in instead</button>
+      <div class="form-divider">Already have an account?</div>
+      <button type="button" onclick="switchTab('login')" style="width:100%;padding:12px;background:transparent;border:1px solid var(--edge2);border-radius:10px;color:var(--soft);font-size:14px;transition:all .15s" onmouseover="this.style.borderColor='var(--edge)';this.style.color='#eeeef5'" onmouseout="this.style.borderColor='var(--edge2)';this.style.color='var(--soft)'">Sign in instead →</button>
     </form>
 
   </div>
@@ -389,7 +389,7 @@ button{font-family:var(--ff-body);cursor:pointer}
 <script>
 const API = window.location.origin;
 
-function switchTab(tab) {
+window.switchTab = function(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab' + (tab === 'login' ? 'Login' : 'Register')).classList.add('active');
   document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
@@ -411,12 +411,12 @@ function togglePassword(id) {
   event.currentTarget.innerHTML = isPw ? `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l12 12M6.7 5.7a4 4 0 014.6 4.6M3 6.3C2.1 7 1.3 7.8 1 8.5c0 0 2.5 5 7 5 1.1 0 2-.2 2.9-.6"/><path d="M11.4 4.6C13.2 5.7 14.5 7.2 15 8.5c0 0-2.5 5-7 5"/></svg>` : `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>`;
 }
 
-function showError(msg) {
+window.showError = function(msg) {
   document.getElementById('errorText').textContent = msg;
   document.getElementById('errorAlert').classList.add('show');
   document.getElementById('successAlert').classList.remove('show');
 }
-function showSuccess(msg) {
+window.showSuccess = function(msg) {
   document.getElementById('successText').textContent = msg;
   document.getElementById('successAlert').classList.add('show');
   document.getElementById('errorAlert').classList.remove('show');
@@ -476,7 +476,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
   if (!document.getElementById('agreeTerms').checked) { showError('Please agree to the terms'); return; }
   setLoading('regBtn','regSpinner','regBtnText',true);
   try {
-    const res = await fetch(`${API}/api/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, phone: phone.startsWith('0') ? '254'+phone.slice(1) : phone, email, template}) });
+    const res = await fetch(`${API}/api/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, phone: phone.startsWith('0') ? '254'+phone.slice(1) : phone, email, template, templateId: ''}) });
     const data = await res.json();
     if (res.ok && data.success) {
       // Display key prominently with copy button
@@ -523,15 +523,15 @@ document.getElementById('errorAlert').classList.remove('show');
 });
 
 // FORGOT
-function showForgot() {
+window.showForgot = function() {
   document.getElementById('forgotModal').classList.add('active');
   document.getElementById('forgotPhone').value = document.getElementById('loginPhone').value;
   setTimeout(() => document.getElementById('forgotPhone').focus(), 100);
 }
-function hideForgot() { document.getElementById('forgotModal').classList.remove('active'); backToStep1(); }
-function backToStep1() { document.getElementById('step1').classList.add('active'); document.getElementById('step2').classList.remove('active'); }
+window.hideForgot = function() { document.getElementById('forgotModal').classList.remove('active'); backToStep1(); }
+window.backToStep1 = function() { document.getElementById('step1').classList.add('active'); document.getElementById('step2').classList.remove('active'); }
 
-async function sendCode() {
+window.sendCode = async function() {
   // Rate limit UI: prevent hammering the button
   const btn = document.getElementById('sendCodeBtn');
   if (btn._cooling) return;
@@ -582,7 +582,7 @@ document.getElementById('newKey').addEventListener('input', function() {
   if (lbl) { lbl.textContent = labels[strength] || '—'; lbl.style.color = labelColors[strength] || 'var(--dim)'; }
 });
 
-async function resetKey() {
+window.resetKey = async function() {
   const code = Array.from(document.querySelectorAll('.code-digit')).map(i => i.value).join('');
   const newKey = document.getElementById('newKey').value;
   const phone = document.getElementById('forgotPhone').value.trim().replace(/\s/g, '');
