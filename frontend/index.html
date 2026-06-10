@@ -191,7 +191,7 @@ nav{
 .preview-topbar{
   height:52px;background:#111;border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;padding:0 20px;
-  flex-shrink:0;gap:12px;position:relative;z-index:10000;
+  flex-shrink:0;gap:12px;
 }
 .preview-topbar-left{display:flex;align-items:center;gap:12px}
 .preview-name{font-family:var(--ff);font-size:14px;font-weight:800;color:var(--white)}
@@ -210,7 +210,7 @@ nav{
   font-size:13px;font-weight:700;border:none;cursor:pointer;transition:all .15s;
 }
 .preview-select-btn:hover{background:#d4f57a}
-.preview-frame-wrap{flex:1;position:relative;overflow:hidden;background:#0a0a0a;z-index:1}
+.preview-frame-wrap{flex:1;position:relative;overflow:hidden;background:#0a0a0a}
 .preview-iframe{width:100%;height:100%;border:none}
 /* device toggle */
 .device-btns{display:flex;gap:4px;background:#0d0d0d;border:1px solid var(--border);border-radius:6px;padding:3px}
@@ -520,18 +520,14 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
         <div class="preview-style" id="pStyle">Style description</div>
       </div>
       <div class="preview-nav-btns">
-        <button class="prev-btn" onclick="navPreview(-1)">← Prev</button>
-        <button class="next-btn" onclick="navPreview(1)">Next →</button>
+        
+        
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <div class="device-btns">
-        <button class="dev-btn active" onclick="setDevice('desktop',this)">Desktop</button>
-        <button class="dev-btn" onclick="setDevice('tablet',this)">Tablet</button>
-        <button class="dev-btn" onclick="setDevice('mobile',this)">Mobile</button>
-      </div>
-      <button class="preview-select-btn" id="pSelectBtn" onclick="selectTemplate()">Select this template →</button>
-      <button class="preview-close" onclick="closePreview()">Close ✕</button>
+
+      <button class="preview-select-btn" id="pSelectBtn">Select this template →</button>
+      <button class="preview-close" id="btnClose">Close ✕</button>
     </div>
   </div>
   <div class="preview-frame-wrap" id="pFrameWrap">
@@ -899,6 +895,8 @@ function setDevice(mode, btn) {
 
 // ESC to close preview
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePreview(); });
+document.getElementById('btnClose').onclick = function(){ closePreview(); };
+document.getElementById('pSelectBtn').onclick = function(){ selectTemplate(); };
 
 // ── TEMPLATE CARD CLICKS (event delegation — more reliable on mobile) ──
 document.addEventListener('click', function(e) {
@@ -1083,11 +1081,6 @@ renderGrids();
 // default: show first step
 document.getElementById('stepForm').style.display='block';
 document.getElementById('stepForm').classList.add('on');
-
-// Fix modal buttons for mobile
-window.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('btnClose') && document.getElementById('btnClose').addEventListener('click', function(){ closePreview(); });
-});
 </script>
 </body>
 </html>
