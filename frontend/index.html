@@ -191,7 +191,7 @@ nav{
 .preview-topbar{
   height:52px;background:#111;border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;padding:0 20px;
-  flex-shrink:0;gap:12px;
+  flex-shrink:0;gap:12px;position:relative;z-index:10000;
 }
 .preview-topbar-left{display:flex;align-items:center;gap:12px}
 .preview-name{font-family:var(--ff);font-size:14px;font-weight:800;color:var(--white)}
@@ -210,7 +210,7 @@ nav{
   font-size:13px;font-weight:700;border:none;cursor:pointer;transition:all .15s;
 }
 .preview-select-btn:hover{background:#d4f57a}
-.preview-frame-wrap{flex:1;position:relative;overflow:hidden;background:#0a0a0a}
+.preview-frame-wrap{flex:1;position:relative;overflow:hidden;background:#0a0a0a;z-index:1}
 .preview-iframe{width:100%;height:100%;border:none}
 /* device toggle */
 .device-btns{display:flex;gap:4px;background:#0d0d0d;border:1px solid var(--border);border-radius:6px;padding:3px}
@@ -780,7 +780,7 @@ let previewIdx = 0;
 let selectedTemplate = null;
 
 // ── RENDER GRIDS ──
-window.renderGrids = function() {
+function renderGrids() {
   ['personal','business','ecommerce'].forEach(cat => {
     const grid = document.getElementById('grid-'+cat);
     if (!grid || !TEMPLATES[cat]) return;
@@ -801,7 +801,7 @@ window.renderGrids = function() {
   });
 }
 
-window.showCat = function(cat, btn) {
+function showCat(cat, btn) {
   activeCat = cat;
   ['personal','business','ecommerce'].forEach(c => {
     const g = document.getElementById('grid-'+c);
@@ -821,7 +821,7 @@ window.showCat = function(cat, btn) {
   if (q) filterTemplates(q);
 }
 
-window.filterTemplates = function(q) {
+function filterTemplates(q) {
   const query = q.toLowerCase().trim();
   const grid = document.getElementById('grid-' + activeCat);
   if (!grid) return;
@@ -847,7 +847,7 @@ window.filterTemplates = function(q) {
 }
 
 // ── PREVIEW MODAL ──
-window.openPreview = function(cat, idx) {
+function openPreview(cat, idx) {
   previewCat = cat;
   previewIdx = idx;
   const t = TEMPLATES[cat][idx];
@@ -860,13 +860,13 @@ window.openPreview = function(cat, idx) {
   document.body.style.overflow = 'hidden';
 }
 
-window.closePreview = function() {
+function closePreview() {
   document.getElementById('previewModal').classList.remove('open');
   document.body.style.overflow = '';
   document.getElementById('pFrame').src = 'about:blank';
 }
 
-window.navPreview = function(dir) {
+function navPreview(dir) {
   const list = TEMPLATES[previewCat];
   previewIdx = (previewIdx + dir + list.length) % list.length;
   const t = list[previewIdx];
@@ -876,7 +876,7 @@ window.navPreview = function(dir) {
   document.getElementById('pFrame').src = t.file;
 }
 
-window.selectTemplate = function() {
+function selectTemplate() {
   const t = TEMPLATES[previewCat][previewIdx];
   selectedTemplate = { ...t, cat: previewCat };
   // Map cat to plan type
@@ -890,7 +890,7 @@ window.selectTemplate = function() {
   document.getElementById('planName').textContent = `${plan} · ${t.name}`;
 }
 
-window.setDevice = function(mode, btn) {
+function setDevice(mode, btn) {
   const wrap = document.getElementById('pFrameWrap');
   wrap.className = 'preview-frame-wrap ' + (mode === 'desktop' ? '' : mode);
   document.querySelectorAll('.dev-btn').forEach(b => b.classList.remove('active'));
@@ -933,7 +933,7 @@ const PLANS = {
 
   // Fire Google Ads conversion event
   // transaction_id deduplicates so repeat calls don't double-count
-  window.fireConversion = function(value, transactionId) {
+  function fireConversion(value, transactionId) {
     // Google Ads conversion
     if (typeof gtag !== 'undefined') {
       gtag('event', 'conversion', {
@@ -954,7 +954,7 @@ const PLANS = {
   }
 
 let tier = 'PERSONAL';
-window.selectPlan = function(t) {
+function selectPlan(t) {
   tier = t;
   document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
   const planMap = {'PERSONAL':0,'BUSINESS':1,'ECOMMERCE':2};
@@ -969,10 +969,10 @@ window.selectPlan = function(t) {
 
 // ── CHECKOUT ──
 const STEPS = ['stepForm','stepProcessing','stepStk','stepManual','stepSuccess','stepError'];
-window.show = function(id) { STEPS.forEach(s => { const el = document.getElementById(s); el.style.display = s===id?'block':'none'; el.classList.toggle('on', s===id); }); }
-window.resetCO = function() { show('stepForm'); const b=document.getElementById('payBtn'); b.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5L2.5 5.5v5l5.5 3.5 5.5-3.5v-5L8 1.5z"/></svg> Pay with M-Pesa'; b.disabled=false; }
+function show(id) { STEPS.forEach(s => { const el = document.getElementById(s); el.style.display = s===id?'block':'none'; el.classList.toggle('on', s===id); }); }
+function resetCO() { show('stepForm'); const b=document.getElementById('payBtn'); b.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5L2.5 5.5v5l5.5 3.5 5.5-3.5v-5L8 1.5z"/></svg> Pay with M-Pesa'; b.disabled=false; }
 
-async window.doPay = async function() {
+async function doPay() {
   const biz   = document.getElementById('bizIn').value.trim();
   const email = document.getElementById('emailIn').value.trim();
   const phone = document.getElementById('phoneIn').value.trim();
@@ -1070,7 +1070,7 @@ async window.doPay = async function() {
   }
 }
 
-window.showCOError = function(msg) {
+function showCOError(msg) {
   document.getElementById('errMsg').textContent = msg;
   show('stepError');
   const btn = document.getElementById('payBtn');
@@ -1083,6 +1083,11 @@ renderGrids();
 // default: show first step
 document.getElementById('stepForm').style.display='block';
 document.getElementById('stepForm').classList.add('on');
+
+// Fix modal buttons for mobile
+window.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('btnClose') && document.getElementById('btnClose').addEventListener('click', function(){ closePreview(); });
+});
 </script>
 </body>
 </html>
