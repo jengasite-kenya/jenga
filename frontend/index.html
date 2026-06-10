@@ -257,7 +257,7 @@ nav{
 .plan-feats li{font-size:12px;color:#666;display:flex;align-items:center;gap:8px}
 .plan-feats li::before{content:'';width:14px;height:14px;border-radius:50%;background:rgba(190,242,100,.08);border:1px solid rgba(190,242,100,.15);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 7l2.5 2.5L11 4.5' stroke='%23c8ff00' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-size:10px;background-position:center;background-repeat:no-repeat;flex-shrink:0}
 .plan.selected{border-color:var(--lime);box-shadow:0 0 0 1px var(--lime)}
-.plan-btn{width:100%;padding:10px;border-radius:7px;font-size:12px;font-weight:700;border:1px solid #333;background:transparent;color:#666;transition:all .2s;cursor:pointer}
+.plan-btn{width:100%;padding:10px;border-radius:7px;font-size:12px;font-weight:700;border:1px solid #333;background:transparent;color:#666;transition:all .2s;cursor:pointer;pointer-events:none}
 .plan.featured .plan.selected{border-color:var(--lime);box-shadow:0 0 0 1px var(--lime)}
 .plan-btn{background:var(--lime);color:var(--black);border-color:var(--lime)}
 .plan-btn:hover{border-color:var(--lime);color:var(--lime)}
@@ -337,7 +337,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
 @media(max-width:900px){
   .hero{grid-template-columns:1fr}
   .hero-right{display:none}
-  .hero-left{padding:80px 28px 60px}
+  .hero-left{padding:80px 20px 60px;border-right:none}
   .template-grid{grid-template-columns:repeat(3,1fr)}
   .vs-inner,.plans-inner,.checkout-inner,.gallery-inner{padding:0 20px}
   .section-head{flex-direction:column;align-items:flex-start}
@@ -347,16 +347,17 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   .nav-mid{display:none}
   .nav-end .btn-ghost{display:none}
   #burger{display:block}
-  .hero{min-height:auto;padding-bottom:0}
-  .hero-left{padding:72px 20px 48px}
-  .hero h1{font-size:clamp(2.4rem,10vw,3.6rem)}
-  .hero-sub{font-size:15px;max-width:100%}
-  .hero-btns{gap:8px}
-  .btn-big{padding:12px 20px;font-size:14px}
+  .hero{min-height:auto;padding-bottom:0;display:block}
+  .hero-left{border-right:none;padding:72px 16px 48px;max-width:100%}
+  .hero h1{font-size:clamp(2rem,9vw,3.2rem);line-height:1}
+  .hero-sub{font-size:14px;max-width:100%;line-height:1.6}
+  .hero-btns{gap:8px;flex-direction:column}
+  .btn-big{width:100%;justify-content:center;padding:14px 20px;font-size:14px}
   .hero-pills{gap:6px}
   .hero-pill{font-size:10px;padding:4px 10px}
   .template-grid{grid-template-columns:repeat(2,1fr)}
-  .cat-tabs{overflow-x:auto}
+  .cat-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .cat-tab{padding:10px 16px;white-space:nowrap}
   .plans-grid{grid-template-columns:1fr}
   .plan{padding:28px 20px}
   footer{grid-template-columns:1fr;padding:28px 20px}
@@ -364,8 +365,13 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   .preview-topbar{flex-wrap:wrap;height:auto;padding:10px 12px;gap:8px}
   .checkout-inner{padding:0 16px}
   .co-form{gap:10px}
+  .section-head{flex-direction:column;align-items:flex-start;gap:16px}
+  .gallery-inner{padding:0 16px}
+  .hero-right{display:none !important}
+  .preview-frame-wrap.mobile .preview-iframe{width:100%;position:static;transform:none;border:none}
 }
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -484,9 +490,9 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
       </div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <div class="cat-tabs">
-          <button class="cat-tab active" onclick="showCat('personal',this)">Personal <span style="opacity:.5;font-size:11px">12</span></button>
-          <button class="cat-tab" onclick="showCat('business',this)">Business <span style="opacity:.5;font-size:11px">15</span></button>
-          <button class="cat-tab" onclick="showCat('ecommerce',this)">E-Commerce <span style="opacity:.5;font-size:11px">6</span></button>
+          <button class="cat-tab active" data-cat="personal" onclick="showCat('personal',this)">Personal <span style="opacity:.5;font-size:11px">12</span></button>
+          <button class="cat-tab" data-cat="business" onclick="showCat('business',this)">Business <span style="opacity:.5;font-size:11px">15</span></button>
+          <button class="cat-tab" data-cat="ecommerce" onclick="showCat('ecommerce',this)">E-Commerce <span style="opacity:.5;font-size:11px">6</span></button>
         </div>
         <input id="tmplSearch" type="search" placeholder="Search templates..." oninput="filterTemplates(this.value)"
           style="padding:9px 14px;background:#111;border:1px solid #222;border-radius:7px;color:#fff;font-size:13px;width:200px;outline:none;transition:border .15s"
@@ -533,7 +539,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
     </div>
   </div>
   <div class="preview-frame-wrap" id="pFrameWrap">
-    <iframe class="preview-iframe" id="pFrame" src="about:blank" title="Template preview" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation"></iframe>
+    <iframe class="preview-iframe" id="pFrame" src="about:blank" title="Template preview" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
   </div>
 </div>
 
@@ -805,17 +811,22 @@ function showCat(cat, btn) {
     const g = document.getElementById('grid-'+c);
     if (g) g.classList.toggle('hidden', c !== cat);
   });
-  // Update active tab — find it if btn not passed
+  // Update active tab
   document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
   if (btn) {
     btn.classList.add('active');
   } else {
-    const tabs = document.querySelectorAll('.cat-tab');
-    const idx = ['personal','business','ecommerce'].indexOf(cat);
-    if (tabs[idx]) tabs[idx].classList.add('active');
+    // Find tab by data-cat attribute
+    const tab = document.querySelector('.cat-tab[data-cat="' + cat + '"]');
+    if (tab) tab.classList.add('active');
   }
-  // Re-apply search filter
-  const q = document.getElementById('tmplSearch')?.value || '';
+  // Clear search when switching categories
+  const searchInput = document.getElementById('tmplSearch');
+  if (searchInput) { searchInput.value = ''; }
+  // Re-render to clear any previous search filtering
+  renderGrids();
+  // Re-apply search filter only if there's a query
+  const q = searchInput?.value || '';
   if (q) filterTemplates(q);
 }
 
@@ -940,11 +951,21 @@ function selectPlan(t) {
   const planMap = {'PERSONAL':0,'BUSINESS':1,'ECOMMERCE':2};
   const planEls = document.querySelectorAll('.plan');
   if (planEls[planMap[t]]) planEls[planMap[t]].classList.add('selected');
-  document.getElementById('planName').textContent = selectedTemplate?.cat === t.toLowerCase().replace('ecommerce','ecommerce')
+  document.getElementById('planName').textContent = selectedTemplate?.cat === t.toLowerCase()
     ? `${t} · ${selectedTemplate.name}`
     : PLANS[t].name;
   document.getElementById('planPrice').textContent = 'KES ' + PLANS[t].price.toLocaleString();
-  const co = document.getElementById('checkout'); if(co) co.scrollIntoView({ behavior: 'smooth' });
+  // If no template selected for this plan type, scroll to templates first
+  const catMap = {'PERSONAL':'personal','BUSINESS':'business','ECOMMERCE':'ecommerce'};
+  const neededCat = catMap[t];
+  if (!selectedTemplate || selectedTemplate.cat !== neededCat) {
+    showCat(neededCat);
+    const tmpl = document.getElementById('templates');
+    if(tmpl) tmpl.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    const co = document.getElementById('checkout');
+    if(co) co.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 
 // ── CHECKOUT ──
