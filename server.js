@@ -1112,6 +1112,8 @@ app.post('/api/register', authLimiter, async (req, res) => {
     try {
         const { name, email, phone, template, subdomain, customDomain } = req.body;
         if (!phone) return res.status(400).json({ error: 'Phone required' });
+        if (!email?.trim()) return res.status(400).json({ error: 'Email is required' });
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) return res.status(400).json({ error: 'Invalid email address' });
 
         const existing = await Customer.findOne({ $or: [{ phone: { $eq: phone } }, { email: email ? { $eq: email } : null }].filter(c => Object.values(c)[0] !== null) });
         if (existing) return res.status(400).json({ error: 'Phone or email already registered' });
