@@ -521,7 +521,7 @@ window._chartJsLoaded = false;
     let activeChat = null;
     let revenueChart, growthChart, templateChart, orderChart, revenueByTemplateChart, monthlyChart;
 
-    async function apiFetch(url, method = 'GET', body = null) {
+    window.apiFetch = async function(url, method = 'GET', body = null) {
       const opts = { method, headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() } };
       if (body) opts.body = JSON.stringify(body);
       const res = await fetch(url, opts);
@@ -592,7 +592,7 @@ window._chartJsLoaded = false;
       if(el) el.textContent = 'Updated ' + new Date().toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});
     }
 
-    async function refreshAll() {
+    window.refreshAll = async function() {
       await loadDashboard();
       updateTimestamp();
       toast('Data refreshed');
@@ -607,7 +607,7 @@ window._chartJsLoaded = false;
       renderCharts();
     }
 
-    async function loadCustomers() {
+    window.loadCustomers = async function() {
       const loading = document.getElementById('loadingMsg');
       const error = document.getElementById('errorMsg');
       const table = document.getElementById('customersTable');
@@ -632,7 +632,7 @@ window._chartJsLoaded = false;
       }
     }
 
-    async function loadOrders() {
+    window.loadOrders = async function() {
       try {
         const res = await fetch(`${API_BASE}/api/admin/orders?page=${orderPage}`, {
           headers: { 'Authorization': `Bearer ${getToken()}` }
@@ -647,7 +647,7 @@ window._chartJsLoaded = false;
       } catch (err) { console.log('Orders load error:', err); orders = []; renderOrders(); }
     }
 
-    async function loadSupportTickets() {
+    window.loadSupportTickets = async function() {
       try {
         const res = await fetch(`${API_BASE}/api/admin/support`, {
           headers: { 'Authorization': `Bearer ${getToken()}` }
@@ -666,7 +666,7 @@ window._chartJsLoaded = false;
     }
 
     // ── STATS ──
-    function updateStats() {
+    window.updateStats = function() {
       const pricing = { PERSONAL: 7000, BUSINESS: 8000, ECOMMERCE: 9000 };
       let totalRev = 0, monthRev = 0, totalOrders = 0, paidOrders = 0, pendingOrders = 0;
       const now = new Date();
@@ -699,7 +699,7 @@ window._chartJsLoaded = false;
     }
 
     // ── CHARTS ──
-    function renderCharts() {
+    window.renderCharts = function() {
       if (typeof Chart === 'undefined') { setTimeout(renderCharts, 200); return; }
       const ctx1 = document.getElementById('revenueChart')?.getContext('2d');
       const ctx2 = document.getElementById('growthChart')?.getContext('2d');
@@ -788,7 +788,7 @@ window._chartJsLoaded = false;
     }
 
     // ── FILTER & RENDER CUSTOMERS ──
-    function filterCustomers() {
+    window.filterCustomers = function() {
       const search = document.getElementById('searchCustomers').value.toLowerCase();
       const template = document.getElementById('filterTemplate').value;
       const status = document.getElementById('filterStatus').value;
@@ -864,7 +864,7 @@ window._chartJsLoaded = false;
     }
 
     // ── EXPORT CSV ──
-    function exportCSV() {
+    window.exportCSV = function() {
       const headers = ['Phone', 'Template', 'Subdomain', 'Custom Domain', 'Products', 'Orders', 'Joined', 'Revenue'];
       const pricing = { PERSONAL: 7000, BUSINESS: 8000, ECOMMERCE: 9000 };
       // CSV formula injection protection: prefix dangerous chars with tab
@@ -896,7 +896,7 @@ window._chartJsLoaded = false;
     }
 
     // ── VIEW CUSTOMER ──
-    async function viewCustomer(id) {
+    window.viewCustomer = async function(id) {
       const customer = customers.find(c => c._id === id);
       if (!customer) return;
       const content = document.getElementById('modalContent');
@@ -914,7 +914,7 @@ window._chartJsLoaded = false;
       document.getElementById('customerModal').classList.remove('hidden');
     }
 
-    function closeModal() { document.getElementById('customerModal').classList.add('hidden'); }
+    window.closeModal = function() { document.getElementById('customerModal').classList.add('hidden'); }
 
     // ── REVENUE MODAL ──
     function viewRevenue() {
@@ -963,10 +963,10 @@ window._chartJsLoaded = false;
       document.getElementById('revenueModal').classList.remove('hidden');
     }
 
-    function closeRevenueModal() { document.getElementById('revenueModal').classList.add('hidden'); }
+    window.closeRevenueModal = function() { document.getElementById('revenueModal').classList.add('hidden'); }
 
     // ── DELETE ──
-    async function deleteCustomer(id) {
+    window.deleteCustomer = async function(id) {
       if (!confirm('Delete this customer permanently?')) return;
       try {
         const res = await fetch(`${API_BASE}/api/admin/customers/${id}`, {
@@ -979,7 +979,7 @@ window._chartJsLoaded = false;
     }
 
     // ── SUPPORT CHAT ──
-    async function loadConversations() {
+    window.loadConversations = async function() {
       try {
         const res = await fetch(`${API_BASE}/api/admin/support`, {
           headers: { 'Authorization': `Bearer ${getToken()}` }
@@ -1008,7 +1008,7 @@ window._chartJsLoaded = false;
       `).join('');
     }
 
-    function openChat(index) {
+    window.openChat = function(index) {
       activeChat = index;
       const conv = conversations[index];
       document.getElementById('chatCustomerName').textContent = conv.customerName || 'Customer';
@@ -1036,7 +1036,7 @@ window._chartJsLoaded = false;
       container.scrollTop = container.scrollHeight;
     }
 
-    async function sendReply() {
+    window.sendReply = async function() {
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
       if (!text || activeChat === null) return;
@@ -1059,7 +1059,7 @@ window._chartJsLoaded = false;
       } catch (err) { alert('Failed to send'); }
     }
 
-    async function markResolved() {
+    window.markResolved = async function() {
       if (activeChat === null) return;
       const conv = conversations[activeChat];
       try {
@@ -1110,7 +1110,7 @@ window._chartJsLoaded = false;
       a.click();
       clearSelection();
     }
-    async function bulkDelete() {
+    window.bulkDelete = async function() {
       const sel = getSelected();
       if(!sel.length) return;
       if(!confirm(`Delete ${sel.length} customer(s)? This cannot be undone.`)) return;
@@ -1122,14 +1122,14 @@ window._chartJsLoaded = false;
       toast(`${sel.length} customer(s) deleted`);
     }
 
-    function toggleSidebar() {
+    window.toggleSidebar = function() {
       const sb = document.querySelector('.sidebar');
       const ov = document.getElementById('sidebarOverlay');
       const open = sb.classList.toggle('open');
       ov.classList.toggle('open', open);
     }
 
-    function showSection(section) {
+    window.showSection = function(section) {
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.getElementById('nav-' + section)?.classList.add('active');
       ['overviewSection', 'customersSection', 'ordersSection', 'analyticsSection', 'supportSection'].forEach(s => {
@@ -1161,12 +1161,24 @@ window._chartJsLoaded = false;
       setTimeout(()=>el.remove(),3000);
     }
 
-    function logout() {
+    window.logout = function() {
       localStorage.removeItem('sitesawa_admin_token');
       showLogin();
     }
 
     checkAuth();
+
+  // ── ADMIN BUTTON WIRING ──────────────────────────────────────────────
+  (function() {
+    function wire(id, fn) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('click', fn);
+    }
+    // Nav items
+    ['overview','customers','orders','analytics','support'].forEach(function(s) {
+      wire('nav-' + s, function() { showSection(s); });
+    });
+  })();
   </script>
 </body>
 </html>
