@@ -373,6 +373,14 @@ input[type=file]{display:none}
   .tb-sep,.tb-url{display:none}
   .stats-row.cols-4,.stats-row.cols-3{grid-template-columns:1fr 1fr}
 }
+@media(max-width:480px){
+  .main{padding:12px 10px}
+  .card{padding:18px 14px}
+  .fg{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .tb-name{font-size:14px}
+  .btn-sm{padding:6px 10px;font-size:12px}
+}
 .hidden{display:none!important}
 </style>
 </head>
@@ -453,6 +461,10 @@ input[type=file]{display:none}
     <div class="ni active" data-s="overview" onclick="nav(this,'overview')">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg>Overview
     </div>
+    <div class="ni" data-s="design" onclick="nav(this,'design')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+      <span>Design</span>
+    </div>
     <div class="ni" data-s="content" onclick="nav(this,'content')">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11 2.5l2.5 2.5-8 8L3 14l.5-2.5 7.5-9z"/><path d="M9.5 4l2.5 2.5"/></svg>Edit Content
     </div>
@@ -531,7 +543,21 @@ input[type=file]{display:none}
     </div>
 
     <!-- CONTENT -->
-    <div class="sec" id="s-content">
+    <!-- DESIGN SECTION -->
+    <div class="sec hidden" id="s-design">
+      <div class="card">
+        <div class="card-head"><div class="ct">Choose your template</div></div>
+        <p style="color:var(--dim);font-size:14px;margin-bottom:20px">Pick a design from your plan. Your content carries over automatically.</p>
+        <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap" id="designTabs">
+          <button class="btn btn-ghost" id="dtPersonal" onclick="filterDesigns('personal')">Personal</button>
+          <button class="btn btn-ghost" id="dtBusiness" onclick="filterDesigns('business')">Business</button>
+          <button class="btn btn-ghost" id="dtEcommerce" onclick="filterDesigns('ecommerce')">E-Commerce</button>
+        </div>
+        <div id="designGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px"></div>
+      </div>
+    </div>
+
+    <div class="sec hidden" id="s-content">
       <div class="ph">
         <div><div class="pt">Edit Content</div><div class="ps">Changes go live when you save</div></div>
         <button class="btn btn-lime" onclick="saveContent()" id="saveContentBtn">
@@ -654,7 +680,7 @@ input[type=file]{display:none}
     </div>
 
     <!-- SETTINGS -->
-    <div class="sec" id="s-settings">
+    <div class="sec hidden" id="s-settings">
       <div class="ph">
         <div><div class="pt">Settings</div><div class="ps">Payments, domain, analytics, social</div></div>
         <button class="btn btn-lime" onclick="saveSettings()" id="saveSettingsBtn">
@@ -729,7 +755,7 @@ input[type=file]{display:none}
     </div>
 
     <!-- SUPPORT -->
-    <div class="sec" id="s-support">
+    <div class="sec hidden" id="s-support">
       <div class="ph"><div><div class="pt">Support</div><div class="ps">Get help from our team</div></div></div>
       <div class="card">
         <div class="card-head"><div class="ct">New ticket</div></div>
@@ -754,10 +780,11 @@ input[type=file]{display:none}
 <script>
 const API = window.location.origin;
 const token = localStorage.getItem('sitesawa_token') || sessionStorage.getItem('sitesawa_token');
+if (!token) { location.href = '/login.html'; throw new Error('No token'); }
 let cust = null, confirmCb = null, pendingLogo = null, pendingPImg = null, isDirty = false;
 const DRAFT_KEY = 'sitesawa_content_draft';
 
-function saveDraft() {
+window.saveDraft = function() {
   if(!isDirty) return;
   const draft = {
     name: document.getElementById('editName')?.value,
@@ -770,7 +797,7 @@ function saveDraft() {
   try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch(e){}
 }
 
-function loadDraft() {
+window.loadDraft = function() {
   try {
     const raw = localStorage.getItem(DRAFT_KEY);
     if(!raw) return;
@@ -793,11 +820,11 @@ setInterval(saveDraft, 60000);
 if (!token) location.href = '/login.html';
 
 // ── UNSAVED CHANGES WARNING ────────────────────────────
-function markDirty(){ isDirty=true; document.getElementById('saveBtn').classList.add('dirty'); }
+window.markDirty = function(){ isDirty=true; document.getElementById('saveBtn').classList.add('dirty'); }
 window.addEventListener('beforeunload', e => { if(isDirty){ e.preventDefault(); e.returnValue=''; } });
 
 // ── INIT ───────────────────────────────────────────────
-async function init() {
+window.init = async function() {
   try {
     cust = await apiFetch('/api/me');
     populate();
@@ -807,7 +834,10 @@ async function init() {
   } catch(e) { toast('Failed to load dashboard', 'error'); }
 }
 
-function populate() {
+window.populate = function() {
+  // Show design tab always, load it with correct plan templates
+  const planCat = { PERSONAL:'personal', BUSINESS:'business', ECOMMERCE:'ecommerce' }[cust?.template] || 'personal';
+  filterDesigns(planCat);
   if (!cust) return;
   const domain = cust.customDomain || (cust.subdomain + '.sitesawa.com');
   const isShop = cust.template === 'ECOMMERCE';
@@ -883,7 +913,7 @@ function populate() {
 }
 
 // ── CHECKLIST ──────────────────────────────────────────
-function updateChecklist() {
+window.updateChecklist = function() {
   if (!cust) return;
   const checks = [
     cust.name?.trim().length > 0,
@@ -902,34 +932,35 @@ function updateChecklist() {
 }
 
 // ── NAV ────────────────────────────────────────────────
-function nav(el, section) {
+window.nav = function(el, section) {
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
   if (el) el.classList.add('active');
   document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sec').forEach(s => s.classList.add('hidden'));
   const target = document.getElementById('s-' + section);
-  if (target && !target.classList.contains('hidden')) target.classList.add('active');
+  if (target) { target.classList.remove('hidden'); target.classList.add('active'); }
   closeSidebar();
 }
 
 // ── SIDEBAR (mobile) ───────────────────────────────────
-function toggleSidebar() {
+window.toggleSidebar = function() {
   const sb = document.getElementById('sidebar');
   const ov = document.getElementById('sidebarOverlay');
   const open = sb.classList.toggle('open');
   ov.classList.toggle('open', open);
 }
-function closeSidebar() {
+window.closeSidebar = function() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebarOverlay').classList.remove('open');
 }
 
 // ── LOGO PREVIEW ───────────────────────────────────────
-function previewLogo(url) {
+window.previewLogo = function(url) {
   const img=document.getElementById('logoPrev'), ico=document.getElementById('logoIco'), tip=document.getElementById('logoTip'), wrap=document.getElementById('logoUp');
   if(url){ img.src=url; img.classList.remove('hidden'); ico.classList.add('hidden'); tip.textContent='Click to change'; wrap.classList.add('has-img'); }
   else{ img.classList.add('hidden'); ico.classList.remove('hidden'); tip.textContent='Click to upload'; wrap.classList.remove('has-img'); }
 }
-async function handleLogoUpload(e) {
+window.handleLogoUpload = async function(e) {
   const f=e.target.files[0]; if(!f) return;
   if(!f.type.startsWith('image/')) { toast('Please upload an image file (JPG, PNG, WebP, etc.)','error'); e.target.value=''; return; }
   if(f.size > 5*1024*1024) { toast('Image must be under 5 MB','error'); e.target.value=''; return; }
@@ -939,12 +970,12 @@ async function handleLogoUpload(e) {
   markDirty();
   toast('Image selected — save to apply','info');
 }
-function previewPImg(url) {
+window.previewPImg = function(url) {
   const img=document.getElementById('pImgPrev'), ico=document.getElementById('pImgIco');
   if(url){ img.src=url; img.classList.remove('hidden'); ico.classList.add('hidden'); }
   else{ img.classList.add('hidden'); ico.classList.remove('hidden'); }
 }
-async function handlePImgUpload(e) {
+window.handlePImgUpload = async function(e) {
   const f=e.target.files[0]; if(!f) return;
   if(!f.type.startsWith('image/')) { toast('Please upload an image file','error'); e.target.value=''; return; }
   if(f.size > 5*1024*1024) { toast('Image must be under 5 MB','error'); e.target.value=''; return; }
@@ -955,11 +986,11 @@ async function handlePImgUpload(e) {
 function toB64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
 
 // ── SERVICES EDITOR ────────────────────────────────────
-function renderSvcEditor(services) {
+window.renderSvcEditor = function(services) {
   document.getElementById('svcEd').innerHTML='';
   services.forEach((s,i) => addSvcField(s.name, s.description||s.desc, i));
 }
-function addSvcField(name='', desc='', idx) {
+window.addSvcField = function(name='', desc='', idx) {
   const el=document.getElementById('svcEd');
   const i = idx!==undefined ? idx : el.children.length;
   const div=document.createElement('div');
@@ -969,11 +1000,11 @@ function addSvcField(name='', desc='', idx) {
 }
 
 // ── SKILLS EDITOR ──────────────────────────────────────
-function renderSkillEditor(skills) {
+window.renderSkillEditor = function(skills) {
   document.getElementById('skillEd').innerHTML='';
   skills.forEach(s => addSkillField(s.name, s.level));
 }
-function addSkillField(name='', level=80) {
+window.addSkillField = function(name='', level=80) {
   const el=document.getElementById('skillEd');
   const div=document.createElement('div');
   div.style.cssText='display:grid;grid-template-columns:1fr 72px auto;gap:10px;align-items:center;margin-bottom:8px';
@@ -982,7 +1013,7 @@ function addSkillField(name='', level=80) {
 }
 
 // ── PRODUCTS ───────────────────────────────────────────
-function renderProducts() {
+window.renderProducts = function() {
   const all = cust?.data?.products || [];
   const q = document.getElementById('prodSearch')?.value.trim().toLowerCase() || '';
   const sf = document.getElementById('stockFilter')?.value || '';
@@ -1010,14 +1041,14 @@ function renderProducts() {
   }).join('') + '</div>';
 }
 
-async function updateStock(productId, rawVal) {
+window.updateStock = async function(productId, rawVal) {
   const stock = rawVal.trim()==='' ? null : Math.max(0, parseInt(rawVal,10)||0);
   const products = (cust.data?.products||[]).map(p => String(p.id)===String(productId) ? {...p,stock} : p);
   try { await apiFetch('/api/me','PUT',{data:{...cust.data,products}}); await refreshData(); toast('Stock updated','success'); }
   catch(e) { toast('Failed to update stock','error'); }
 }
 
-async function addProduct() {
+window.addProduct = async function() {
   const name = document.getElementById('pName').value.trim();
   const price = parseFloat(document.getElementById('pPrice').value);
   const desc = document.getElementById('pDesc').value.trim();
@@ -1055,7 +1086,7 @@ async function loadOrders() {
 }
 
 let _allOrders = [];
-function filterOrders() {
+window.filterOrders = function() {
   const q = document.getElementById('orderSearch')?.value.trim().toLowerCase() || '';
   const st = document.getElementById('orderStatusFilter')?.value || '';
   const filtered = _allOrders.filter(o => {
@@ -1069,7 +1100,7 @@ function filterOrders() {
   renderOrders(filtered);
 }
 
-function renderOrders(orders) {
+window.renderOrders = function(orders) {
   const el = document.getElementById('orderList');
   if (!orders.length) {
     el.innerHTML='<div class="es"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M3 3l18 18M3 8v10a1 1 0 001 1h12M7 3h11a1 1 0 011 1v9M8 9h1M8 12h5"/></svg><h4>No orders yet</h4><p>Orders will appear here once customers start buying</p></div>';
@@ -1097,13 +1128,13 @@ function renderOrders(orders) {
     </div>`).join('') + '</div>';
 }
 
-async function updateOrderStatus(id, sel) {
+window.updateOrderStatus = async function(id, sel) {
   try { await apiFetch(`/api/orders/${id}/status`,'PUT',{status:sel.value}); toast('Order updated','success'); }
   catch(e) { toast('Failed to update','error'); }
 }
 
 // ── SAVE CONTENT ───────────────────────────────────────
-async function saveContent() {
+window.saveContent = async function() {
   const services = Array.from(document.querySelectorAll('#svcEd [data-idx]')).map(d=>({name:d.querySelector('.sn').value.trim(),description:d.querySelector('.sd').value.trim()})).filter(s=>s.name);
   const skills = Array.from(document.querySelectorAll('#skillEd > div')).map(d=>({name:d.querySelector('.kn').value.trim(),level:parseInt(d.querySelector('.kl').value)||80})).filter(s=>s.name);
   const logo = pendingLogo || document.getElementById('logoUrl').value.trim();
@@ -1131,7 +1162,7 @@ async function saveContent() {
 }
 
 // ── SAVE SETTINGS ──────────────────────────────────────
-async function saveSettings() {
+window.saveSettings = async function() {
   // Validate M-Pesa fields if STK mode is on
   if(document.getElementById('mpesaToggle').checked) {
     const sc = document.getElementById('mpesaShortcode').value.trim();
@@ -1172,7 +1203,7 @@ async function saveSettings() {
 }
 
 // ── SUPPORT ────────────────────────────────────────────
-async function createTicket() {
+window.createTicket = async function() {
   const subject = document.getElementById('ticketSubj').value.trim();
   const message = document.getElementById('ticketMsg').value.trim();
   if (!subject||!message) return toast('Subject and message required','error');
@@ -1190,7 +1221,7 @@ async function createTicket() {
   finally { setBtnLoading(btn, false, 'Send ticket', '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2L2 7l4 3 2 4 6-12z"/><path d="M6 10l3-3"/></svg>'); }
 }
 
-async function loadTickets() {
+window.loadTickets = async function() {
   try {
     const tickets = await apiFetch('/api/support');
     const el = document.getElementById('ticketList');
@@ -1200,16 +1231,16 @@ async function loadTickets() {
 }
 
 // ── UTILITIES ──────────────────────────────────────────
-function saveCurrent() {
+window.saveCurrent = function() {
   const active = document.querySelector('.sec.active')?.id;
   if (active==='s-content') saveContent();
   else if (active==='s-settings') saveSettings();
   else toast('Navigate to Content or Settings to save','info');
 }
 
-function openSite() { const d=cust?.customDomain||(cust?.subdomain+'.sitesawa.com'); window.open('https://'+d,'_blank'); }
+window.openSite = function() { const d=cust?.customDomain||(cust?.subdomain+'.sitesawa.com'); window.open('https://'+d,'_blank'); }
 
-function copyUrl() {
+window.copyUrl = function() {
   const d = cust?.customDomain||(cust?.subdomain+'.sitesawa.com');
   navigator.clipboard.writeText('https://'+d).then(()=>{
     const ico=document.getElementById('copyIco');
@@ -1219,27 +1250,27 @@ function copyUrl() {
   });
 }
 
-function logout() { localStorage.removeItem('sitesawa_token'); localStorage.removeItem('sitesawa_user'); location.href='/login.html'; }
-function toggleMpesa() { document.getElementById('mpesaFields').classList.toggle('hidden',!document.getElementById('mpesaToggle').checked); }
-function toggleShipping() { document.getElementById('shippingOpts').classList.toggle('hidden',!document.getElementById('shippingToggle').checked); }
-function toggleVis(id,btn) {
+window.logout = function() { localStorage.removeItem('sitesawa_token'); localStorage.removeItem('sitesawa_user'); location.href='/login.html'; }
+window.toggleMpesa = function() { document.getElementById('mpesaFields').classList.toggle('hidden',!document.getElementById('mpesaToggle').checked); }
+window.toggleShipping = function() { document.getElementById('shippingOpts').classList.toggle('hidden',!document.getElementById('shippingToggle').checked); }
+window.toggleVis = function(id,btn) {
   const el=document.getElementById(id); el.type=el.type==='password'?'text':'password';
   const eye='<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>';
   const eyeOff='<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l12 12M6.7 5.7a4 4 0 014.6 4.6M3 6.3C2.1 7 1.3 7.8 1 8.5c0 0 2.5 5 7 5 1.1 0 2-.2 2.9-.6"/><path d="M11.4 4.6C13.2 5.7 14.5 7.2 15 8.5c0 0-2.5 5-7 5"/></svg>';
   btn.innerHTML=el.type==='password'?eye:eyeOff;
 }
 
-function confirmDelete(id,name) {
+window.confirmDelete = function(id,name) {
   document.getElementById('confirmTitle').textContent='Delete product?';
   document.getElementById('confirmMsg').textContent=`"${name}" will be permanently removed from your store.`;
   confirmCb=async()=>{ await apiFetch('/api/products/'+id,'DELETE'); await refreshData(); toast('Product deleted','success'); };
   document.getElementById('confirmModal').classList.add('open');
 }
-function closeModal() { document.getElementById('confirmModal').classList.remove('open'); confirmCb=null; }
-function doConfirm() { if(confirmCb) confirmCb(); closeModal(); }
+window.closeModal = function() { document.getElementById('confirmModal').classList.remove('open'); confirmCb=null; }
+window.doConfirm = function() { if(confirmCb) confirmCb(); closeModal(); }
 document.getElementById('confirmModal').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
 
-async function refreshData() { cust=await apiFetch('/api/me'); populate(); await loadOrders(); }
+window.refreshData = async function() { cust=await apiFetch('/api/me'); populate(); await loadOrders(); }
 
 async function apiFetch(path,method='GET',body) {
   const r=await fetch(API+path,{method,headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
@@ -1273,7 +1304,7 @@ function updateCharCount(el, counterId, max) {
   if(el2) { el2.textContent = n; el2.style.color = n > max*0.9 ? 'var(--amber)' : 'var(--muted)'; el2.style.fontWeight = n >= max ? '700' : ''; }
 }
 
-function toggleTheme() {
+window.toggleTheme = function() {
   const root = document.documentElement;
   const isLight = root.getAttribute('data-theme') === 'light';
   root.setAttribute('data-theme', isLight ? 'dark' : 'light');
@@ -1290,6 +1321,59 @@ function toggleTheme() {
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 init();
+
+  // ── NAV WIRING ──────────────────────────────────────────────
+  document.querySelectorAll('.ni[data-s]').forEach(function(ni) {
+    ni.addEventListener('click', function() {
+      nav(this, this.getAttribute('data-s'));
+    });
+  });
+
+// ── DESIGN / TEMPLATE SWITCHING ──────────────────────────────────────
+const ALL_TEMPLATES = {
+  personal:  ['me-portfolio','me-developer','me-writer','me-music','me-resume','me-wedding','me-artist','me-doctor','me-linkbio','me-coach','me-speaker','me-travel'],
+  business:  ['biz-agency','biz-restaurant','biz-spa','biz-law','biz-realestate','biz-gym','biz-coffee','biz-construction','biz-startup','biz-auto','biz-safari','biz-bakery','biz-politician','biz-logistics','biz-salon'],
+  ecommerce: ['shop-fashion','shop-electronics','shop-beauty','shop-food','shop-furniture','shop-bookstore'],
+};
+const TMPL_NAMES = {
+  'me-portfolio':'Portfolio','me-developer':'Developer','me-writer':'Writer','me-music':'Musician',
+  'me-resume':'Resume','me-wedding':'Wedding','me-artist':'Artist','me-doctor':'Doctor',
+  'me-linkbio':'Link Bio','me-coach':'Coach','me-speaker':'Speaker','me-travel':'Travel',
+  'biz-agency':'Agency','biz-restaurant':'Restaurant','biz-spa':'Spa','biz-law':'Law Firm',
+  'biz-realestate':'Real Estate','biz-gym':'Gym','biz-coffee':'Cafe','biz-construction':'Construction',
+  'biz-startup':'Startup','biz-auto':'Auto','biz-safari':'Safari','biz-bakery':'Bakery',
+  'biz-politician':'Campaign','biz-logistics':'Logistics','biz-salon':'Salon',
+  'shop-fashion':'Fashion','shop-electronics':'Electronics','shop-beauty':'Beauty',
+  'shop-food':'Food','shop-furniture':'Furniture','shop-bookstore':'Bookstore',
+};
+
+window.filterDesigns = function(cat) {
+  document.querySelectorAll('#designTabs .btn').forEach(b => b.classList.remove('btn-lime'));
+  const btn = document.getElementById('dt' + cat.charAt(0).toUpperCase() + cat.slice(1));
+  if (btn) btn.classList.add('btn-lime');
+  const grid = document.getElementById('designGrid');
+  const planCat = { PERSONAL:'personal', BUSINESS:'business', ECOMMERCE:'ecommerce' }[cust?.template] || 'personal';
+  const templates = ALL_TEMPLATES[planCat] || [];
+  grid.innerHTML = templates.map(id => {
+    const active = (cust?.templateId || '') === id;
+    return `<div style="border:2px solid ${active?'var(--lime)':'var(--border)'};border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;background:var(--card)" onclick="applyTemplate('${id}')">
+      <div style="aspect-ratio:9/14;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--dim);position:relative">
+        <iframe src="/${id}.html" style="width:200%;height:200%;transform:scale(.5);transform-origin:top left;pointer-events:none;border:none" loading="lazy"></iframe>
+      </div>
+      <div style="padding:10px;font-size:13px;font-weight:600;color:var(--text)">${TMPL_NAMES[id]||id}${active?' <span style=\"color:var(--lime);font-size:11px\">✓ Active</span>':''}</div>
+    </div>`;
+  }).join('');
+};
+
+window.applyTemplate = async function(templateId) {
+  if (!confirm('Switch to this template? Your content will carry over.')) return;
+  try {
+    await apiFetch('/api/me','PUT',{ templateId });
+    cust.templateId = templateId;
+    toast('Template updated! Refresh your site to see changes.','success');
+    filterDesigns();
+  } catch(e) { toast('Failed to update template','error'); }
+};
 </script>
 </body>
 </html>
