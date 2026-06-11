@@ -173,7 +173,7 @@ button{font-family:var(--ff-body);cursor:pointer}
 .strength-segment.strong{background:var(--green)}
 
 /* MODAL */
-.modal{
+.modal{display:none;
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);
   z-index:100;align-items:center;justify-content:center;padding:20px;
 }
@@ -212,6 +212,14 @@ button{font-family:var(--ff-body);cursor:pointer}
   body{grid-template-columns:1fr}
   .left{display:none}
   .right{padding:32px 24px}
+}
+@media(max-width:480px){
+  .right{padding:24px 16px}
+  .card{padding:28px 20px}
+  .tabs{gap:2px}
+  .tab{font-size:12px;padding:8px}
+  .field-inner input{font-size:14px}
+  .submit-btn{padding:13px}
 }
 </style>
 </head>
@@ -252,8 +260,8 @@ button{font-family:var(--ff-body);cursor:pointer}
 
     <!-- TABS -->
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('login')" id="tabLogin">Sign in</button>
-      <button class="tab" onclick="switchTab('register')" id="tabRegister">Create account <span class="new">NEW</span></button>
+      <button class="tab active" id="tabLogin">Sign in</button>
+      <button class="tab" id="tabRegister">Create account <span class="new">NEW</span></button>
     </div>
 
     <!-- ALERTS -->
@@ -278,14 +286,14 @@ button{font-family:var(--ff-body);cursor:pointer}
         <label>Secret key</label>
         <div class="field-inner">
           <input type="password" id="loginKey" placeholder="Your 8-character secret key" autocomplete="current-password" style="padding-right:44px">
-          <button type="button" class="toggle-pw" onclick="togglePassword('loginKey')" title="Show/hide" aria-label="Toggle visibility"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg></button>
+          <button type="button" class="toggle-pw" id="btnToggleLoginKey" title="Show/hide" aria-label="Toggle visibility"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg></button>
         </div>
       </div>
       <div class="check-row">
         <input type="checkbox" id="rememberMe" checked>
         <label for="rememberMe">Keep me signed in</label>
         <div style="flex:1"></div>
-        <a href="#" onclick="showForgot();return false" style="font-size:13px;color:var(--soft);transition:color .15s" onmouseover="this.style.color='var(--lime)'" onmouseout="this.style.color='var(--soft)'">Forgot key?</a>
+        <a href="#" id="btnForgot" style="font-size:13px;color:var(--soft);transition:color .15s" onmouseover="this.style.color='var(--lime)'" onmouseout="this.style.color='var(--soft)'">Forgot key?</a>
       </div>
       <button class="submit-btn" type="submit" id="loginBtn">
         <span class="spinner hidden" id="loginSpinner"></span>
@@ -306,8 +314,8 @@ button{font-family:var(--ff-body);cursor:pointer}
         </div>
       </div>
       <div class="field" style="margin-top:16px">
-        <label>Email <span style="color:var(--dim);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
-        <div class="field-inner"><input type="email" id="regEmail" placeholder="you@email.com" autocomplete="email"></div>
+        <label>Email</label>
+        <div class="field-inner"><input type="email" id="regEmail" placeholder="you@email.com" autocomplete="email" required></div>
       </div>
       <div class="field">
         <label>Website type</label>
@@ -327,7 +335,7 @@ button{font-family:var(--ff-body);cursor:pointer}
         <span id="regBtnText">Create my website →</span>
       </button>
       <div class="form-divider">Already have an account?</div>
-      <button type="button" onclick="switchTab('login')" style="width:100%;padding:12px;background:transparent;border:1px solid var(--edge2);border-radius:10px;color:var(--soft);font-size:14px;transition:all .15s" onmouseover="this.style.borderColor='var(--edge)';this.style.color='#eeeef5'" onmouseout="this.style.borderColor='var(--edge2)';this.style.color='var(--soft)'">Sign in instead →</button>
+      <button type="button" id="btnSignInInstead" style="width:100%;padding:12px;background:transparent;border:1px solid var(--edge2);border-radius:10px;color:var(--soft);font-size:14px;transition:all .15s" onmouseover="this.style.borderColor='var(--edge)';this.style.color='#eeeef5'" onmouseout="this.style.borderColor='var(--edge2)';this.style.color='var(--soft)'">Sign in instead →</button>
     </form>
 
   </div>
@@ -336,17 +344,17 @@ button{font-family:var(--ff-body);cursor:pointer}
 <!-- FORGOT MODAL -->
 <div class="modal" id="forgotModal">
   <div class="modal-box">
-    <button class="modal-close" onclick="hideForgot()">✕</button>
+    <button class="modal-close" id="btnHideForgot">✕</button>
     <div class="modal-title">Recover your key</div>
 
     <!-- step 1 -->
     <div class="modal-step active" id="step1">
-      <div class="modal-sub">Enter your phone number. We'll send a recovery code via SMS.</div>
+      <div class="modal-sub">Enter your phone number. We'll send a recovery code to your email.</div>
       <div class="field">
         <label>Phone number</label>
         <div class="field-inner"><input type="tel" id="forgotPhone" placeholder="07XX XXX XXX"></div>
       </div>
-      <button class="submit-btn" onclick="sendCode()" id="sendCodeBtn" style="margin-top:4px">
+      <button class="submit-btn" id="sendCodeBtn" style="margin-top:4px">
         <span class="spinner hidden" id="forgotSpinner"></span>
         <span id="sendCodeText">Send recovery code →</span>
       </button>
@@ -354,7 +362,7 @@ button{font-family:var(--ff-body);cursor:pointer}
 
     <!-- step 2 -->
     <div class="modal-step" id="step2">
-      <div class="modal-sub">Enter the 6-digit code sent to your phone, then set a new key.</div>
+      <div class="modal-sub">Enter the 6-digit code sent to your email, then set a new key.</div>
       <div class="field"><label>6-digit code</label>
         <div class="code-grid">
           <input class="code-digit" type="text" maxlength="1" inputmode="numeric">
@@ -369,7 +377,7 @@ button{font-family:var(--ff-body);cursor:pointer}
         <label>New secret key</label>
         <div class="field-inner">
           <input type="password" id="newKey" placeholder="Min. 6 characters" style="padding-right:44px">
-          <button type="button" class="toggle-pw" onclick="togglePassword('newKey')" aria-label="Toggle visibility"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg></button>
+          <button type="button" class="toggle-pw" id="btnToggleNewKey" aria-label="Toggle visibility"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg></button>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)">Key strength</span><span id="strengthLabel" style="font-size:11px;color:var(--dim)">—</span></div>
       <div class="strength-bar">
@@ -377,11 +385,11 @@ button{font-family:var(--ff-body);cursor:pointer}
           <div class="strength-segment"></div><div class="strength-segment"></div>
         </div>
       </div>
-      <button class="submit-btn" onclick="resetKey()" id="resetBtn">
+      <button class="submit-btn" id="resetBtn">
         <span class="spinner hidden" id="resetSpinner"></span>
         <span id="resetText">Reset my key →</span>
       </button>
-      <a class="back-link" onclick="backToStep1()">← Back</a>
+      <a class="back-link" id="btnBackStep1">← Back</a>
     </div>
   </div>
 </div>
@@ -404,7 +412,7 @@ window.switchTab = function(tab) {
   setTimeout(() => { const f = document.querySelector(`#${tab}Form input:not([type="checkbox"])`); if (f) f.focus(); }, 50);
 }
 
-function togglePassword(id) {
+window.togglePassword = function(id) {
   const input = document.getElementById(id);
   const isPw = input.type === 'password';
   input.type = isPw ? 'text' : 'password';
@@ -469,6 +477,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
   const name = document.getElementById('regName').value.trim();
   const phone = document.getElementById('regPhone').value.trim().replace(/\s/g, '');
   const email = document.getElementById('regEmail').value.trim();
+  if (!email) { showError('Email is required'); return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { showError('Please enter a valid email address'); return; }
   const template = document.getElementById('regTemplate').value;
   if (!name) { showError('Enter your full name'); return; }
   if (!phone) { showError('Enter your phone number'); return; }
@@ -622,6 +632,24 @@ if (token) {
 
 document.getElementById('loginPhone').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('loginKey').focus(); });
 document.getElementById('loginKey').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('loginForm').dispatchEvent(new Event('submit')); });
+
+// ── LOGIN PAGE BUTTON WIRING ──────────────────────────────────────────
+(function() {
+  function wire(id, fn) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('click', fn);
+  }
+  wire('tabLogin',        function() { switchTab('login'); });
+  wire('tabRegister',     function() { switchTab('register'); });
+  wire('btnForgot',       function(e) { e.preventDefault(); showForgot(); });
+  wire('btnHideForgot',   function() { hideForgot(); });
+  wire('sendCodeBtn',     function() { sendCode(); });
+  wire('resetBtn',        function() { resetKey(); });
+  wire('btnBackStep1',    function() { backToStep1(); });
+  wire('btnSignInInstead',function() { switchTab('login'); });
+  wire('btnToggleLoginKey',function() { togglePassword('loginKey'); });
+  wire('btnToggleNewKey', function() { togglePassword('newKey'); });
+})();
 </script>
 </body>
 </html>
