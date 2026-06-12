@@ -50,7 +50,7 @@ nav{
 .nav-end{display:flex;gap:10px;align-items:center}
 .btn-ghost{padding:7px 16px;border:1px solid #333;border-radius:6px;font-size:13px;color:#888;background:transparent;transition:all .15s}
 .btn-ghost:hover{border-color:#555;color:var(--white)}
-.btn-lime{padding:8px 18px;border-radius:6px;background:var(--lime);color:var(--black);font-size:13px;font-weight:700;border:none;transition:all .15s}
+.btn-lime{padding:7px 14px;border-radius:6px;background:var(--lime);color:var(--black);font-size:12px;font-weight:700;border:none;transition:all .15s;white-space:nowrap}
 .btn-lime:hover{background:#d4f57a;transform:translateY(-1px)}
 #burger{display:none;background:none;border:1px solid #333;border-radius:6px;padding:6px 8px;color:#888}
 #mob{display:none;position:fixed;inset:0;background:var(--black);z-index:190;flex-direction:column;align-items:center;justify-content:center;gap:12px;border-top:1px solid var(--border)}
@@ -387,6 +387,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   .co-form{gap:10px}
 }
 @media(max-width:480px){
+  .btn-lime{padding:6px 12px;font-size:11px}
   .hero-left{padding:64px 16px 40px}
   .hero h1{font-size:clamp(2rem,9vw,2.8rem)}
   .hero-sub{font-size:14px}
@@ -460,7 +461,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
         <span class="hero-screen-badge">Personal</span>
       </div>
       <div class="hero-screen" onclick="openPreview('business',0)">
-        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80" alt="Business template">
+        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80" alt="Business template">
         <span class="hero-screen-label">Business · Agency</span>
         <span class="hero-screen-badge">Business</span>
       </div>
@@ -742,7 +743,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
     <h4>Account</h4>
     <a href="/login.html">Sign in</a>
     <a href="#checkout">Get started</a>
-    <a href="mailto:info@sitesawa.com">info@sitesawa.com</a>
+    <a href="https://mail.google.com/mail/?view=cm&to=info@sitesawa.com" target="_blank" rel="noopener">info@sitesawa.com</a>
   </div>
 </footer>
 <div class="ft-bottom">
@@ -919,6 +920,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closePreview
 document.getElementById('tabP').addEventListener('click', function(){ showCat('personal', this); });
 document.getElementById('tabB').addEventListener('click', function(){ showCat('business', this); });
 document.getElementById('tabE').addEventListener('click', function(){ showCat('ecommerce', this); });
+if(document.getElementById('payBtn')) document.getElementById('payBtn').addEventListener('click', function(){ doPay(); });
 document.getElementById('btnClose').addEventListener('click', function(){ closePreview(); });
 document.getElementById('pSelectBtn').addEventListener('click', function(){ selectTemplate(); });
 
