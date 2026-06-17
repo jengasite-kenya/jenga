@@ -401,7 +401,26 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   .section-title{font-size:clamp(1.6rem,7vw,2.2rem)}
   footer{padding:24px 16px}
 }
+html,body{max-width:100%;overflow-x:hidden}
+img,iframe,video{max-width:100%}
+@media(max-width:480px){
+  nav{padding:0 12px}
+  .nav-end{gap:6px}
+  .gallery-inner,.plans-inner,.vs-inner,.checkout-inner{padding:0 12px;max-width:100%}
+  .cat-tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:6px;padding-bottom:4px}
+  .cat-tab{flex:0 0 auto}
+  .co-form input,.co-form select{font-size:16px}
+}
 </style>
+<!-- TikTok Pixel Code -->
+<script>
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+  ttq.load('7630890911811798037');
+  ttq.page();
+}(window, document, 'ttq');
+</script>
+<!-- End TikTok Pixel Code -->
 </head>
 <body>
 
@@ -419,14 +438,14 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   <div class="nav-end">
     <a href="/login.html" class="btn-ghost">Sign in</a>
     <a href="#checkout" class="btn-lime">Get your website →</a>
-    <button id="burger" onclick="document.getElementById('mob').classList.toggle('on')" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h14M2 9h14M2 14h14"/></svg></button>
+    <button id="burger" data-burger="1" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h14M2 9h14M2 14h14"/></svg></button>
   </div>
 </nav>
 <div id="mob">
-  <button id="mob-x" onclick="document.getElementById('mob').classList.remove('on')" aria-label="Close"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3l12 12M15 3L3 15"/></svg></button>
-  <a href="#templates" onclick="document.getElementById('mob').classList.remove('on')">Templates</a>
-  <a href="#pricing" onclick="document.getElementById('mob').classList.remove('on')">Pricing</a>
-  <a href="#checkout" onclick="document.getElementById('mob').classList.remove('on')">Get started</a>
+  <button id="mob-x" data-mobclose="1" aria-label="Close"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3l12 12M15 3L3 15"/></svg></button>
+  <a href="#templates" data-mobclose="1">Templates</a>
+  <a href="#pricing" data-mobclose="1">Pricing</a>
+  <a href="#checkout" data-mobclose="1">Get started</a>
   <a href="/login.html" style="color:var(--lime)">Sign in →</a>
 </div>
 
@@ -455,22 +474,22 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   <div class="hero-right">
     <div class="hero-preview-label">30 templates — click to preview</div>
     <div class="hero-screens">
-      <div class="hero-screen" onclick="openPreview('personal',0)">
+      <div class="hero-screen" data-hcat="personal" data-hidx="0">
         <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80" alt="Personal template">
         <span class="hero-screen-label">Personal · Studio</span>
         <span class="hero-screen-badge">Personal</span>
       </div>
-      <div class="hero-screen" onclick="openPreview('business',0)">
+      <div class="hero-screen" data-hcat="business" data-hidx="0">
         <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80" alt="Business template">
         <span class="hero-screen-label">Business · Agency</span>
         <span class="hero-screen-badge">Business</span>
       </div>
-      <div class="hero-screen" onclick="openPreview('ecommerce',0)">
+      <div class="hero-screen" data-hcat="ecommerce" data-hidx="0">
         <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&q=80" alt="E-Commerce template">
         <span class="hero-screen-label">E-Commerce · Boutique</span>
         <span class="hero-screen-badge">E-Commerce</span>
       </div>
-      <div class="hero-screen" onclick="openPreview('personal',4)">
+      <div class="hero-screen" data-hcat="personal" data-hidx="4">
         <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&q=80" alt="Personal dark">
         <span class="hero-screen-label">Personal · Dark</span>
         <span class="hero-screen-badge">Personal</span>
@@ -612,7 +631,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
     <div class="section-tag reveal">Pricing</div>
     <div class="section-title reveal">One price. Yours forever.</div>
     <div class="plans-grid">
-      <div class="plan reveal" onclick="selectPlan('PERSONAL')">
+      <div class="plan reveal" id="planP">
         <span class="plan-badge pb-personal">Personal</span>
         <div class="plan-name">Personal</div>
         <div class="plan-who">Artists · Doctors · Lawyers · Freelancers · Consultants</div>
@@ -625,9 +644,9 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
           <li>yourname.sitesawa.com</li>
           <li>Google Analytics + SEO</li>
         </ul>
-        <button class="plan-btn" onclick="event.stopPropagation();selectPlan('PERSONAL')">Choose →</button>
+        <button class="plan-btn" id="chP">Choose →</button>
       </div>
-      <div class="plan reveal d1" onclick="selectPlan('BUSINESS')">
+      <div class="plan reveal d1" id="planB">
         <span class="plan-badge pb-business">Business</span>
         <div class="plan-name">Business</div>
         <div class="plan-who">Salons · Restaurants · Gyms · Garages · Hardware</div>
@@ -640,9 +659,9 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
           <li>TikTok Pixel + Analytics</li>
           <li>SEO + sitemap</li>
         </ul>
-        <button class="plan-btn" onclick="event.stopPropagation();selectPlan('BUSINESS')">Choose →</button>
+        <button class="plan-btn" id="chB">Choose →</button>
       </div>
-      <div class="plan reveal d2" onclick="selectPlan('ECOMMERCE')">
+      <div class="plan reveal d2" id="planE">
         <span class="plan-badge pb-ecommerce">E-Commerce</span>
         <div class="plan-name">Shop</div>
         <div class="plan-who">Clothes · Electronics · Beauty · Any product</div>
@@ -655,7 +674,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
           <li>Order dashboard</li>
           <li>Delivery options</li>
         </ul>
-        <button class="plan-btn" onclick="event.stopPropagation();selectPlan('ECOMMERCE')">Choose →</button>
+        <button class="plan-btn" id="chE">Choose →</button>
       </div>
     </div>
 </section>
@@ -677,7 +696,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
       <div class="field"><label>Business or profile name</label><input type="text" id="bizIn" placeholder="e.g. Grace Wanjiku or Glam House"></div>
       <div class="field"><label>Email address</label><input type="email" id="emailIn" placeholder="you@email.com — secret key sent here"></div>
       <div class="field" style="margin-bottom:20px"><label>M-Pesa phone number</label><input type="tel" id="phoneIn" placeholder="07XX XXX XXX"></div>
-      <button class="pay-btn" id="payBtn" onclick="doPay()">
+      <button class="pay-btn" id="payBtn" data-pay="1">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5L2.5 5.5v5l5.5 3.5 5.5-3.5v-5L8 1.5z"/></svg>
         Pay with M-Pesa
       </button>
@@ -723,7 +742,7 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
       <div style="font-size:48px;margin-bottom:14px">❌</div>
       <div class="sbox-title" style="color:#ef4444">Payment failed</div>
       <div class="sbox-sub" id="errMsg">Something went wrong.</div>
-      <button class="btn-block" onclick="resetCO()">Try again</button>
+      <button class="btn-block" data-reset="1">Try again</button>
     </div>
   </div>
 </section>
@@ -735,9 +754,9 @@ footer{border-top:1px solid var(--border);padding:40px;display:grid;grid-templat
   </div>
   <div class="ft-col">
     <h4>Templates</h4>
-    <a href="#templates" onclick="showCat('personal')">Personal (12)</a>
-    <a href="#templates" onclick="showCat('business')">Business (15)</a>
-    <a href="#templates" onclick="showCat('ecommerce')">E-Commerce (6)</a>
+    <a href="#templates" id="ftP">Personal (12)</a>
+    <a href="#templates" id="ftB">Business (15)</a>
+    <a href="#templates" id="ftE">E-Commerce (6)</a>
   </div>
   <div class="ft-col">
     <h4>Account</h4>
@@ -921,6 +940,27 @@ document.getElementById('tabP').addEventListener('click', function(){ showCat('p
 document.getElementById('tabB').addEventListener('click', function(){ showCat('business', this); });
 document.getElementById('tabE').addEventListener('click', function(){ showCat('ecommerce', this); });
 if(document.getElementById('payBtn')) document.getElementById('payBtn').addEventListener('click', function(){ doPay(); });
+// plans
+[['planP','PERSONAL'],['planB','BUSINESS'],['planE','ECOMMERCE'],['chP','PERSONAL'],['chB','BUSINESS'],['chE','ECOMMERCE']].forEach(function(p){
+  var el=document.getElementById(p[0]); if(el) el.addEventListener('click', function(e){ e.stopPropagation(); selectPlan(p[1]); });
+});
+// footer cat links
+[['ftP','personal'],['ftB','business'],['ftE','ecommerce']].forEach(function(p){
+  var el=document.getElementById(p[0]); if(el) el.addEventListener('click', function(){ showCat(p[1]); });
+});
+// hero screens
+document.querySelectorAll('.hero-screen[data-hcat]').forEach(function(h){
+  h.addEventListener('click', function(){ openPreview(h.dataset.hcat, parseInt(h.dataset.hidx)); });
+});
+// burger
+document.querySelectorAll('[data-burger]').forEach(function(b){ b.addEventListener('click', function(){ document.getElementById('mob').classList.toggle('on'); }); });
+document.querySelectorAll('[data-mobclose]').forEach(function(b){ b.addEventListener('click', function(){ document.getElementById('mob').classList.remove('on'); }); });
+// reset / pay (delegation — these live inside steps that re-render)
+document.addEventListener('click', function(e){
+  if (e.target.closest && e.target.closest('[data-reset]')) resetCO();
+  if (e.target.closest && e.target.closest('[data-pay]')) doPay();
+});
+
 document.getElementById('btnClose').addEventListener('click', function(){ closePreview(); });
 document.getElementById('pSelectBtn').addEventListener('click', function(){ selectTemplate(); });
 
@@ -990,6 +1030,7 @@ function selectPlan(t) {
     : PLANS[t].name;
   document.getElementById('planPrice').textContent = 'KES ' + PLANS[t].price.toLocaleString();
   const co = document.getElementById('checkout'); if(co) co.scrollIntoView({ behavior: 'smooth' });
+  if(window.ttq) ttq.track('InitiateCheckout', { content_name: PLANS[t].name, value: PLANS[t].price, currency: 'KES' });
 }
 
 // ── CHECKOUT ──
@@ -1063,6 +1104,7 @@ async function doPay() {
           document.getElementById('sucKey').textContent   = secretKey;
           fireConversion(amount, checkoutId);
           show('stepSuccess');
+          if(window.ttq) ttq.track('CompletePayment', { content_name: PLANS[tier]?.name || 'website', value: PLANS[tier]?.price || 0, currency: 'KES' });
 
         } else if (sd.status === 'failed') {
           clearInterval(poll);
@@ -1082,6 +1124,7 @@ async function doPay() {
             document.getElementById('sucEmail').textContent = email;
             document.getElementById('sucKey').textContent   = secretKey;
             show('stepSuccess');
+            if(window.ttq) ttq.track('CompletePayment', { content_name: PLANS[tier]?.name || 'website', value: PLANS[tier]?.price || 0, currency: 'KES' });
           }, 30000);
         }
       } catch (e) { /* ignore poll errors, keep trying */ }
