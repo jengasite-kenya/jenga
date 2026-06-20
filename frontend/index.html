@@ -421,6 +421,27 @@ img,iframe,video{max-width:100%}
 }(window, document, 'ttq');
 </script>
 <!-- End TikTok Pixel Code -->
+
+<script>
+// TikTok Advanced Matching helpers
+async function ttHash(v){
+  if(!v) return undefined;
+  try{
+    const data = new TextEncoder().encode(String(v).trim().toLowerCase());
+    const buf  = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){ return undefined; }
+}
+async function ttIdentify(email, phoneE164){
+  if(typeof ttq==='undefined') return;
+  const [he, hp] = await Promise.all([ttHash(email), ttHash(phoneE164)]);
+  const payload = {};
+  if(he) payload.email = he;
+  if(hp) payload.phone_number = hp;
+  if(Object.keys(payload).length) ttq.identify(payload);
+}
+</script>
+
 </head>
 <body>
 
@@ -1030,7 +1051,7 @@ function selectPlan(t) {
     : PLANS[t].name;
   document.getElementById('planPrice').textContent = 'KES ' + PLANS[t].price.toLocaleString();
   const co = document.getElementById('checkout'); if(co) co.scrollIntoView({ behavior: 'smooth' });
-  if(window.ttq) ttq.track('InitiateCheckout', { content_name: PLANS[t].name, value: PLANS[t].price, currency: 'KES' });
+  if(window.ttq) ttq.track('InitiateCheckout', { contents:[{ content_id: t, content_type:'product', content_name: PLANS[t].name }], value: PLANS[t].price, currency: 'KES' });
 }
 
 // ── CHECKOUT ──
@@ -1052,6 +1073,7 @@ async function doPay() {
   if (!/^(254[0-9]{9}|0[17][0-9]{8})$/.test(cleanPhone)) return showCOError('Enter a valid Safaricom number (e.g. 0712 345 678)');
   const normalised = cleanPhone.startsWith('0') ? '254'+cleanPhone.slice(1) : cleanPhone;
 
+  if(window.ttq) ttIdentify(email, normalised);
   btn.innerHTML = '<span class="pay-spin"></span> Processing...';
   btn.disabled = true;
   show('stepProcessing');
@@ -1104,7 +1126,7 @@ async function doPay() {
           document.getElementById('sucKey').textContent   = secretKey;
           fireConversion(amount, checkoutId);
           show('stepSuccess');
-          if(window.ttq) ttq.track('CompletePayment', { content_name: PLANS[tier]?.name || 'website', value: PLANS[tier]?.price || 0, currency: 'KES' });
+          if(window.ttq){ ttq.track('CompletePayment', { contents:[{ content_id: tier, content_type:'product', content_name: PLANS[tier]?.name || 'website' }], value: PLANS[tier]?.price || 0, currency: 'KES' }); }
 
         } else if (sd.status === 'failed') {
           clearInterval(poll);
@@ -1124,7 +1146,7 @@ async function doPay() {
             document.getElementById('sucEmail').textContent = email;
             document.getElementById('sucKey').textContent   = secretKey;
             show('stepSuccess');
-            if(window.ttq) ttq.track('CompletePayment', { content_name: PLANS[tier]?.name || 'website', value: PLANS[tier]?.price || 0, currency: 'KES' });
+            if(window.ttq){ ttq.track('CompletePayment', { contents:[{ content_id: tier, content_type:'product', content_name: PLANS[tier]?.name || 'website' }], value: PLANS[tier]?.price || 0, currency: 'KES' }); }
           }, 30000);
         }
       } catch (e) { /* ignore poll errors, keep trying */ }
