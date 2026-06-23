@@ -328,18 +328,38 @@
   };
 
   Object.entries(socialMap).forEach(([platform, url]) => {
-    if (!url) return;
-    // href-based
-    $$(`a[href*="${platform}"]`).forEach(a => a.href = url);
-    // Font Awesome icon parent links
-    $$(`a .fa-${platform}, a i[class*="${platform}"]`).forEach(icon => {
-      const a = icon.closest('a');
-      if (a) a.href = url;
-    });
-    // Text label links
-    $$('.soc a, footer a, .socials a, .social-links a').forEach(a => {
-      if (a.textContent.toLowerCase().trim() === platform) a.href = url;
-    });
+    if (url) {
+      // Customer HAS this account → point existing icons/links to it
+      // href-based
+      $$(`a[href*="${platform}"]`).forEach(a => a.href = url);
+      // Font Awesome icon parent links
+      $$(`a .fa-${platform}, a i[class*="${platform}"]`).forEach(icon => {
+        const a = icon.closest('a');
+        if (a) a.href = url;
+      });
+      // Text label links
+      $$('.soc a, footer a, .socials a, .social-links a').forEach(a => {
+        if (a.textContent.toLowerCase().trim() === platform) a.href = url;
+      });
+    } else {
+      // Customer does NOT have this account → hide the icon so it never
+      // shows as an empty/dead link. Only their real accounts appear.
+      // Icon-based links (Font Awesome etc.)
+      $$(`a .fa-${platform}, a i[class*="${platform}"]`).forEach(icon => {
+        const a = icon.closest('a');
+        if (a) a.style.display = 'none';
+      });
+      // href-based links pointing at the platform's domain
+      $$(`a[href*="${platform}.com"], a[href*="${platform}"]`).forEach(a => {
+        // only hide if it's clearly a social link (icon inside or matching label)
+        const t = a.textContent.toLowerCase().trim();
+        if (a.querySelector('i,svg,img') || t === platform) a.style.display = 'none';
+      });
+      // Text label links in known social containers
+      $$('.soc a, .socials a, .social-links a, .ft-soc a').forEach(a => {
+        if (a.textContent.toLowerCase().trim() === platform) a.style.display = 'none';
+      });
+    }
   });
 
   // me-linkbio: icon button order instagram/youtube/spotify/twitter
