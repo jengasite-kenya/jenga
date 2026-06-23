@@ -6,6 +6,10 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SiteSawa">
+  <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#0a0a0a">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -178,7 +182,7 @@ nav{
 .t-card:hover .t-preview img{transform:translateY(-20%)}
 .t-info{padding:12px}
 .t-name{font-size:12px;font-weight:700;color:var(--white);margin-bottom:3px}
-.t-style{font-family:var(--fm);font-size:10px;color:#555;letter-spacing:.06em}
+.t-style{font-family:var(--fm);font-size:11px;color:#a8ad9a;letter-spacing:.04em;line-height:1.45}
 .t-preview-btn{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   background:rgba(0,0,0,.6);opacity:0;transition:opacity .2s;
@@ -480,7 +484,7 @@ async function ttIdentify(email, phoneE164){
       get online<br>
       for <span class="hi">KES 7,000</span>
     </h1>
-    <p class="hero-sub"><strong>80% of Kenyan businesses have no website.</strong> SiteSawa gives you a professional site in minutes — 10 unique designs per category, live preview before you buy, M-Pesa checkout.</p>
+    <p class="hero-sub"><strong>80% of Kenyan businesses have no website.</strong> SiteSawa gives you a professional site in minutes — dozens of professional designs, live preview before you buy, M-Pesa checkout.</p>
     <div class="hero-btns">
       <a href="#templates" class="btn-big btn-big-lime">Browse 30 templates →</a>
       <a href="#pricing" class="btn-big btn-big-ghost">See pricing</a>
@@ -659,7 +663,7 @@ async function ttIdentify(email, phoneE164){
         <div class="plan-price">7K</div>
         <div class="plan-per">KES · one-time</div>
         <ul class="plan-feats">
-          <li>10 unique designs</li>
+          <li>12 designs to choose from</li>
           <li>Portfolio + skills + services</li>
           <li>WhatsApp, Call & SMS</li>
           <li>yourname.sitesawa.com</li>
@@ -674,7 +678,7 @@ async function ttIdentify(email, phoneE164){
         <div class="plan-price">8K</div>
         <div class="plan-per">KES · one-time</div>
         <ul class="plan-feats">
-          <li>10 unique designs</li>
+          <li>15 designs to choose from</li>
           <li>Services + process + team</li>
           <li>WhatsApp booking button</li>
           <li>TikTok Pixel + Analytics</li>
@@ -689,7 +693,7 @@ async function ttIdentify(email, phoneE164){
         <div class="plan-price">9K</div>
         <div class="plan-per">KES · one-time</div>
         <ul class="plan-feats">
-          <li>10 unique designs</li>
+          <li>6 designs to choose from</li>
           <li>Unlimited products</li>
           <li>M-Pesa STK Push</li>
           <li>Order dashboard</li>
@@ -795,43 +799,43 @@ async function ttIdentify(email, phoneE164){
 // ── TEMPLATE DATA ──
 const TEMPLATES = {
   personal: [
-    {id:'me-portfolio', name:'Portfolio',  style:'Dark · Photography · Architectural',   thumb:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=500&q=80', file:'/me-portfolio.html'},
-    {id:'me-developer', name:'Developer',  style:'Code editor · Terminal · Dark',         thumb:'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&q=80', file:'/me-developer.html'},
-    {id:'me-writer',    name:'Writer',     style:'Editorial · Serif · Warm',              thumb:'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=500&q=80', file:'/me-writer.html'},
-    {id:'me-music',     name:'Musician',   style:'Neon · Producer · DJ',                  thumb:'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&q=80', file:'/me-music.html'},
-    {id:'me-resume',    name:'Resume',     style:'Sidebar CV · Clean · Professional',     thumb:'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=500&q=80', file:'/me-resume.html'},
-    {id:'me-wedding',   name:'Wedding',    style:'Elegant · Script · Serif',              thumb:'https://images.unsplash.com/photo-1519741497674-611481863552?w=500&q=80', file:'/me-wedding.html'},
-    {id:'me-artist',    name:'Artist',     style:'Playful · Bold · Illustrations',        thumb:'https://images.unsplash.com/photo-1550859492-d5da9d8e45f3?w=500&q=80', file:'/me-artist.html'},
-    {id:'me-doctor',    name:'Doctor',     style:'Clean · Medical · Trust',               thumb:'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=500&q=80', file:'/me-doctor.html'},
-    {id:'me-linkbio',   name:'Link Bio',   style:'Gradient · Creator · Social links',    thumb:'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=500&q=80', file:'/me-linkbio.html'},
-    {id:'me-coach',     name:'Coach',      style:'Warm · Orange · Energetic',             thumb:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500&q=80', file:'/me-coach.html'},
-    {id:'me-speaker',   name:'Speaker',    style:'Dark · Gold · Author',                  thumb:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=500&q=80', file:'/me-speaker.html'},
-    {id:'me-travel',    name:'Travel',     style:'Journal · Teal · Coral',               thumb:'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=500&q=80', file:'/me-travel.html'},
+    {id:'me-portfolio', name:'Showcase',  style:'Dark · Visual · Great for portfolios, photographers, creatives',   thumb:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=500&q=80', file:'/me-portfolio.html'},
+    {id:'me-developer', name:'Terminal',  style:'Code & dark · Great for developers, tech, IT pros',         thumb:'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&q=80', file:'/me-developer.html'},
+    {id:'me-writer',    name:'Editorial',     style:'Warm serif · Great for writers, blogs, journalists',              thumb:'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=500&q=80', file:'/me-writer.html'},
+    {id:'me-music',     name:'Pulse',   style:'Neon & bold · Great for DJs, musicians, producers',                  thumb:'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&q=80', file:'/me-music.html'},
+    {id:'me-resume',    name:'Profile',     style:'Clean CV · Great for job seekers, professionals, freelancers',     thumb:'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=500&q=80', file:'/me-resume.html'},
+    {id:'me-wedding',   name:'Forever',    style:'Elegant script · Great for weddings, events, celebrations',              thumb:'https://images.unsplash.com/photo-1519741497674-611481863552?w=500&q=80', file:'/me-wedding.html'},
+    {id:'me-artist',    name:'Canvas',     style:'Playful & bold · Great for artists, designers, makers',        thumb:'https://images.unsplash.com/photo-1550859492-d5da9d8e45f3?w=500&q=80', file:'/me-artist.html'},
+    {id:'me-doctor',    name:'Clarity',     style:'Clean & trusted · Great for clinics, consultants, health',               thumb:'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=500&q=80', file:'/me-doctor.html'},
+    {id:'me-linkbio',   name:'Link Hub',   style:'Gradient & social · Great for creators, influencers, bios',    thumb:'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=500&q=80', file:'/me-linkbio.html'},
+    {id:'me-coach',     name:'Rise',      style:'Warm & energetic · Great for coaches, trainers, mentors',             thumb:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500&q=80', file:'/me-coach.html'},
+    {id:'me-speaker',   name:'Spotlight',    style:'Dark & gold · Great for speakers, authors, experts',                  thumb:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=500&q=80', file:'/me-speaker.html'},
+    {id:'me-travel',    name:'Wander',     style:'Journal style · Great for travel, blogs, lifestyle',               thumb:'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=500&q=80', file:'/me-travel.html'},
   ],
   business: [
-    {id:'biz-agency',       name:'Agency',       style:'Brutalist · Bold · Blue',           thumb:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=80', file:'/biz-agency.html'},
-    {id:'biz-restaurant',   name:'Restaurant',   style:'Warm · Dark · Food',                thumb:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&q=80', file:'/biz-restaurant.html'},
-    {id:'biz-spa',          name:'Spa',          style:'Minimal · Sage · Wellness',          thumb:'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500&q=80', file:'/biz-spa.html'},
-    {id:'biz-law',          name:'Law Firm',     style:'Formal · Navy · Gold',               thumb:'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=500&q=80', file:'/biz-law.html'},
-    {id:'biz-realestate',   name:'Real Estate',  style:'Clean · Green · Listings',           thumb:'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500&q=80', file:'/biz-realestate.html'},
-    {id:'biz-gym',          name:'Gym',          style:'Bold · Yellow · Dark',               thumb:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&q=80', file:'/biz-gym.html'},
-    {id:'biz-coffee',       name:'Cafe',         style:'Cozy · Brown · Serif',               thumb:'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=500&q=80', file:'/biz-coffee.html'},
-    {id:'biz-construction', name:'Construction', style:'Industrial · Orange · Dark',         thumb:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500&q=80', file:'/biz-construction.html'},
-    {id:'biz-startup',      name:'Startup',      style:'SaaS · Gradient · Purple',           thumb:'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500&q=80', file:'/biz-startup.html'},
-    {id:'biz-auto',         name:'Auto',         style:'Booking · Blue · Clean',             thumb:'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=500&q=80', file:'/biz-auto.html'},
-    {id:'biz-safari',       name:'Safari',       style:'Tours · Green · Gold',               thumb:'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=500&q=80', file:'/biz-safari.html'},
-    {id:'biz-bakery',       name:'Bakery',       style:'Sweet · Pink · Serif',               thumb:'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=500&q=80', file:'/biz-bakery.html'},
-    {id:'biz-politician',   name:'Campaign',     style:'Bold · Blue · Political',            thumb:'https://images.unsplash.com/photo-1555848962-6e79363ec58f?w=500&q=80', file:'/biz-politician.html'},
-    {id:'biz-logistics',    name:'Logistics',    style:'Navy · Yellow · Tracking',           thumb:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&q=80', file:'/biz-logistics.html'},
-    {id:'biz-salon',        name:'Salon',        style:'Dark · Rose · Elegant',              thumb:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80', file:'/biz-salon.html'},
+    {id:'biz-agency',       name:'Bold',       style:'Brutalist blue · Great for agencies, studios, startups',           thumb:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=80', file:'/biz-agency.html'},
+    {id:'biz-restaurant',   name:'Savory',   style:'Warm & dark · Great for restaurants, cafés, eateries',                thumb:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&q=80', file:'/biz-restaurant.html'},
+    {id:'biz-spa',          name:'Serene',          style:'Minimal sage · Great for spas, wellness, beauty',          thumb:'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500&q=80', file:'/biz-spa.html'},
+    {id:'biz-law',          name:'Authority',     style:'Formal navy & gold · Great for lawyers, accountants, advisors',               thumb:'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=500&q=80', file:'/biz-law.html'},
+    {id:'biz-realestate',   name:'Property',  style:'Clean & green · Great for agents, rentals, real estate',           thumb:'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500&q=80', file:'/biz-realestate.html'},
+    {id:'biz-gym',          name:'Power',          style:'Bold & energetic · Great for gyms, trainers, fitness',               thumb:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&q=80', file:'/biz-gym.html'},
+    {id:'biz-coffee',       name:'Cozy',         style:'Warm & inviting · Great for cafés, bakeries, coffee',               thumb:'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=500&q=80', file:'/biz-coffee.html'},
+    {id:'biz-construction', name:'Solid', style:'Industrial & strong · Great for builders, contractors, trades',         thumb:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500&q=80', file:'/biz-construction.html'},
+    {id:'biz-startup',      name:'Launch',      style:'Modern gradient · Great for startups, apps, SaaS',           thumb:'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500&q=80', file:'/biz-startup.html'},
+    {id:'biz-auto',         name:'Drive',         style:'Clean booking · Great for garages, car wash, auto',             thumb:'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=500&q=80', file:'/biz-auto.html'},
+    {id:'biz-safari',       name:'Wild',       style:'Green & gold · Great for tours, safaris, travel',               thumb:'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=500&q=80', file:'/biz-safari.html'},
+    {id:'biz-bakery',       name:'Sweet',       style:'Soft & charming · Great for bakeries, cakes, treats',               thumb:'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=500&q=80', file:'/biz-bakery.html'},
+    {id:'biz-politician',   name:'Campaign',     style:'Bold & civic · Great for campaigns, leaders, causes',            thumb:'https://images.unsplash.com/photo-1555848962-6e79363ec58f?w=500&q=80', file:'/biz-politician.html'},
+    {id:'biz-logistics',    name:'Move',    style:'Navy & sharp · Great for logistics, delivery, transport',           thumb:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&q=80', file:'/biz-logistics.html'},
+    {id:'biz-salon',        name:'Allure',        style:'Elegant rose · Great for salons, beauty, barbers',              thumb:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80', file:'/biz-salon.html'},
   ],
   ecommerce: [
-    {id:'shop-fashion',     name:'Fashion',     style:'Boutique · Black · Editorial',       thumb:'https://images.unsplash.com/photo-1445205170230-053b83016050?w=500&q=80', file:'/shop-fashion.html'},
-    {id:'shop-electronics', name:'Electronics', style:'Tech · Dark · Cyan',                 thumb:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&q=80', file:'/shop-electronics.html'},
-    {id:'shop-beauty',      name:'Beauty',      style:'Natural · Rose · Clean',             thumb:'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&q=80', file:'/shop-beauty.html'},
-    {id:'shop-food',        name:'Food',        style:'Delivery · Orange · Warm',           thumb:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80', file:'/shop-food.html'},
-    {id:'shop-furniture',   name:'Furniture',   style:'Editorial · Clay · Natural',         thumb:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80', file:'/shop-furniture.html'},
-    {id:'shop-bookstore',   name:'Bookstore',   style:'Literary · Green · Serif',           thumb:'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=500&q=80', file:'/shop-bookstore.html'},
+    {id:'shop-fashion',     name:'Boutique',     style:'Editorial black · Great for fashion, clothing, style',       thumb:'https://images.unsplash.com/photo-1445205170230-053b83016050?w=500&q=80', file:'/shop-fashion.html'},
+    {id:'shop-electronics', name:'Tech', style:'Dark & cyan · Great for electronics, gadgets, phones',                 thumb:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&q=80', file:'/shop-electronics.html'},
+    {id:'shop-beauty',      name:'Glow',      style:'Natural rose · Great for beauty, skincare, cosmetics',             thumb:'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&q=80', file:'/shop-beauty.html'},
+    {id:'shop-food',        name:'Fresh',        style:'Warm & appetising · Great for food, groceries, delivery',           thumb:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80', file:'/shop-food.html'},
+    {id:'shop-furniture',   name:'Home',   style:'Natural clay · Great for furniture, décor, interiors',         thumb:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80', file:'/shop-furniture.html'},
+    {id:'shop-bookstore',   name:'Chapter',   style:'Literary green · Great for books, stationery, gifts',           thumb:'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=500&q=80', file:'/shop-bookstore.html'},
   ],
 };
 let activeCat = 'personal';
@@ -1173,6 +1177,77 @@ renderGrids();
 // default: show first step
 document.getElementById('stepForm').style.display='block';
 document.getElementById('stepForm').classList.add('on');
+</script>
+
+<!-- Floating WhatsApp button -->
+<a href="https://wa.me/254717806917?text=Hi%20SiteSawa%2C%20I%20want%20to%20get%20my%20business%20online" target="_blank" rel="noopener" id="waFloat" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" width="34" height="34" fill="#fff" aria-hidden="true">
+    <path d="M16.04 4C9.96 4 5.02 8.94 5.02 15.02c0 1.94.51 3.83 1.47 5.5L4.9 26.2l5.83-1.53a11 11 0 0 0 5.3 1.35h.01c6.08 0 11.02-4.94 11.02-11.02C27.06 8.94 22.12 4 16.04 4zm0 20.2h-.01a9.16 9.16 0 0 1-4.67-1.28l-.34-.2-3.46.91.92-3.37-.22-.35a9.13 9.13 0 0 1-1.4-4.89c0-5.05 4.11-9.16 9.17-9.16 2.45 0 4.75.96 6.48 2.69a9.1 9.1 0 0 1 2.68 6.48c0 5.06-4.11 9.16-9.16 9.16zm5.03-6.86c-.28-.14-1.63-.8-1.88-.9-.25-.09-.43-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-.28-.14-1.16-.43-2.21-1.36-.82-.73-1.37-1.63-1.53-1.91-.16-.28-.02-.43.12-.57.13-.13.28-.32.41-.48.14-.16.18-.28.28-.46.09-.18.05-.35-.02-.49-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.47-.62-.48l-.53-.01c-.18 0-.48.07-.73.35-.25.28-.96.94-.96 2.3 0 1.36.98 2.67 1.12 2.85.14.18 1.93 2.95 4.68 4.14.65.28 1.16.45 1.56.58.66.21 1.25.18 1.72.11.53-.08 1.63-.67 1.86-1.31.23-.64.23-1.19.16-1.31-.07-.12-.25-.19-.53-.33z"/>
+  </svg>
+</a>
+<style>
+#waFloat{
+  position:fixed;bottom:22px;right:22px;z-index:9999;
+  width:62px;height:62px;border-radius:50%;background:#25D366;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 22px rgba(0,0,0,.28);
+  transition:transform .15s ease;
+}
+#waFloat:hover{transform:scale(1.08)}
+@media(max-width:480px){
+  #waFloat{width:56px;height:56px;bottom:18px;right:18px}
+}
+</style>
+
+<!-- PWA install button -->
+<button id="installBtn" aria-label="Install SiteSawa app">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0a0a0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+  Install App
+</button>
+<style>
+#installBtn{
+  position:fixed;left:22px;bottom:22px;z-index:9998;
+  display:none;align-items:center;gap:10px;
+  background:#bef264;color:#0a0a0a;border:none;
+  font-family:inherit;font-weight:700;font-size:15px;
+  padding:13px 20px;border-radius:99px;cursor:pointer;
+  box-shadow:0 6px 22px rgba(0,0,0,.28);
+}
+#installBtn svg{display:block}
+#installBtn:hover{transform:translateY(-2px)}
+@media(max-width:480px){#installBtn{left:18px;bottom:84px;font-size:14px;padding:12px 18px}}
+</style>
+<script>
+// Register service worker (enables install + offline)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  });
+}
+// Custom install prompt
+(function () {
+  var deferred = null;
+  var btn = document.getElementById('installBtn');
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferred = e;
+    if (btn) btn.style.display = 'inline-flex';
+  });
+  if (btn) {
+    btn.addEventListener('click', function () {
+      if (!deferred) return;
+      deferred.prompt();
+      deferred.userChoice.finally(function () {
+        deferred = null;
+        btn.style.display = 'none';
+      });
+    });
+  }
+  // Hide button once installed
+  window.addEventListener('appinstalled', function () {
+    if (btn) btn.style.display = 'none';
+  });
+})();
 </script>
 </body>
 </html>
