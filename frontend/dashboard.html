@@ -214,6 +214,23 @@ a{color:inherit;text-decoration:none}
 .btn-lime:hover:not(:disabled){background:#d4f57a;transform:translateY(-1px)}
 .btn-ghost{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
 .btn-ghost:hover:not(:disabled){color:var(--text);border-color:var(--border2)}
+.plan-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.plan-card{position:relative;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:20px 18px;transition:border-color .15s}
+.plan-card.current{border-color:var(--lime);box-shadow:0 0 0 2px var(--lime-glow)}
+.plan-card .pc-badge{position:absolute;top:-10px;right:14px;background:var(--lime);color:var(--bg);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px}
+.plan-card .pc-name{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.plan-card .pc-price{font-size:30px;font-weight:800;color:var(--text);margin:6px 0 12px}
+.plan-card .pc-feats{list-style:none;padding:0;margin:0 0 16px;display:flex;flex-direction:column;gap:7px}
+.plan-card .pc-feats li{font-size:13px;color:var(--dim);padding-left:18px;position:relative}
+.plan-card .pc-feats li::before{content:'✓';position:absolute;left:0;color:var(--lime);font-weight:800}
+.plan-card .pc-btn{width:100%}
+.plan-card.current .pc-btn{background:var(--lime);color:var(--bg);border-color:var(--lime);pointer-events:none}
+@media(max-width:760px){.plan-cards{grid-template-columns:1fr}}
+.trial-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,var(--lime-dim),var(--surface2));border:1px solid var(--lime);border-radius:14px;padding:16px 20px;margin-bottom:18px;flex-wrap:wrap}
+.trial-banner.urgent{border-color:#e8954a;background:linear-gradient(135deg,rgba(232,149,74,.12),var(--surface2))}
+.trial-banner .tb-title{font-weight:800;font-size:17px;color:var(--text)}
+.trial-banner .tb-sub{font-size:13px;color:var(--dim);margin-top:2px}
+.trial-banner .btn{flex:none}
 .btn-danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,77,77,.2)}
 .btn-danger:hover:not(:disabled){background:rgba(255,77,77,.18)}
 .btn-sm{padding:5px 11px;font-size:11px;border-radius:7px}
@@ -485,6 +502,9 @@ input[type=file]{display:none}
     <div class="ni" data-s="settings" onclick="nav(this,'settings')">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>Settings
     </div>
+    <div class="ni" data-s="plan" onclick="nav(this,'plan')">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 1l2 4 4.5.5-3.3 3.1.9 4.4L8 11l-4.1 2 .9-4.4L1.5 5.5 6 5z"/></svg>Change Plan
+    </div>
     <div class="ni" data-s="support" onclick="nav(this,'support')">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 10V8a6 6 0 0112 0v2"/><rect x="1.5" y="10" width="2" height="4" rx="1"/><rect x="12.5" y="10" width="2" height="4" rx="1"/><path d="M14.5 14a3 3 0 01-3 2h-2"/></svg>Support
     </div>
@@ -496,6 +516,13 @@ input[type=file]{display:none}
     <div class="sec active" id="s-overview">
       <div class="ph">
         <div><div class="pt">Overview</div><div class="ps">Your website at a glance</div></div>
+      </div>
+      <div id="trialBanner" class="trial-banner hidden">
+        <div class="tb-left">
+          <div class="tb-title" id="tbTitle">Free trial</div>
+          <div class="tb-sub" id="tbSub">Your site is live free during your trial.</div>
+        </div>
+        <button class="btn btn-lime" onclick="nav(document.querySelector('[data-s=plan]'),'plan')">Pay to keep my site →</button>
       </div>
       <div class="hero-card">
         <div class="hc-inner">
@@ -570,6 +597,17 @@ input[type=file]{display:none}
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 3a1 1 0 011-1h8.5L14 4.5V13a1 1 0 01-1 1H3a1 1 0 01-1-1V3z"/><rect x="5" y="2" width="5" height="3.5" rx=".5"/><rect x="4" y="9" width="8" height="4" rx="1"/></svg>
           Save changes
         </button>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="ct">Theme colour 🎨</div></div>
+        <p style="color:var(--dim);font-size:14px;margin-bottom:14px">Pick your brand colour — it changes buttons, headings and accents on your website, so your site looks unique even on a popular design.</p>
+        <div id="themeSwatches" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px"></div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <label style="font-size:13px;color:var(--dim)">Or pick your own:</label>
+          <input type="color" id="themeColorInput" value="#1e3a2f" style="width:52px;height:40px;border:1px solid var(--border);border-radius:8px;background:none;cursor:pointer" oninput="setThemeColor(this.value)">
+          <span id="themeColorHex" style="font-family:var(--mono,monospace);font-size:13px;color:var(--lime)">#1e3a2f</span>
+        </div>
       </div>
 
       <div class="card">
@@ -702,7 +740,16 @@ input[type=file]{display:none}
             <label>Subdomain</label>
             <div class="iw"><input type="text" id="editSub" placeholder="yourname"><span class="suffix">.sitesawa.com</span></div>
           </div>
-          <div class="f"><label>Custom domain <span style="font-weight:400;opacity:.5">(optional)</span></label><input type="text" id="editCustom" placeholder="www.yourbusiness.com"></div>
+          <div class="f"><label>Custom domain <span style="font-weight:400;opacity:.5">(optional)</span></label><input type="text" id="editCustom" placeholder="yourbusiness.co.ke"></div>
+        </div>
+        <div id="dnsHelp" style="margin-top:14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:8px">📡 Connecting your own domain</div>
+          <p style="font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:10px">After you save your domain above, you must point it to SiteSawa at the company where you bought it (e.g. Truehost, Safaricom, GoDaddy). Log in there, open <strong>DNS settings</strong>, and add these two records:</p>
+          <div style="font-family:var(--mono,monospace);font-size:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;line-height:1.8;overflow-x:auto">
+            <div><span style="color:var(--dim)">Type:</span> CNAME &nbsp; <span style="color:var(--dim)">Name:</span> www &nbsp; <span style="color:var(--dim)">Value:</span> <span style="color:var(--lime)">sitesawa.com</span></div>
+            <div><span style="color:var(--dim)">Type:</span> A &nbsp;&nbsp;&nbsp;&nbsp; <span style="color:var(--dim)">Name:</span> @ &nbsp;&nbsp;&nbsp; <span style="color:var(--dim)">Value:</span> <span style="color:var(--lime)" id="dnsIp">(ask SiteSawa for the IP)</span></div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6">⏱️ Changes can take a few minutes up to 24 hours to work. Your <strong>yourname.sitesawa.com</strong> address works instantly in the meantime. Stuck? Message us on support and we'll help you set it up.</p>
         </div>
       </div>
 
@@ -746,9 +793,21 @@ input[type=file]{display:none}
         </div>
       </div>
 
+      <!-- Link-in-bio hub -->
+      <div class="card">
+        <div class="card-head"><div class="ct">Your link-in-bio 🔗</div></div>
+        <p style="color:var(--dim);font-size:14px;margin-bottom:14px">One link for all your socials. Paste it into your Instagram, TikTok and Facebook bio — customers tap it to reach you everywhere.</p>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <input type="text" id="bioLink" readonly style="flex:1;min-width:220px;font-family:var(--mono,monospace);background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;color:var(--lime)">
+          <button class="btn btn-lime" onclick="copyBioLink()" id="copyBioBtn">Copy link</button>
+        </div>
+        <div style="margin-top:10px"><a id="bioPreview" href="#" target="_blank" rel="noopener" style="color:var(--dim);font-size:13px;text-decoration:underline">Preview your link page →</a></div>
+      </div>
+
       <!-- Social -->
       <div class="card">
         <div class="card-head"><div class="ct">Social links</div></div>
+        <p style="color:var(--dim);font-size:13px;margin-bottom:12px">Add your social profiles — they appear on your website <strong>and</strong> your link-in-bio page above.</p>
         <div class="fg">
           <div class="f"><label>WhatsApp number</label><input type="text" id="socialWA" placeholder="254712345678"></div>
           <div class="f"><label>Instagram</label><input type="text" id="socialIG" placeholder="https://instagram.com/..."></div>
@@ -777,6 +836,43 @@ input[type=file]{display:none}
         <div id="ticketList">
           <div class="es"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><rect x="2" y="7" width="20" height="10" rx="1"/><path d="M2 12h2M20 12h2" stroke-dasharray="2 2"/></svg><h4>No tickets yet</h4><p>Submit a ticket above if you need help</p></div>
         </div>
+      </div>
+    </div>
+
+    <!-- CHANGE PLAN -->
+    <div class="sec hidden" id="s-plan">
+      <div class="ph"><div><div class="pt">Change Plan</div><div class="ps">Upgrade or switch your plan anytime</div></div></div>
+      <div class="card">
+        <div class="card-head"><div class="ct">Your current plan: <span id="curPlanName" style="color:var(--lime)">—</span></div></div>
+        <p style="color:var(--dim);font-size:14px;margin-bottom:18px">Pick a new plan below. You'll get an M-Pesa prompt on your phone for the full plan price. Your new features unlock as soon as payment is confirmed, and your content carries over.</p>
+        <div class="plan-cards" id="planCards">
+          <div class="plan-card" data-plan="PERSONAL">
+            <div class="pc-name">Personal</div>
+            <div class="pc-price">KES 7,000</div>
+            <ul class="pc-feats">
+              <li>12 designs</li><li>Portfolio + services</li><li>WhatsApp, Call, SMS</li><li>Google + SEO</li>
+            </ul>
+            <button class="btn btn-ghost pc-btn" onclick="changePlan('PERSONAL')">Switch to Personal</button>
+          </div>
+          <div class="plan-card" data-plan="BUSINESS">
+            <div class="pc-badge">Popular</div>
+            <div class="pc-name">Business</div>
+            <div class="pc-price">KES 8,000</div>
+            <ul class="pc-feats">
+              <li>15 designs</li><li>Services + team</li><li>WhatsApp booking</li><li>TikTok Pixel + SEO</li>
+            </ul>
+            <button class="btn btn-ghost pc-btn" onclick="changePlan('BUSINESS')">Switch to Business</button>
+          </div>
+          <div class="plan-card" data-plan="ECOMMERCE">
+            <div class="pc-name">E-Commerce</div>
+            <div class="pc-price">KES 9,000</div>
+            <ul class="pc-feats">
+              <li>Online shop</li><li>Unlimited products</li><li>M-Pesa STK Push</li><li>Order dashboard</li>
+            </ul>
+            <button class="btn btn-ghost pc-btn" onclick="changePlan('ECOMMERCE')">Switch to E-Commerce</button>
+          </div>
+        </div>
+        <div id="planMsg" style="margin-top:16px;font-size:14px;color:var(--dim)"></div>
       </div>
     </div>
 
@@ -853,7 +949,43 @@ window.populate = function() {
   document.getElementById('suName').textContent = cust.name || 'User';
   document.getElementById('suPhone').textContent = cust.phone || '';
   document.getElementById('suPlan').textContent = ({'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[cust.template] || cust.template || 'Personal') + ' Plan';
+  // Mark current plan in the Change Plan section
+  var curName = document.getElementById('curPlanName');
+  if (curName) curName.textContent = ({'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[cust.template] || cust.template || 'Personal');
+  // Trial banner
+  var tb = document.getElementById('trialBanner');
+  if (tb) {
+    if (cust.paymentStatus !== 'paid' && typeof cust.trialDaysLeft === 'number') {
+      var dl = cust.trialDaysLeft;
+      tb.classList.remove('hidden');
+      var tbTitle = document.getElementById('tbTitle');
+      var tbSub = document.getElementById('tbSub');
+      if (cust.trialExpired || dl <= 0) {
+        tb.classList.add('urgent');
+        if (tbTitle) tbTitle.textContent = 'Your free trial has ended';
+        if (tbSub) tbSub.textContent = 'Your site is paused. Choose a plan to bring it back online.';
+      } else {
+        tb.classList.toggle('urgent', dl <= 2);
+        if (tbTitle) tbTitle.textContent = dl + (dl === 1 ? ' day' : ' days') + ' left in your free trial';
+        if (tbSub) tbSub.textContent = 'Your site is live free. Pay before the trial ends to keep it online.';
+      }
+    } else {
+      tb.classList.add('hidden');
+    }
+  }
+  document.querySelectorAll('.plan-card').forEach(function(card){
+    var isCur = card.getAttribute('data-plan') === cust.template;
+    card.classList.toggle('current', isCur);
+    var btn = card.querySelector('.pc-btn');
+    if (btn) btn.textContent = isCur ? 'Current plan' : ('Switch to ' + ({'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[card.getAttribute('data-plan')]));
+  });
   document.getElementById('siteUrl').textContent = 'https://' + domain;
+  // Link-in-bio hub URL
+  var bioUrl = 'https://' + domain + '/links';
+  var bioInput = document.getElementById('bioLink');
+  if (bioInput) bioInput.value = bioUrl;
+  var bioPrev = document.getElementById('bioPreview');
+  if (bioPrev) bioPrev.href = bioUrl;
 
   // Template-aware stats grid
   const statsRow = document.getElementById('statsRow');
@@ -888,6 +1020,13 @@ window.populate = function() {
   document.getElementById('editLoc').value = cust.data?.location || '';
   document.getElementById('editEmail').value = cust.data?.email || cust.email || '';
   document.getElementById('logoUrl').value = cust.data?.logo || '';
+  // Theme colour
+  var savedColor = cust.data?.accentColor || '#1e3a2f';
+  var tci = document.getElementById('themeColorInput');
+  var tch = document.getElementById('themeColorHex');
+  if (tci) tci.value = savedColor;
+  if (tch) tch.textContent = savedColor;
+  renderThemeSwatches(savedColor);
   if (cust.data?.logo) previewLogo(cust.data.logo);
 
   renderSvcEditor(cust.data?.services || []);
@@ -1155,6 +1294,7 @@ window.saveContent = async function() {
         aboutText: document.getElementById('editAbout').value.trim(),
         location: document.getElementById('editLoc').value.trim(),
         email: document.getElementById('editEmail').value.trim(),
+        accentColor: (document.getElementById('themeColorInput')?.value || cust.data?.accentColor || '#1e3a2f'),
         logo, services, skills
       }
     });
@@ -1277,6 +1417,79 @@ window.doConfirm = function() { if(confirmCb) confirmCb(); closeModal(); }
 document.getElementById('confirmModal').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
 
 window.refreshData = async function() { cust=await apiFetch('/api/me'); populate(); await loadOrders(); }
+
+// ── THEME COLOUR PICKER ────────────────────────────────
+var THEME_PRESETS = [
+  {name:'Forest',  c:'#1e3a2f'}, {name:'Emerald', c:'#1a8c3a'},
+  {name:'Ocean',   c:'#0a6fb5'}, {name:'Royal',   c:'#3b3b98'},
+  {name:'Berry',   c:'#a4248c'}, {name:'Coral',   c:'#e2563b'},
+  {name:'Sunset',  c:'#e8954a'}, {name:'Gold',    c:'#c79a2b'},
+  {name:'Charcoal',c:'#26262a'}, {name:'Crimson', c:'#b3243a'}
+];
+function renderThemeSwatches(active) {
+  var wrap = document.getElementById('themeSwatches');
+  if (!wrap) return;
+  wrap.innerHTML = THEME_PRESETS.map(function(p){
+    var on = (p.c.toLowerCase() === (active||'').toLowerCase());
+    return '<button type="button" title="'+p.name+'" onclick="setThemeColor(\''+p.c+'\')" '
+      + 'style="width:40px;height:40px;border-radius:10px;cursor:pointer;background:'+p.c+';'
+      + 'border:3px solid '+(on?'var(--lime)':'transparent')+';box-shadow:0 0 0 1px var(--border)"></button>';
+  }).join('');
+}
+window.setThemeColor = function(hex) {
+  var input = document.getElementById('themeColorInput');
+  var hexLbl = document.getElementById('themeColorHex');
+  if (input) input.value = hex;
+  if (hexLbl) hexLbl.textContent = hex;
+  renderThemeSwatches(hex);
+  // mark unsaved
+  isDirty = true;
+  var sb = document.getElementById('saveBtn'); if (sb) sb.classList.add('dirty');
+}
+
+window.copyBioLink = function() {
+  var input = document.getElementById('bioLink');
+  var btn = document.getElementById('copyBioBtn');
+  if (!input) return;
+  input.select();
+  input.setSelectionRange(0, 99999);
+  var done = function(){ if(btn){ var t=btn.textContent; btn.textContent='Copied ✓'; setTimeout(function(){btn.textContent=t;},1800);} };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(input.value).then(done).catch(function(){ try{document.execCommand('copy');done();}catch(e){} });
+  } else {
+    try { document.execCommand('copy'); done(); } catch(e){}
+  }
+}
+
+window.changePlan = async function(plan) {
+  var msg = document.getElementById('planMsg');
+  if (cust && cust.template === plan) { if(msg){msg.textContent='You are already on this plan.';} return; }
+  var label = {'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[plan];
+  var price = {'PERSONAL':'7,000','BUSINESS':'8,000','ECOMMERCE':'9,000'}[plan];
+  if (!confirm('Switch to the ' + label + ' plan for KES ' + price + '? You will get an M-Pesa prompt on your phone.')) return;
+  if (msg) { msg.style.color='var(--lime)'; msg.textContent='Sending M-Pesa prompt to your phone…'; }
+  try {
+    var res = await apiFetch('/api/change-plan','POST',{ plan: plan });
+    if (msg) msg.textContent = 'Check your phone — enter your M-Pesa PIN to pay KES ' + (res.amount ? res.amount.toLocaleString() : price) + '. Your plan updates automatically once paid.';
+    // Poll for the plan to update (payment confirmation happens via callback)
+    var tries = 0;
+    var poll = setInterval(async function(){
+      tries++;
+      try {
+        var me = await apiFetch('/api/me');
+        if (me.template === plan) {
+          clearInterval(poll);
+          cust = me; populate();
+          if (msg) { msg.style.color='var(--lime)'; msg.textContent='✓ Done! You are now on the ' + label + ' plan.'; }
+          toast('Plan changed to ' + label + '!','success');
+        }
+      } catch(e){}
+      if (tries > 40) { clearInterval(poll); if(msg){msg.style.color='var(--dim)';msg.textContent='If you completed payment, refresh in a moment to see your new plan.';} }
+    }, 3000);
+  } catch (err) {
+    if (msg) { msg.style.color='var(--rose,#e8546b)'; msg.textContent = err.message || 'Could not start the plan change. Try again.'; }
+  }
+}
 
 async function apiFetch(path,method='GET',body) {
   const r=await fetch(API+path,{method,headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
