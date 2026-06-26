@@ -100,12 +100,32 @@ app.use(express.json({ limit: '10mb' }));
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/sitesawa')
     .then(async () => {
         console.log('MongoDB connected');
+
+        // --- One-time migration: drop any stale UNIQUE index on phone ---
+        // Older versions made phone unique. Phones must now be reusable
+        // (people often pay with someone else's M-Pesa number). MongoDB will
+        // NOT convert an existing unique index to non-unique, so we drop it
+        // explicitly. This is safe to run on every startup (idempotent).
+        try {
+            const idx = await Customer.collection.indexes();
+            for (const ix of idx) {
+                const keys = Object.keys(ix.key || {});
+                // find any index that is ONLY on phone and is unique
+                if (keys.length === 1 && keys[0] === 'phone' && ix.unique) {
+                    await Customer.collection.dropIndex(ix.name);
+                    console.log('Dropped stale unique phone index:', ix.name);
+                }
+            }
+        } catch (e) {
+            console.error('Phone index migration check failed (non-fatal):', e.message);
+        }
+
         // Ensure indexes exist (idempotent)
         await Promise.all([
-            Customer.collection.createIndex({ phone: 1 }, { unique: true, sparse: true }),
+            Customer.collection.createIndex({ phone: 1 }, { unique: false }),  // phone reusable
             Customer.collection.createIndex({ subdomain: 1 }, { unique: true, sparse: true }),
             Customer.collection.createIndex({ customDomain: 1 }, { unique: true, sparse: true }),
-            Customer.collection.createIndex({ email: 1 }, { sparse: true }),
+            Customer.collection.createIndex({ email: 1 }, { unique: true, sparse: true }),  // email is the login
             Order.collection.createIndex({ customerId: 1 }),
             Order.collection.createIndex({ checkoutId: 1 }, { sparse: true }),
             Order.collection.createIndex({ createdAt: -1 }),
@@ -123,10 +143,11 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/sitesawa'
 // ============================================
 const CustomerSchema = new mongoose.Schema({
     name: String,
-    email: { type: String, unique: true, sparse: true },
-    phone: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    phone: { type: String, required: true },  // phone NOT unique — people may pay with another person's phone
     secretKey: { type: String, required: true },
     template: { type: String, enum: ['PERSONAL', 'BUSINESS', 'ECOMMERCE'], default: 'PERSONAL' },
+    pendingPlan: { type: String, enum: ['PERSONAL', 'BUSINESS', 'ECOMMERCE', null], default: null },  // plan being paid for during an upgrade/downgrade
     subdomain: { type: String, unique: true, sparse: true, index: true },
     templateId: { type: String, default: '' }, // e.g. 'biz-agency', 'me-developer'
     customDomain: { type: String, unique: true, sparse: true, index: true },
@@ -160,7 +181,9 @@ const CustomerSchema = new mongoose.Schema({
         code: String,
         expires: Date
     },
-    paymentStatus: { type: String, default: 'pending' }, // pending | paid | failed
+    paymentStatus: { type: String, default: 'pending' }, // pending | paid | failed | trial
+    trialEndsAt: { type: Date, default: null }, // free 7-day trial expiry; site goes read-only/locked after this unless paid
+    trialReminderSent: { type: Boolean, default: false }, // so the "trial ending soon" email is sent only once
     mpesaCheckoutId: String
 });
 
@@ -219,7 +242,9 @@ async function sendEmail(to, subject, html) {
         });
         console.log('Email sent to', to);
     } catch (err) {
-        console.error('Email failed:', err.message);
+        console.error('Email failed to', to, '— subject:', subject);
+        console.error('Email error:', err.message);
+        console.error('Check WORKSPACE_EMAIL and WORKSPACE_APP_PASSWORD env vars on Render');
     }
 }
 
@@ -764,6 +789,11 @@ const TEMPLATE_FILES = {
     'biz-politician':    'templates/biz-politician.html',
     'biz-logistics':     'templates/biz-logistics.html',
     'biz-salon':         'templates/biz-salon.html',
+    'biz-phonerepair':   'templates/biz-phonerepair.html',
+    'biz-printing':      'templates/biz-printing.html',
+    'biz-chemist':       'templates/biz-chemist.html',
+    'biz-forex':         'templates/biz-forex.html',
+    'biz-college':       'templates/biz-college.html',
     // E-Commerce
     'shop-fashion':     'templates/shop-fashion.html',
     'shop-electronics': 'templates/shop-electronics.html',
@@ -771,6 +801,7 @@ const TEMPLATE_FILES = {
     'shop-food':        'templates/shop-food.html',
     'shop-furniture':   'templates/shop-furniture.html',
     'shop-bookstore':   'templates/shop-bookstore.html',
+    'shop-retail':      'templates/shop-retail.html',
 
     // ── Aliases from marketing site template IDs ──────────────────────
     // ME
@@ -1051,13 +1082,92 @@ app.use(async (req, res, next) => {
             const subdomain = host.replace('.sitesawa.com', '').split(':')[0];
             customer = await Customer.findOne({ subdomain: { $eq: subdomain } });
         } else if (!isMain) {
-            const cleanHost = host.split(':')[0];
+            const cleanHost = host.split(':')[0].replace(/^www\./, '');
             customer = await Customer.findOne({ customDomain: { $eq: cleanHost } });
         }
     } catch (err) { console.error('[ROUTING]', err.message); }
 
     if (customer) {
+        // Link-in-bio hub — yourname.sitesawa.com/links
+        // One page with all the business's socials + contact, for pasting into bios.
+        if (req.path === '/links' || req.path === '/links/') {
+            try {
+                const s = customer.social || {};
+                const biz = (customer.name || 'My Business').replace(/[<>]/g, '');
+                const wa = (s.whatsapp || '').replace(/[^0-9]/g, '');
+                const links = [];
+                if (wa) links.push({ label: 'WhatsApp — Message us', href: 'https://wa.me/' + wa, bg: '#25D366', fg: '#062b14' });
+                if (s.instagram) links.push({ label: 'Instagram', href: s.instagram, bg: '#E1306C', fg: '#fff' });
+                if (s.facebook)  links.push({ label: 'Facebook',  href: s.facebook,  bg: '#1877F2', fg: '#fff' });
+                if (s.tiktok)    links.push({ label: 'TikTok',    href: s.tiktok,    bg: '#000000', fg: '#fff' });
+                if (s.twitter)   links.push({ label: 'X (Twitter)', href: s.twitter, bg: '#0a0a0a', fg: '#fff' });
+                if (s.linkedin)  links.push({ label: 'LinkedIn',  href: s.linkedin,  bg: '#0A66C2', fg: '#fff' });
+                const siteUrl = 'https://' + (customer.customDomain || (customer.subdomain + '.sitesawa.com'));
+                links.push({ label: 'Visit our website', href: siteUrl, bg: '#bef264', fg: '#1a1712' });
+                if (wa) links.push({ label: 'Call us', href: 'tel:+' + wa, bg: '#1c1c1e', fg: '#fff' });
+
+                const esc = (t) => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+                const buttons = links.map(l =>
+                    `<a class="lk" href="${esc(l.href)}" target="_blank" rel="noopener" style="background:${l.bg};color:${l.fg}">${esc(l.label)}</a>`
+                ).join('\n');
+
+                const initial = esc(biz.charAt(0).toUpperCase());
+                const hub = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${esc(biz)} — All our links</title>
+<meta name="description" content="${esc(biz)} — find us on WhatsApp, Instagram, Facebook, TikTok and more.">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#13131a;color:#f5f5f0;min-height:100vh;padding:40px 20px;display:flex;flex-direction:column;align-items:center}
+  .av{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#bef264,#8fce3c);display:grid;place-items:center;font-size:42px;font-weight:800;color:#1a1712;margin-bottom:16px;box-shadow:0 8px 30px rgba(190,242,100,.25)}
+  h1{font-size:26px;font-weight:800;text-align:center;margin-bottom:6px}
+  .tag{color:#9a9a9a;font-size:15px;text-align:center;margin-bottom:32px}
+  .links{width:100%;max-width:520px;display:flex;flex-direction:column;gap:14px}
+  .lk{display:block;text-align:center;padding:17px;border-radius:14px;font-weight:700;font-size:17px;text-decoration:none;transition:transform .12s,box-shadow .12s}
+  .lk:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+  .lk:active{transform:translateY(0)}
+  .ft{margin-top:36px;font-size:13px;color:#555;text-align:center}
+  .ft a{color:#bef264;text-decoration:none}
+</style></head><body>
+  <div class="av">${initial}</div>
+  <h1>${esc(biz)}</h1>
+  <div class="tag">Find us everywhere 👇</div>
+  <div class="links">
+${buttons}
+  </div>
+  <div class="ft">Powered by <a href="https://www.sitesawa.com" target="_blank" rel="noopener">SiteSawa</a></div>
+</body></html>`;
+                return res.set('Content-Type', 'text/html').send(hub);
+            } catch (err) { console.error('[LINKS HUB]', err.message); }
+        }
         try {
+            // Free-trial gate: if trial expired and not paid, show a reactivate page
+            const isPaid = customer.paymentStatus === 'paid';
+            const trialExpired = customer.trialEndsAt && new Date() > new Date(customer.trialEndsAt);
+            if (!isPaid && trialExpired) {
+                const bizName = customer.name || 'This website';
+                const reactivateHtml = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${bizName} — Coming back soon</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,sans-serif;background:#1c1c1e;color:#f5f5f0;min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center}
+  .wrap{max-width:480px}
+  .tile{width:64px;height:64px;border-radius:16px;background:#bef264;display:grid;place-items:center;font-weight:800;font-size:34px;color:#1c1c1e;margin:0 auto 24px}
+  h1{font-size:28px;font-weight:800;margin-bottom:12px}
+  p{color:#aaa;line-height:1.6;margin-bottom:24px}
+  .btn{display:inline-block;background:#bef264;color:#1c1c1e;font-weight:800;text-decoration:none;padding:15px 28px;border-radius:12px}
+  .small{margin-top:20px;font-size:13px;color:#666}
+</style></head><body><div class="wrap">
+  <div class="tile">S</div>
+  <h1>This website is paused</h1>
+  <p>The free trial for <strong>${bizName}</strong> has ended. The owner can reactivate it anytime by choosing a plan — it only takes a minute.</p>
+  <a class="btn" href="https://www.sitesawa.com/login.html">Reactivate this site →</a>
+  <div class="small">Powered by SiteSawa · sitesawa.com</div>
+</div></body></html>`;
+                return res.set('Content-Type', 'text/html').send(reactivateHtml);
+            }
+
             const templateFile = resolveTemplateFile(customer);
             const templatePath = path.join(__dirname, templateFile);
             if (fs.existsSync(templatePath)) {
@@ -1125,8 +1235,9 @@ app.post('/api/register', authLimiter, async (req, res) => {
         if (!email?.trim()) return res.status(400).json({ error: 'Email is required' });
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) return res.status(400).json({ error: 'Invalid email address' });
 
-        const existing = await Customer.findOne({ $or: [{ phone: { $eq: phone } }, { email: email ? { $eq: email } : null }].filter(c => Object.values(c)[0] !== null) });
-        if (existing) return res.status(400).json({ error: 'Phone or email already registered' });
+        if (!email) return res.status(400).json({ error: 'Email is required' });
+        const existing = await Customer.findOne({ email: { $eq: email.toLowerCase().trim() } });
+        if (existing) return res.status(400).json({ error: 'This email is already registered. Try logging in instead.' });
 
         const secretKey = generateSecretKey();
         const hashedKey = await bcrypt.hash(secretKey, 10);
@@ -1159,8 +1270,9 @@ app.post('/api/register', authLimiter, async (req, res) => {
 
 app.post('/api/login', authLimiter, async (req, res) => {
     try {
-        const { phone, secretKey } = req.body;
-        const customer = await Customer.findOne({ phone: { $eq: phone } });
+        const { email, secretKey } = req.body;
+        if (!email || !secretKey) return res.status(401).json({ error: 'Invalid credentials' });
+        const customer = await Customer.findOne({ email: { $eq: email.toLowerCase().trim() } });
         if (!customer) return res.status(401).json({ error: 'Invalid credentials' });
 
         const valid = await bcrypt.compare(secretKey, customer.secretKey);
@@ -1170,12 +1282,12 @@ app.post('/api/login', authLimiter, async (req, res) => {
         await customer.save();
 
         const token = jwt.sign(
-            { id: customer._id, phone: customer.phone, isAdmin: customer.isAdmin },
+            { id: customer._id, email: customer.email, isAdmin: customer.isAdmin },
             process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );
 
-        res.json({ token, customer: { id: customer._id, name: customer.name, phone: customer.phone, template: customer.template, isAdmin: customer.isAdmin } });
+        res.json({ token, customer: { id: customer._id, name: customer.name, email: customer.email, phone: customer.phone, template: customer.template, isAdmin: customer.isAdmin } });
     } catch (err) {
         res.status(500).json({ error: 'Internal server error', requestId: req.requestId });
     }
@@ -1237,6 +1349,12 @@ app.get('/api/me', auth, async (req, res) => {
         delete safe.mpesaConsumerKey;
         delete safe.mpesaConsumerSecret;
         delete safe.mpesaPasskey;
+        // Trial countdown for the dashboard
+        if (safe.paymentStatus !== 'paid' && safe.trialEndsAt) {
+            const msLeft = new Date(safe.trialEndsAt).getTime() - Date.now();
+            safe.trialDaysLeft = Math.max(0, Math.ceil(msLeft / (24 * 60 * 60 * 1000)));
+            safe.trialExpired = msLeft <= 0;
+        }
         res.json(safe);
     } catch (err) {
         res.status(500).json({ error: 'Internal server error', requestId: req.requestId });
@@ -1275,6 +1393,17 @@ app.put('/api/me', auth, async (req, res) => {
         }
 
         const updates = sanitized;
+        // Normalize custom domain so it always matches the router (which sees a bare lowercase host).
+        // Strip protocol, www., any path/slash, port, and whitespace; lowercase it.
+        if (typeof updates.customDomain === 'string') {
+            let cd = updates.customDomain.trim().toLowerCase()
+                .replace(/^https?:\/\//, '')   // drop http:// or https://
+                .replace(/^www\./, '')          // drop leading www.
+                .replace(/[\/\\].*$/, '')       // drop anything from first slash onward
+                .replace(/:.*$/, '')            // drop :port
+                .trim();
+            updates.customDomain = cd || null;  // empty string -> null so it clears cleanly
+        }
         // Prevent changing critical fields
         delete updates._id;
         delete updates.isAdmin;
@@ -1922,10 +2051,11 @@ app.post('/api/checkout', async (req, res) => {
         }
         const normPhone = cleanPhone.startsWith('0') ? '254' + cleanPhone.slice(1) : cleanPhone;
 
-        // Check if phone already registered
-        const existing = await Customer.findOne({ phone: { $eq: normPhone } });
+        // Check if EMAIL already registered (email is the login — phone can be reused,
+        // since people often pay with someone else's M-Pesa number)
+        const existing = await Customer.findOne({ email: { $eq: email.trim().toLowerCase() } });
         if (existing) {
-            return res.status(409).json({ error: 'This number already has a SiteSawa account. Sign in instead.' });
+            return res.status(409).json({ error: 'This email already has a SiteSawa account. Sign in instead.' });
         }
 
         // Valid plans
@@ -1960,7 +2090,8 @@ app.post('/api/checkout', async (req, res) => {
             templateId: resolvedTemplateId,
             subdomain,
             secretKey:  hashedKey,
-            paymentStatus: 'pending',
+            paymentStatus: 'trial',
+            trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // free for 7 days
         });
         await customer.save();
 
@@ -1969,7 +2100,10 @@ app.post('/api/checkout', async (req, res) => {
         // Initiate M-Pesa STK push if configured
         if (process.env.MPESA_CONSUMER_KEY && process.env.MPESA_CONSUMER_SECRET) {
             try {
-                const authRes = await axios.get('https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', {
+                const mpesaBase = process.env.MPESA_ENV === 'production'
+                    ? 'https://api.safaricom.co.ke'
+                    : 'https://sandbox.safaricom.co.ke';
+                const authRes = await axios.get(`${mpesaBase}/oauth/v1/generate?grant_type=client_credentials`, {
                     auth: { username: process.env.MPESA_CONSUMER_KEY, password: process.env.MPESA_CONSUMER_SECRET },
                 });
                 const token = authRes.data.access_token;
@@ -1979,7 +2113,7 @@ app.post('/api/checkout', async (req, res) => {
                 const password  = Buffer.from(shortcode + passkey + timestamp).toString('base64');
                 const callbackURL = `${process.env.BASE_URL || 'https://sitesawa.com'}/api/mpesa/checkout-callback/${checkoutId}`;
 
-                await axios.post('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', {
+                await axios.post(`${mpesaBase}/mpesa/stkpush/v1/processrequest`, {
                     BusinessShortCode: shortcode,
                     Password:          password,
                     Timestamp:         timestamp,
@@ -2019,7 +2153,7 @@ app.post('/api/checkout', async (req, res) => {
              <p>Once payment is confirmed, visit <a href="https://sitesawa.com/login.html">sitesawa.com/login.html</a> to sign in.</p>`
         ).catch(err => console.error('[CHECKOUT] Email failed:', err.message));
 
-        res.json({ checkoutId, secretKey: rawKey });
+        res.json({ checkoutId, secretKey: rawKey, subdomain });
 
     } catch (err) {
         console.error('[CHECKOUT]', err.message);
@@ -2064,12 +2198,162 @@ app.post('/api/mpesa/checkout-callback/:checkoutId', async (req, res) => {
         if (String(resultCode) === '0') {
             await Customer.updateOne({ _id: id }, { $set: { paymentStatus: 'paid' } });
             console.log('[CHECKOUT] Payment confirmed for', id);
+            // Send secret key email now that payment is confirmed
+            try {
+                const customer = await Customer.findById(id).select('email name phone secretKey template');
+                if (customer && customer.email) {
+                    // The secretKey stored is hashed — we cannot recover the raw key.
+                    // The raw key was already returned in the API response at checkout time.
+                    // Send a confirmation email with login instructions.
+                    sendEmail(customer.email,
+                        'Payment confirmed — Your SiteSawa website is live! 🎉',
+                        `<div style="font-family:sans-serif;max-width:520px;margin:0 auto">
+                        <h2 style="color:#bef264;background:#1a1712;padding:20px;border-radius:8px">🎉 Your website is live!</h2>
+                        <p>Hi ${customer.name || 'there'},</p>
+                        <p>Your payment has been confirmed and your SiteSawa website is now active.</p>
+                        <p><strong>To log in to your dashboard:</strong></p>
+                        <ul>
+                          <li>Go to <a href="https://www.sitesawa.com/login.html">sitesawa.com/login.html</a></li>
+                          <li>Enter your phone number: <strong>${customer.phone}</strong></li>
+                          <li>Enter the secret key that was shown on screen when you signed up</li>
+                        </ul>
+                        <p style="background:#fff3cd;padding:12px;border-radius:6px;color:#856404">
+                          ⚠️ <strong>Can't find your key?</strong> Use the "Forgot key?" link on the login page to request a new one sent to this email address.
+                        </p>
+                        <p>Plan: <strong>${customer.template}</strong></p>
+                        <p>Welcome to SiteSawa! 🇰🇪</p>
+                        </div>`
+                    );
+                }
+            } catch (emailErr) {
+                console.error('[CHECKOUT] Post-payment email failed:', emailErr.message);
+            }
         } else {
             await Customer.updateOne({ _id: id }, { $set: { paymentStatus: 'failed' } });
             console.log('[CHECKOUT] Payment failed/cancelled for', id);
         }
     } catch (err) {
         console.error('[CHECKOUT CALLBACK]', err.message);
+    }
+});
+
+// ============================================
+// PLAN CHANGE (upgrade / downgrade) — logged-in customer pays full new price
+// ============================================
+app.post('/api/change-plan', auth, async (req, res) => {
+    try {
+        const { plan } = req.body;
+        const newPlan = String(plan || '').toUpperCase();
+
+        const planPrices = { PERSONAL: 7000, BUSINESS: 8000, ECOMMERCE: 9000 };
+        if (!planPrices[newPlan]) return res.status(400).json({ error: 'Invalid plan' });
+
+        const customer = await Customer.findById(req.user.id);
+        if (!customer) return res.status(404).json({ error: 'Account not found' });
+
+        if (customer.template === newPlan) {
+            return res.status(400).json({ error: `You are already on the ${newPlan} plan` });
+        }
+
+        const planPrice = planPrices[newPlan];
+        const normPhone = customer.phone;
+        // Track the requested plan change until payment confirms
+        await Customer.updateOne({ _id: customer._id }, { $set: { pendingPlan: newPlan } });
+
+        // Fire STK push for the full new-plan price
+        if (process.env.MPESA_CONSUMER_KEY && process.env.MPESA_CONSUMER_SECRET) {
+            try {
+                const mpesaBase = process.env.MPESA_ENV === 'production'
+                    ? 'https://api.safaricom.co.ke'
+                    : 'https://sandbox.safaricom.co.ke';
+                const authRes = await axios.get(`${mpesaBase}/oauth/v1/generate?grant_type=client_credentials`, {
+                    auth: { username: process.env.MPESA_CONSUMER_KEY, password: process.env.MPESA_CONSUMER_SECRET },
+                });
+                const token = authRes.data.access_token;
+                const shortcode = process.env.MPESA_SHORTCODE;
+                const passkey   = process.env.MPESA_PASSKEY;
+                const timestamp = new Date().toISOString().replace(/[-:T.Z]/g,'').slice(0,14);
+                const password  = Buffer.from(shortcode + passkey + timestamp).toString('base64');
+                const callbackURL = `${process.env.BASE_URL || 'https://sitesawa.com'}/api/mpesa/plan-callback/${customer._id}`;
+
+                await axios.post(`${mpesaBase}/mpesa/stkpush/v1/processrequest`, {
+                    BusinessShortCode: shortcode,
+                    Password:          password,
+                    Timestamp:         timestamp,
+                    TransactionType:   'CustomerPayBillOnline',
+                    Amount:            planPrice,
+                    PartyA:            normPhone,
+                    PartyB:            shortcode,
+                    PhoneNumber:       normPhone,
+                    CallBackURL:       callbackURL,
+                    AccountReference:  'SiteSawa',
+                    TransactionDesc:   `${newPlan} Plan`,
+                }, { headers: { Authorization: `Bearer ${token}` } });
+            } catch (mpesaErr) {
+                console.error('[PLAN CHANGE] M-Pesa STK error:', mpesaErr.message);
+                return res.status(502).json({ error: 'Could not start M-Pesa payment. Try again.' });
+            }
+        } else {
+            // Dev mode: auto-apply after 5s
+            setTimeout(async () => {
+                await Customer.updateOne({ _id: customer._id }, { $set: { template: newPlan }, $unset: { pendingPlan: '' } });
+            }, 5000);
+        }
+
+        res.json({ ok: true, plan: newPlan, amount: planPrice, phone: normPhone });
+    } catch (err) {
+        console.error('[PLAN CHANGE]', err.message);
+        res.status(500).json({ error: 'Plan change failed' });
+    }
+});
+
+// M-Pesa callback for a plan change — switch the plan once paid
+app.post('/api/mpesa/plan-callback/:customerId', async (req, res) => {
+    const sharedSecret = process.env.MPESA_CALLBACK_SECRET || '';
+    if (sharedSecret) {
+        const incoming = req.headers['x-callback-secret'] || '';
+        if (incoming !== sharedSecret) {
+            console.warn('[PLAN CALLBACK] Rejected — invalid secret');
+            return res.status(400).json({ ResultCode: 1, ResultDesc: 'Rejected' });
+        }
+    }
+    res.json({ ResultCode: 0, ResultDesc: 'Accepted' });
+    try {
+        const resultCode = req.body?.Body?.stkCallback?.ResultCode;
+        const id = String(req.params.customerId).slice(0, 50);
+        const customer = await Customer.findById(id).select('email name template pendingPlan');
+        if (!customer) return;
+
+        if (String(resultCode) === '0' && customer.pendingPlan) {
+            const oldPlan = customer.template;
+            const newPlan = customer.pendingPlan;
+            // Paying for a plan also lifts any free-trial gate
+            await Customer.updateOne({ _id: id }, { $set: { template: newPlan, paymentStatus: 'paid' }, $unset: { pendingPlan: '' } });
+            console.log(`[PLAN CHANGE] ${id}: ${oldPlan} → ${newPlan} (paid)`);
+
+            // Confirmation email
+            if (customer.email) {
+                const direction = ({ PERSONAL: 1, BUSINESS: 2, ECOMMERCE: 3 }[newPlan]
+                                 > { PERSONAL: 1, BUSINESS: 2, ECOMMERCE: 3 }[oldPlan]) ? 'upgraded' : 'changed';
+                const planLabel = { PERSONAL: 'Personal', BUSINESS: 'Business', ECOMMERCE: 'E-Commerce' }[newPlan];
+                sendEmail(customer.email,
+                    `Your SiteSawa plan is now ${planLabel}`,
+                    `<div style="font-family:sans-serif;max-width:520px;margin:0 auto">
+                     <h2 style="color:#bef264;background:#1a1712;padding:20px;border-radius:8px">Plan ${direction} ✓</h2>
+                     <p>Hi ${customer.name || 'there'},</p>
+                     <p>Your SiteSawa plan has been ${direction} to <strong>${planLabel}</strong>. The new features are active on your dashboard right away.</p>
+                     <p><a href="https://www.sitesawa.com/login.html">Log in to your dashboard →</a></p>
+                     <p>Thank you for growing with SiteSawa! 🇰🇪</p>
+                     </div>`
+                ).catch(e => console.error('[PLAN CHANGE] email failed:', e.message));
+            }
+        } else {
+            // payment failed/cancelled — clear the pending plan, keep current plan
+            await Customer.updateOne({ _id: id }, { $unset: { pendingPlan: '' } });
+            console.log(`[PLAN CHANGE] payment failed for ${id} — plan unchanged`);
+        }
+    } catch (err) {
+        console.error('[PLAN CALLBACK]', err.message);
     }
 });
 
@@ -2232,6 +2516,51 @@ app.use((err, req, res, next) => {
         : 'Something went wrong. Please try again.';
     res.status(status).json({ error: safeMsg, requestId: id });
 });
+
+// ============================================
+// DAILY TRIAL-ENDING REMINDER
+// Checks once a day for trials expiring within ~2 days and emails them once.
+// Lightweight in-process scheduler — no external cron needed.
+// ============================================
+async function sendTrialReminders() {
+    try {
+        const now = Date.now();
+        const twoDays = now + 2 * 24 * 60 * 60 * 1000;
+        const soon = await Customer.find({
+            paymentStatus: { $ne: 'paid' },
+            trialReminderSent: { $ne: true },
+            trialEndsAt: { $gte: new Date(now), $lte: new Date(twoDays) },
+        }).select('email name trialEndsAt template');
+
+        for (const c of soon) {
+            if (!c.email) continue;
+            const daysLeft = Math.max(1, Math.ceil((new Date(c.trialEndsAt).getTime() - now) / (24*60*60*1000)));
+            const planLabel = { PERSONAL: 'Personal', BUSINESS: 'Business', ECOMMERCE: 'E-Commerce' }[c.template] || 'your';
+            const planPrice = { PERSONAL: '7,000', BUSINESS: '8,000', ECOMMERCE: '9,000' }[c.template] || '';
+            sendEmail(c.email,
+                `Your SiteSawa free trial ends in ${daysLeft} day${daysLeft>1?'s':''}`,
+                `<div style="font-family:sans-serif;max-width:520px;margin:0 auto">
+                 <h2 style="color:#1a1712;background:#bef264;padding:20px;border-radius:8px">⏳ ${daysLeft} day${daysLeft>1?'s':''} left in your free trial</h2>
+                 <p>Hi ${c.name || 'there'},</p>
+                 <p>Your SiteSawa website is live and working — but your free trial ends soon. To keep your site online, choose your ${planLabel} plan (KES ${planPrice}, one payment, no monthly fees).</p>
+                 <p style="text-align:center;margin:24px 0">
+                   <a href="https://www.sitesawa.com/login.html" style="background:#1a1712;color:#bef264;text-decoration:none;font-weight:800;padding:14px 28px;border-radius:10px;display:inline-block">Keep my site live →</a>
+                 </p>
+                 <p style="color:#888;font-size:13px">If you do nothing, your site will pause when the trial ends — but you can reactivate anytime by paying.</p>
+                 <p>SiteSawa 🇰🇪</p>
+                 </div>`
+            ).catch(e => console.error('[TRIAL REMINDER] email failed:', e.message));
+
+            await Customer.updateOne({ _id: c._id }, { $set: { trialReminderSent: true } });
+        }
+        if (soon.length) console.log(`[TRIAL REMINDER] sent ${soon.length} reminder(s)`);
+    } catch (err) {
+        console.error('[TRIAL REMINDER] job failed:', err.message);
+    }
+}
+// Run shortly after startup, then once every 24h
+setTimeout(sendTrialReminders, 60 * 1000);
+setInterval(sendTrialReminders, 24 * 60 * 60 * 1000);
 
 app.listen(PORT, () => {
     console.log(`SiteSawa server running on port ${PORT}`);
