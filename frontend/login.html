@@ -492,7 +492,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
   if (!document.getElementById('agreeTerms').checked) { showError('Please agree to the terms'); return; }
   setLoading('regBtn','regSpinner','regBtnText',true);
   try {
-    const res = await fetch(`${API}/api/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, phone: phone.startsWith('0') ? '254'+phone.slice(1) : phone, email, template, templateId: ''}) });
+    var chosenTpl = ''; try { chosenTpl = sessionStorage.getItem('ss_signup_template') || ''; } catch(e){}
+    const res = await fetch(`${API}/api/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, phone: phone.startsWith('0') ? '254'+phone.slice(1) : phone, email, template, templateId: chosenTpl}) });
     const data = await res.json();
     if (res.ok && data.success) {
       // Display key prominently with copy button
@@ -655,6 +656,25 @@ document.getElementById('loginKey').addEventListener('keypress', e => { if (e.ke
   wire('btnSignInInstead',function() { switchTab('login'); });
   wire('btnToggleLoginKey',function() { togglePassword('loginKey'); });
   wire('btnToggleNewKey', function() { togglePassword('newKey'); });
+
+  // If arriving from "choose a plan" on the homepage, open the Create Account
+  // tab with the chosen plan pre-selected (free-trial signup, no payment).
+  try {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('signup') === '1' || params.get('plan')) {
+      switchTab('register');
+      var plan = (params.get('plan') || '').toUpperCase();
+      var sel = document.getElementById('regTemplate');
+      if (sel && plan) {
+        for (var i = 0; i < sel.options.length; i++) {
+          if (sel.options[i].value === plan) { sel.selectedIndex = i; break; }
+        }
+      }
+      // remember chosen template id (if any) so it can be saved on register
+      var tpl = params.get('template');
+      if (tpl) { try { sessionStorage.setItem('ss_signup_template', tpl); } catch(e){} }
+    }
+  } catch (e) {}
 })();
 </script>
 </body>
