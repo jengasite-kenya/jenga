@@ -104,6 +104,11 @@ window._chartJsLoaded = false;
     .modal h2 { margin-bottom: 20px; }
     .modal-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1f2937; font-size: 14px; }
     .modal-row:last-child { border-bottom: none; }
+    .adm-edit { display:grid; grid-template-columns:120px 1fr; gap:10px 12px; align-items:center; }
+    .adm-edit label { color:#9ca3af; font-size:13px; }
+    .adm-edit input, .adm-edit select { width:100%; padding:9px 11px; border:1px solid #2a3441; border-radius:8px; background:#0f1620; color:#e5e7eb; font-size:14px; outline:none; }
+    .adm-edit input:focus, .adm-edit select:focus { border-color:#bef264; }
+    @media(max-width:560px){ .adm-edit{ grid-template-columns:1fr; gap:4px 0; } .adm-edit label{ margin-top:8px; } }
     .modal-row span:first-child { color: #6b7280; }
     .close-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #6b7280; font-size: 20px; cursor: pointer; }
 
@@ -903,21 +908,86 @@ window._chartJsLoaded = false;
 
     // ── VIEW CUSTOMER ──
     window.viewCustomer = async function(id) {
-      const customer = customers.find(c => c._id === id);
-      if (!customer) return;
       const content = document.getElementById('modalContent');
-      content.innerHTML = `
-        <div class="modal-row"><span>Phone</span><span>${customer.phone}</span></div>
-        <div class="modal-row"><span>Template</span><span class="badge badge-${customer.template}">${customer.template.toUpperCase()}</span></div>
-        <div class="modal-row"><span>Subdomain</span><span>${customer.subdomain || 'Not set'}</span></div>
-        <div class="modal-row"><span>Custom Domain</span><span>${customer.customDomain || 'Not set'}</span></div>
-        <div class="modal-row"><span>Email</span><span>${customer.email || 'Not set'}</span></div>
-        <div class="modal-row"><span>Products</span><span>${(customer.products || []).length}</span></div>
-        <div class="modal-row"><span>Orders</span><span>${(customer.orders || []).length}</span></div>
-        <div class="modal-row"><span>Joined</span><span>${new Date(customer.createdAt).toLocaleString()}</span></div>
-        <div class="modal-row"><span>Last Updated</span><span>${new Date(customer.updatedAt || customer.createdAt).toLocaleString()}</span></div>
-      `;
+      content.innerHTML = '<div style="padding:20px;text-align:center;color:#888">Loading…</div>';
       document.getElementById('customerModal').classList.remove('hidden');
+      let c, orders = [];
+      try {
+        const data = await apiFetch(`${API_BASE}/api/admin/customers/${id}`);
+        c = data.customer; orders = data.orders || [];
+      } catch (e) {
+        content.innerHTML = '<div style="padding:20px;color:#c00">Could not load: ' + e.message + '</div>';
+        return;
+      }
+      const trialInfo = c.paymentStatus === 'paid'
+        ? '<span style="color:#1faa53;font-weight:700">PAID ✓</span>'
+        : (c.trialExpired ? '<span style="color:#e0664f;font-weight:700">TRIAL ENDED</span>'
+           : '<span style="color:#e0a83c;font-weight:700">TRIAL · ' + (c.trialDaysLeft||0) + ' days left</span>');
+      content.innerHTML = `
+        <div style="margin-bottom:14px;font-size:13px;color:#888">Status: ${trialInfo} &nbsp;·&nbsp; Joined ${new Date(c.createdAt).toLocaleDateString()} &nbsp;·&nbsp; ${orders.length} orders</div>
+        <div class="adm-edit">
+          <label>Name</label><input id="ed_name" value="${(c.name||'').replace(/"/g,'&quot;')}">
+          <label>Email</label><input id="ed_email" value="${(c.email||'').replace(/"/g,'&quot;')}">
+          <label>Phone</label><input id="ed_phone" value="${(c.phone||'').replace(/"/g,'&quot;')}">
+          <label>Plan</label>
+          <select id="ed_template">
+            <option value="PERSONAL"${c.template==='PERSONAL'?' selected':''}>Personal (7,000)</option>
+            <option value="BUSINESS"${c.template==='BUSINESS'?' selected':''}>Business (8,000)</option>
+            <option value="ECOMMERCE"${c.template==='ECOMMERCE'?' selected':''}>E-Commerce (9,000)</option>
+          </select>
+          <label>Subdomain</label><input id="ed_subdomain" value="${(c.subdomain||'').replace(/"/g,'&quot;')}">
+          <label>Custom domain</label><input id="ed_customDomain" value="${(c.customDomain||'').replace(/"/g,'&quot;')}">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0">
+          <button class="btn-sm btn-primary" onclick="saveCustomer('${id}')">💾 Save changes</button>
+          <button class="btn-sm btn-secondary" onclick="adminAction('${id}',{markPaid:true})">✓ Mark paid</button>
+          <button class="btn-sm btn-secondary" onclick="adminAction('${id}',{extendTrialDays:7})">+7 trial days</button>
+          <button class="btn-sm btn-secondary" onclick="adminAction('${id}',{markTrial:true})">↺ Restart trial</button>
+          <button class="btn-sm btn-danger" onclick="adminAction('${id}',{endTrialNow:true})">✕ End trial now</button>
+          <button class="btn-sm btn-secondary" onclick="resetCustomerKey('${id}')">🔑 Reset key</button>
+        </div>
+        <div id="adm_msg" style="font-size:13px;min-height:18px"></div>
+      `;
+    }
+
+    window.saveCustomer = async function(id) {
+      const body = {
+        name: document.getElementById('ed_name').value.trim(),
+        email: document.getElementById('ed_email').value.trim(),
+        phone: document.getElementById('ed_phone').value.trim(),
+        template: document.getElementById('ed_template').value,
+        subdomain: document.getElementById('ed_subdomain').value.trim(),
+        customDomain: document.getElementById('ed_customDomain').value.trim(),
+      };
+      const msg = document.getElementById('adm_msg');
+      msg.style.color = '#888'; msg.textContent = 'Saving…';
+      try {
+        const r = await apiFetch(`${API_BASE}/api/admin/customers/${id}`, 'PUT', body);
+        msg.style.color = '#1faa53'; msg.textContent = '✓ Saved: ' + (r.changed||[]).join(', ');
+        await loadCustomers();
+      } catch (e) { msg.style.color = '#c00'; msg.textContent = e.message; }
+    }
+
+    window.adminAction = async function(id, body) {
+      const msg = document.getElementById('adm_msg');
+      msg.style.color = '#888'; msg.textContent = 'Working…';
+      try {
+        await apiFetch(`${API_BASE}/api/admin/customers/${id}`, 'PUT', body);
+        msg.style.color = '#1faa53'; msg.textContent = '✓ Done';
+        await loadCustomers();
+        viewCustomer(id); // refresh panel
+      } catch (e) { msg.style.color = '#c00'; msg.textContent = e.message; }
+    }
+
+    window.resetCustomerKey = async function(id) {
+      if (!confirm('Reset this customer\\'s secret key? Their old key stops working. The new key is shown once and emailed to them.')) return;
+      const msg = document.getElementById('adm_msg');
+      msg.style.color = '#888'; msg.textContent = 'Resetting…';
+      try {
+        const r = await apiFetch(`${API_BASE}/api/admin/customers/${id}/reset-key`, 'POST');
+        msg.style.color = '#1faa53';
+        msg.innerHTML = 'New key (give this to the customer): <strong style="font-family:monospace;font-size:16px;letter-spacing:2px">' + r.secretKey + '</strong>';
+      } catch (e) { msg.style.color = '#c00'; msg.textContent = e.message; }
     }
 
     window.closeModal = function() { document.getElementById('customerModal').classList.add('hidden'); }
