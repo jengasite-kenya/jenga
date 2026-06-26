@@ -101,35 +101,46 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/sitesawa'
     .then(async () => {
         console.log('MongoDB connected');
 
-        // --- One-time migration: drop any stale UNIQUE index on phone ---
-        // Older versions made phone unique. Phones must now be reusable
-        // (people often pay with someone else's M-Pesa number). MongoDB will
-        // NOT convert an existing unique index to non-unique, so we drop it
-        // explicitly. This is safe to run on every startup (idempotent).
+        // --- One-time migration: drop stale indexes that conflict with new specs ---
+        // (1) Older versions made PHONE unique. Phones must now be reusable
+        //     (people often pay with someone else's M-Pesa number).
+        // (2) Older versions had an EMAIL index that was NOT unique. Email is now
+        //     the login, so it must be unique. MongoDB will NOT change an existing
+        //     index's spec in place, and throws IndexKeySpecsConflict if the name
+        //     matches but the options differ — so we drop the stale ones first.
+        //     Safe to run on every startup (idempotent).
         try {
             const idx = await Customer.collection.indexes();
             for (const ix of idx) {
                 const keys = Object.keys(ix.key || {});
-                // find any index that is ONLY on phone and is unique
                 if (keys.length === 1 && keys[0] === 'phone' && ix.unique) {
                     await Customer.collection.dropIndex(ix.name);
                     console.log('Dropped stale unique phone index:', ix.name);
                 }
+                // drop any existing single-field email index so we can recreate it as unique
+                if (keys.length === 1 && keys[0] === 'email') {
+                    await Customer.collection.dropIndex(ix.name);
+                    console.log('Dropped stale email index (recreating as unique):', ix.name);
+                }
             }
         } catch (e) {
-            console.error('Phone index migration check failed (non-fatal):', e.message);
+            console.error('Index migration check failed (non-fatal):', e.message);
         }
 
-        // Ensure indexes exist (idempotent)
+        // Ensure indexes exist. Each wrapped so one conflict can't crash startup.
+        const ensureIndex = async (coll, spec, opts, label) => {
+            try { await coll.createIndex(spec, opts); }
+            catch (e) { console.error('Index ensure failed (' + label + ', non-fatal):', e.message); }
+        };
         await Promise.all([
-            Customer.collection.createIndex({ phone: 1 }, { unique: false }),  // phone reusable
-            Customer.collection.createIndex({ subdomain: 1 }, { unique: true, sparse: true }),
-            Customer.collection.createIndex({ customDomain: 1 }, { unique: true, sparse: true }),
-            Customer.collection.createIndex({ email: 1 }, { unique: true, sparse: true }),  // email is the login
-            Order.collection.createIndex({ customerId: 1 }),
-            Order.collection.createIndex({ checkoutId: 1 }, { sparse: true }),
-            Order.collection.createIndex({ createdAt: -1 }),
-            SupportTicket.collection.createIndex({ customerId: 1 }),
+            ensureIndex(Customer.collection, { phone: 1 }, { unique: false }, 'phone'),
+            ensureIndex(Customer.collection, { subdomain: 1 }, { unique: true, sparse: true }, 'subdomain'),
+            ensureIndex(Customer.collection, { customDomain: 1 }, { unique: true, sparse: true }, 'customDomain'),
+            ensureIndex(Customer.collection, { email: 1 }, { unique: true, sparse: true }, 'email'),
+            ensureIndex(Order.collection, { customerId: 1 }, {}, 'order.customerId'),
+            ensureIndex(Order.collection, { checkoutId: 1 }, { sparse: true }, 'order.checkoutId'),
+            ensureIndex(Order.collection, { createdAt: -1 }, {}, 'order.createdAt'),
+            ensureIndex(SupportTicket.collection, { customerId: 1 }, {}, 'ticket.customerId'),
         ]);
         console.log('DB indexes verified');
     })
@@ -1245,24 +1256,35 @@ app.post('/api/register', authLimiter, async (req, res) => {
         const regTemplateId = (req.body.templateId && TEMPLATE_FILES[req.body.templateId])
             ? req.body.templateId : '';
 
+        // Build a unique subdomain (phones are reusable now, so don't rely on phone alone)
+        let baseSub = (subdomain || (name || 'site')).toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20) || 'site';
+        let uniqueSub = baseSub;
+        for (let i = 0; i < 20; i++) {
+            const clash = await Customer.findOne({ subdomain: uniqueSub });
+            if (!clash) break;
+            uniqueSub = baseSub + Math.floor(1000 + Math.random() * 9000);
+        }
+
         const customer = new Customer({
             name, email, phone,
             secretKey: hashedKey,
             template: template || 'PERSONAL',
             templateId: regTemplateId,
-            subdomain: subdomain || phone.replace(/\D/g, ''),
+            subdomain: uniqueSub,
             customDomain,
+            paymentStatus: 'trial',
+            trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // free for 7 days
             data: { name, email, phone }
         });
         await customer.save();
 
         // Send welcome email
         sendEmail(email || phone + '@sitesawa.com',
-            'Welcome to SiteSawa!',
-            `<h2>Welcome ${name || 'there'}!</h2><p>Your SiteSawa site is ready.</p><p><strong>Login:</strong> ${phone}</p><p><strong>Secret Key:</strong> ${secretKey}</p><p>Keep this key safe!</p>`
+            'Welcome to SiteSawa — your site is live free for 7 days!',
+            `<h2>Welcome ${name || 'there'}!</h2><p>Your SiteSawa website is live — free for 7 days.</p><p><strong>Sign in with your email:</strong> ${email}</p><p><strong>Secret Key:</strong> ${secretKey}</p><p>⚠️ Save this key — it is your password and cannot be recovered.</p><p>Your site address: ${uniqueSub}.sitesawa.com</p>`
         );
 
-        res.json({ success: true, secretKey, message: 'Save this key - it cannot be recovered!' });
+        res.json({ success: true, secretKey, subdomain: uniqueSub, message: 'Save this key - it cannot be recovered!' });
     } catch (err) {
         res.status(500).json({ error: 'Internal server error', requestId: req.requestId });
     }
@@ -1852,6 +1874,116 @@ app.delete('/api/admin/customers/:id', adminAuth, async (req, res) => {
         await Order.deleteMany({ customerId: req.params.id });
         await SupportTicket.deleteMany({ customerId: req.params.id });
         res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Internal server error', requestId: req.requestId });
+    }
+});
+
+// ADMIN: full details for ONE customer (for the support panel)
+app.get('/api/admin/customers/:id', adminAuth, async (req, res) => {
+    try {
+        const customer = await Customer.findById(req.params.id).lean();
+        if (!customer) return res.status(404).json({ error: 'Customer not found' });
+        delete customer.secretKey;
+        delete customer.recoveryOTP;
+        delete customer.recoveryOTPExpiry;
+        delete customer.mpesaConsumerKey;
+        delete customer.mpesaConsumerSecret;
+        delete customer.mpesaPasskey;
+        const orders = await Order.find({ customerId: req.params.id }).sort({ createdAt: -1 }).limit(20).lean();
+        // trial countdown
+        if (customer.paymentStatus !== 'paid' && customer.trialEndsAt) {
+            const msLeft = new Date(customer.trialEndsAt).getTime() - Date.now();
+            customer.trialDaysLeft = Math.max(0, Math.ceil(msLeft / (24*60*60*1000)));
+            customer.trialExpired = msLeft <= 0;
+        }
+        res.json({ customer, orders });
+    } catch (err) {
+        res.status(500).json({ error: 'Internal server error', requestId: req.requestId });
+    }
+});
+
+// ADMIN: update ANY customer field — full control for phone support
+app.put('/api/admin/customers/:id', adminAuth, async (req, res) => {
+    try {
+        const customer = await Customer.findById(req.params.id);
+        if (!customer) return res.status(404).json({ error: 'Customer not found' });
+
+        const b = req.body || {};
+        const allowed = ['name', 'email', 'phone', 'template', 'subdomain', 'customDomain', 'paymentStatus'];
+        const changes = [];
+
+        for (const field of allowed) {
+            if (b[field] === undefined) continue;
+            let val = b[field];
+            if (field === 'email') val = String(val).toLowerCase().trim();
+            if (field === 'template') val = String(val).toUpperCase();
+            if (field === 'subdomain') val = String(val).toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (field === 'customDomain') {
+                val = String(val).trim().toLowerCase()
+                    .replace(/^https?:\/\//, '').replace(/^www\./, '')
+                    .replace(/[\/\\].*$/, '').replace(/:.*$/, '').trim() || null;
+            }
+            // uniqueness guards
+            if (field === 'email' && val) {
+                const clash = await Customer.findOne({ email: val, _id: { $ne: customer._id } });
+                if (clash) return res.status(409).json({ error: 'Another account already uses that email' });
+            }
+            if (field === 'subdomain' && val) {
+                const clash = await Customer.findOne({ subdomain: val, _id: { $ne: customer._id } });
+                if (clash) return res.status(409).json({ error: 'Another account already uses that subdomain' });
+            }
+            if (String(customer[field]) !== String(val)) changes.push(field);
+            customer[field] = val;
+        }
+
+        // Trial controls
+        if (b.extendTrialDays !== undefined) {
+            const days = parseInt(b.extendTrialDays, 10) || 0;
+            const base = (customer.trialEndsAt && new Date(customer.trialEndsAt) > new Date())
+                ? new Date(customer.trialEndsAt) : new Date();
+            customer.trialEndsAt = new Date(base.getTime() + days * 24*60*60*1000);
+            changes.push('trialEndsAt');
+        }
+        if (b.endTrialNow === true) {
+            customer.trialEndsAt = new Date(Date.now() - 1000);
+            changes.push('trialEndsAt(ended)');
+        }
+        // Mark paid / unpaid shortcuts
+        if (b.markPaid === true) { customer.paymentStatus = 'paid'; changes.push('paymentStatus(paid)'); }
+        if (b.markTrial === true) {
+            customer.paymentStatus = 'trial';
+            customer.trialEndsAt = new Date(Date.now() + 7*24*60*60*1000);
+            changes.push('paymentStatus(trial)');
+        }
+
+        await customer.save();
+        console.log(`[ADMIN] ${req.params.id} updated:`, changes.join(', '));
+        res.json({ success: true, changed: changes });
+    } catch (err) {
+        console.error('[ADMIN UPDATE]', err.message);
+        res.status(500).json({ error: err.message || 'Update failed', requestId: req.requestId });
+    }
+});
+
+// ADMIN: reset a customer's secret key (generate a new one, return it once)
+app.post('/api/admin/customers/:id/reset-key', adminAuth, async (req, res) => {
+    try {
+        const customer = await Customer.findById(req.params.id);
+        if (!customer) return res.status(404).json({ error: 'Customer not found' });
+        const newKey = generateSecretKey();
+        customer.secretKey = await bcrypt.hash(newKey, 10);
+        await customer.save();
+        // email it to them too, if they have an email
+        if (customer.email) {
+            sendEmail(customer.email, 'Your SiteSawa secret key was reset',
+                `<h2>New secret key</h2><p>Hi ${customer.name || 'there'}, your SiteSawa secret key has been reset.</p>
+                 <p><strong>New key:</strong> ${newKey}</p>
+                 <p>Sign in at <a href="https://www.sitesawa.com/login.html">sitesawa.com/login.html</a> with your email and this key.</p>`
+            ).catch(()=>{});
+        }
+        console.log(`[ADMIN] reset key for ${req.params.id}`);
+        res.json({ success: true, secretKey: newKey });
     } catch (err) {
         res.status(500).json({ error: 'Internal server error', requestId: req.requestId });
     }
