@@ -283,9 +283,9 @@ button{font-family:var(--ff-body);cursor:pointer}
     <!-- LOGIN FORM -->
     <form id="loginForm" onsubmit="return false">
       <div class="field">
-        <label>Phone number</label>
+        <label>Gmail / Email address</label>
         <div class="field-inner">
-          <input type="tel" id="loginPhone" placeholder="07XX XXX XXX" autocomplete="tel">
+          <input type="email" id="loginEmail" placeholder="you@gmail.com" autocomplete="email">
         </div>
       </div>
       <div class="field">
@@ -357,7 +357,7 @@ button{font-family:var(--ff-body);cursor:pointer}
     <div class="modal-step active" id="step1">
       <div class="modal-sub">Enter your phone number. We'll send a recovery code to your email.</div>
       <div class="field">
-        <label>Phone number</label>
+        <label>Gmail / Email address</label>
         <div class="field-inner"><input type="tel" id="forgotPhone" placeholder="07XX XXX XXX"></div>
       </div>
       <button class="submit-btn" id="sendCodeBtn" style="margin-top:4px">
@@ -453,14 +453,14 @@ function validatePhone(phone) {
 // LOGIN
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault(); hideAlerts();
-  const phone = document.getElementById('loginPhone').value.trim().replace(/\s/g, '');
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
   const key = document.getElementById('loginKey').value.trim();
   if (!phone) { showError('Enter your phone number'); return; }
   if (!validatePhone(phone)) { showError('Enter a valid phone (e.g. 0712 345 678)'); return; }
   if (!key) { showError('Enter your secret key'); return; }
   setLoading('loginBtn','loginSpinner','loginBtnText',true);
   try {
-    const res = await fetch(`${API}/api/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone: phone.startsWith('0') ? '254'+phone.slice(1) : phone, secretKey:key}) });
+    const res = await fetch(`${API}/api/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, secretKey:key}) });
     const data = await res.json();
     if (res.ok && data.token) {
       if (document.getElementById('rememberMe').checked) localStorage.setItem('sitesawa_token', data.token);
@@ -468,7 +468,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
       localStorage.setItem('sitesawa_user', JSON.stringify(data.customer));
       window.location.href = '/dashboard-customer.html';
     } else {
-      showError(data.error || 'Invalid phone or secret key');
+      showError(data.error || 'Invalid email or secret key');
       document.getElementById('loginKey').classList.add('error');
     }
   } catch { showError('Network error. Please try again.'); }
@@ -541,7 +541,7 @@ document.getElementById('errorAlert').classList.remove('show');
 // FORGOT
 window.showForgot = function() {
   document.getElementById('forgotModal').classList.add('active');
-  document.getElementById('forgotPhone').value = document.getElementById('loginPhone').value;
+  document.getElementById('forgotPhone').value = document.getElementById('loginEmail').value;
   setTimeout(() => document.getElementById('forgotPhone').focus(), 100);
 }
 window.hideForgot = function() { document.getElementById('forgotModal').classList.remove('active'); backToStep1(); }
@@ -609,7 +609,7 @@ window.resetKey = async function() {
     const res = await fetch(`${API}/api/reset-key`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone,code,newKey}) });
     if (res.ok) {
       showSuccess('Key reset! Sign in with your new key.');
-      setTimeout(() => { hideForgot(); document.getElementById('loginPhone').value = phone; document.getElementById('loginKey').focus(); }, 2000);
+      setTimeout(() => { hideForgot(); document.getElementById('loginEmail').value = phone; document.getElementById('loginKey').focus(); }, 2000);
     } else { const data = await res.json(); showError(data.error || 'Invalid code'); }
   } catch { showError('Network error'); }
   finally { setLoading('resetBtn','resetSpinner','resetText',false); }
@@ -636,7 +636,7 @@ if (token) {
         });
 }
 
-document.getElementById('loginPhone').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('loginKey').focus(); });
+document.getElementById('loginEmail').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('loginKey').focus(); });
 document.getElementById('loginKey').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('loginForm').dispatchEvent(new Event('submit')); });
 
 // ── LOGIN PAGE BUTTON WIRING ──────────────────────────────────────────
