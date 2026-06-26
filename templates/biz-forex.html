@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sterling Bureau — Forex & Money Transfer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#060e1f;--navy2:#0c1a30;--navy3:#122040;--navy4:#182a50;
+  --gold:#c9a84c;--gold-h:#b8962e;--gold-light:rgba(201,168,76,.12);--gold-mid:rgba(201,168,76,.2);
+  --edge:rgba(255,255,255,.08);--edge-gold:rgba(201,168,76,.25);
+  --text:#f0ebe0;--muted:rgba(240,235,224,.55);--dim:rgba(240,235,224,.25);
+  --green:#22c55e;--red:#f87171;
+}
+html{font-family:'DM Sans',system-ui,sans-serif;background:var(--navy);color:var(--text);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:none}
+
+/* TICKER */
+.rates-ticker{background:var(--gold);padding:8px 0;overflow:hidden}
+.rt-inner{display:flex;gap:0;white-space:nowrap;animation:rtick 22s linear infinite}
+.rt-item{padding:0 28px;font-size:12px;font-weight:700;color:var(--navy);letter-spacing:.06em;display:flex;align-items:center;gap:10px;border-right:1px solid rgba(6,14,31,.2)}
+.rt-up{color:#166534}
+.rt-down{color:#991b1b}
+@keyframes rtick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* NAV */
+nav{background:var(--navy2);border-bottom:1px solid var(--edge);height:66px;padding:0 36px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;backdrop-filter:blur(10px)}
+.nav-brand{display:flex;flex-direction:column;gap:1px}
+.nav-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;font-weight:700;letter-spacing:.06em;color:var(--gold);text-transform:uppercase}
+.nav-sub{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.nav-right{display:flex;align-items:center;gap:14px}
+.nav-lic{padding:5px 12px;border:1px solid var(--edge-gold);border-radius:4px;font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.06em}
+.nav-wa{padding:9px 20px;border-radius:4px;background:var(--gold);color:var(--navy);font-size:13px;font-weight:700;letter-spacing:.04em;transition:background .15s}
+.nav-wa:hover{background:var(--gold-h)}
+
+/* HERO */
+.hero{min-height:600px;padding:80px 36px;display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;max-width:1200px;margin:0 auto}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--gold)}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:64px;font-weight:600;line-height:1.04;letter-spacing:-.01em;margin-bottom:20px}
+h1 span{color:var(--gold)}
+.hero-sub{font-size:16px;color:var(--muted);line-height:1.65;margin-bottom:36px;max-width:440px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-gold{padding:13px 28px;border-radius:4px;background:var(--gold);color:var(--navy);font-size:14px;font-weight:700;letter-spacing:.04em;box-shadow:0 6px 24px rgba(201,168,76,.25);transition:all .15s}
+.btn-gold:hover{background:var(--gold-h);transform:translateY(-1px)}
+.btn-navy-outline{padding:13px 28px;border-radius:4px;border:1px solid var(--edge-gold);color:var(--text);font-size:14px;font-weight:600;transition:all .15s}
+.btn-navy-outline:hover{border-color:var(--gold);background:var(--gold-light)}
+
+/* RATES BOARD */
+.rates-board{background:var(--navy2);border:1px solid var(--edge-gold);border-radius:12px;overflow:hidden}
+.rates-head{background:var(--gold);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.rates-head-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--navy);letter-spacing:.06em;text-transform:uppercase}
+.rates-head-time{font-size:11px;color:rgba(6,14,31,.6);font-weight:600}
+.rate-row{display:flex;align-items:center;padding:14px 20px;border-bottom:1px solid var(--edge);transition:background .12s}
+.rate-row:last-child{border-bottom:none}
+.rate-row:hover{background:var(--gold-light)}
+.rate-flag{font-size:20px;width:32px}
+.rate-currency{flex:1;margin-left:10px}
+.rate-code{font-size:13px;font-weight:700;letter-spacing:.06em}
+.rate-name{font-size:11px;color:var(--muted);margin-top:1px}
+.rate-buy{text-align:right;margin-right:24px}
+.rate-sell{text-align:right}
+.rate-label{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+.rate-value{font-size:16px;font-weight:700;color:var(--gold)}
+.rate-change{font-size:11px;margin-top:2px}
+.up{color:var(--green)}
+.dn{color:var(--red)}
+
+/* SERVICES */
+.services{padding:80px 36px;max-width:1200px;margin:0 auto}
+.sec-line{display:flex;align-items:center;gap:20px;margin-bottom:48px}
+.sec-line::before,.sec-line::after{content:'';flex:1;height:1px;background:var(--edge)}
+.sec-line-text{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--text);white-space:nowrap;padding:0 20px}
+.sec-line-text span{color:var(--gold)}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--edge);border:1px solid var(--edge);border-radius:8px;overflow:hidden}
+.svc-item{background:var(--navy2);padding:32px;transition:background .15s}
+.svc-item:hover{background:var(--navy3)}
+.svc-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:var(--gold);opacity:.35;line-height:1;margin-bottom:14px}
+.svc-title{font-size:16px;font-weight:700;margin-bottom:8px}
+.svc-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.svc-link{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.svc-link:hover{text-decoration:underline}
+
+/* WHY */
+.why{background:var(--navy2);border-top:1px solid var(--edge);padding:80px 36px}
+.why-inner{max-width:1200px;margin:0 auto}
+.why-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:40px;margin-top:48px;align-items:start}
+.why-big{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:600;line-height:1.1;color:var(--gold)}
+.why-big p{font-size:14px;color:var(--muted);margin-top:12px;line-height:1.6;font-family:'DM Sans',sans-serif}
+.why-point{border-top:1px solid var(--edge-gold);padding-top:20px}
+.why-point-n{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:var(--text);line-height:1}
+.why-point-l{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5}
+
+/* CONTACT */
+.contact{padding:80px 36px;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.contact-left h2{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:600;line-height:1.1;margin-bottom:20px}
+.contact-left h2 span{color:var(--gold)}
+.contact-left p{font-size:15px;color:var(--muted);line-height:1.65;margin-bottom:32px}
+.contact-detail{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;font-size:14px;color:var(--muted)}
+.contact-detail svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;fill:none;stroke:var(--gold);stroke-width:1.8;stroke-linecap:round}
+.contact-panel{background:var(--navy2);border:1px solid var(--edge-gold);border-radius:12px;padding:36px}
+.contact-panel h3{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--gold);margin-bottom:6px}
+.contact-panel p{font-size:13px;color:var(--muted);margin-bottom:24px}
+.big-wa{display:block;padding:15px;border-radius:6px;background:#25d366;color:#fff;text-align:center;font-size:15px;font-weight:700;margin-bottom:10px;transition:all .15s}
+.big-wa:hover{background:#1fb855}
+.big-call{display:block;padding:15px;border-radius:6px;border:1px solid var(--edge-gold);background:transparent;color:var(--text);text-align:center;font-size:15px;font-weight:700;transition:all .15s}
+.big-call:hover{background:var(--gold-light)}
+.hours{margin-top:24px;border-top:1px solid var(--edge)}
+.hr{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--edge);font-size:13px}
+.hr:last-child{border-bottom:none}
+.hr-t{color:var(--gold);font-weight:600}
+
+/* FOOTER */
+footer{background:var(--navy2);border-top:1px solid var(--edge);padding:28px 36px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase}
+footer span{font-size:12px;color:var(--dim)}
+footer a{color:var(--gold)}
+
+@media(max-width:768px){.hero,.contact,.svc-grid,.why-grid{grid-template-columns:1fr}h1{font-size:42px}}
+</style>
+</head>
+<body>
+
+<!-- RATES TICKER -->
+<div class="rates-ticker">
+  <div class="rt-inner">
+    <div class="rt-item">USD/KES <strong>130.25</strong> <span class="rt-up">▲ +0.12</span></div>
+    <div class="rt-item">EUR/KES <strong>140.80</strong> <span class="rt-down">▼ -0.05</span></div>
+    <div class="rt-item">GBP/KES <strong>163.50</strong> <span class="rt-up">▲ +0.30</span></div>
+    <div class="rt-item">ZAR/KES <strong>7.15</strong> <span class="rt-down">▼ -0.02</span></div>
+    <div class="rt-item">TZS/KES <strong>0.049</strong> <span class="rt-up">▲ +0.001</span></div>
+    <div class="rt-item">UGX/KES <strong>0.034</strong> <span class="rt-down">▼ -0.001</span></div>
+    <div class="rt-item">CNY/KES <strong>18.10</strong> <span class="rt-up">▲ +0.08</span></div>
+    <div class="rt-item">AED/KES <strong>35.45</strong> <span class="rt-up">▲ +0.15</span></div>
+    <div class="rt-item">USD/KES <strong>130.25</strong> <span class="rt-up">▲ +0.12</span></div>
+    <div class="rt-item">EUR/KES <strong>140.80</strong> <span class="rt-down">▼ -0.05</span></div>
+    <div class="rt-item">GBP/KES <strong>163.50</strong> <span class="rt-up">▲ +0.30</span></div>
+    <div class="rt-item">ZAR/KES <strong>7.15</strong> <span class="rt-down">▼ -0.02</span></div>
+    <div class="rt-item">TZS/KES <strong>0.049</strong> <span class="rt-up">▲ +0.001</span></div>
+    <div class="rt-item">UGX/KES <strong>0.034</strong> <span class="rt-down">▼ -0.001</span></div>
+    <div class="rt-item">CNY/KES <strong>18.10</strong> <span class="rt-up">▲ +0.08</span></div>
+    <div class="rt-item">AED/KES <strong>35.45</strong> <span class="rt-up">▲ +0.15</span></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-name">Sterling Bureau</div>
+    <div class="nav-sub">Licensed Forex &amp; Money Transfer</div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-lic">CBK Licensed</div>
+    <a href="https://wa.me/254712345678?text=Hi%20Sterling%20Bureau%2C%20I%20need%20forex%20services" class="nav-wa">WhatsApp Us</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div style="background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 60%,#0d1f3c 100%)">
+<section class="hero">
+  <div>
+    <div class="hero-eyebrow">CBK Licensed · Nairobi CBD</div>
+    <h1>Buy &amp; sell<br>foreign currency<br>at <span>fair rates</span></h1>
+    <p class="hero-sub">USD, EUR, GBP, ZAR and 20+ currencies. Best rates in the CBD — guaranteed. Money transfer, M-Pesa, Western Union, MoneyGram.</p>
+    <div class="hero-btns">
+      <a href="https://wa.me/254712345678?text=Hi%20Sterling%20Bureau%2C%20I%20need%20forex" class="btn-gold">Get Today's Rate</a>
+      <a href="tel:0712345678" class="btn-navy-outline">Call 0712 345 678</a>
+    </div>
+  </div>
+  <div class="rates-board">
+    <div class="rates-head">
+      <span class="rates-head-title">Today's Rates</span>
+      <span class="rates-head-time">Updated: 9:00 AM</span>
+    </div>
+    <div class="rate-row">
+      <span class="rate-flag">🇺🇸</span>
+      <div class="rate-currency"><div class="rate-code">USD</div><div class="rate-name">US Dollar</div></div>
+      <div class="rate-buy"><div class="rate-label">We buy</div><div class="rate-value">129.80</div><div class="rate-change up">▲ +0.10</div></div>
+      <div class="rate-sell"><div class="rate-label">We sell</div><div class="rate-value">130.50</div></div>
+    </div>
+    <div class="rate-row">
+      <span class="rate-flag">🇪🇺</span>
+      <div class="rate-currency"><div class="rate-code">EUR</div><div class="rate-name">Euro</div></div>
+      <div class="rate-buy"><div class="rate-label">We buy</div><div class="rate-value">140.20</div><div class="rate-change dn">▼ -0.05</div></div>
+      <div class="rate-sell"><div class="rate-label">We sell</div><div class="rate-value">141.30</div></div>
+    </div>
+    <div class="rate-row">
+      <span class="rate-flag">🇬🇧</span>
+      <div class="rate-currency"><div class="rate-code">GBP</div><div class="rate-name">British Pound</div></div>
+      <div class="rate-buy"><div class="rate-label">We buy</div><div class="rate-value">162.80</div><div class="rate-change up">▲ +0.30</div></div>
+      <div class="rate-sell"><div class="rate-label">We sell</div><div class="rate-value">164.20</div></div>
+    </div>
+    <div class="rate-row">
+      <span class="rate-flag">🇦🇪</span>
+      <div class="rate-currency"><div class="rate-code">AED</div><div class="rate-name">UAE Dirham</div></div>
+      <div class="rate-buy"><div class="rate-label">We buy</div><div class="rate-value">35.20</div><div class="rate-change up">▲ +0.12</div></div>
+      <div class="rate-sell"><div class="rate-label">We sell</div><div class="rate-value">35.70</div></div>
+    </div>
+    <div style="padding:14px 20px;background:var(--gold-light);display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:12px;color:var(--muted)">More currencies available</span>
+      <a href="https://wa.me/254712345678?text=Hi%20Sterling%2C%20what%20is%20today%27s%20rate?" style="font-size:12px;font-weight:700;color:var(--gold)">Ask for rate →</a>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- SERVICES -->
+<section class="services">
+  <div class="sec-line"><div class="sec-line-text">Our <span>services</span></div></div>
+  <div class="svc-grid">
+    <div class="svc-item"><div class="svc-num">01</div><div class="svc-title">Currency Exchange</div><div class="svc-desc">Buy and sell 20+ currencies at the best rates in the CBD. No hidden charges. Walk in with cash, leave with your currency.</div><span class="svc-link" onclick="window.open('https://wa.me/254712345678?text=Hi%20Sterling%2C%20I%20need%20to%20exchange%20currency')">Get Rate →</span></div>
+    <div class="svc-item"><div class="svc-num">02</div><div class="svc-title">Money Transfer</div><div class="svc-desc">Western Union and MoneyGram send &amp; receive. Fast, secure international transfers — same day processing.</div><span class="svc-link" onclick="window.open('https://wa.me/254712345678?text=Hi%20Sterling%2C%20I%20need%20to%20send%20money%20abroad')">Send Money →</span></div>
+    <div class="svc-item"><div class="svc-num">03</div><div class="svc-title">M-Pesa Agent</div><div class="svc-desc">Large M-Pesa deposits, withdrawals and transfers. Serving businesses and individuals with high transaction limits.</div><span class="svc-link" onclick="window.open('https://wa.me/254712345678?text=Hi%20Sterling%2C%20I%20need%20M-Pesa%20services')">Transact →</span></div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="why">
+  <div class="why-inner">
+    <div style="display:flex;align-items:center;gap:20px">
+      <div style="flex:1;height:1px;background:var(--edge)"></div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;padding:0 20px">Why <span style="color:var(--gold)">Sterling</span></div>
+      <div style="flex:1;height:1px;background:var(--edge)"></div>
+    </div>
+    <div class="why-grid">
+      <div class="why-big">The<br>best<br>rates<br>in town.<br><p>We monitor the market daily to ensure we offer the most competitive exchange rates — no inflated spreads, no surprises.</p></div>
+      <div class="why-point"><div class="why-point-n">CBK<br>Licensed</div><div class="why-point-l">Fully licensed by the Central Bank of Kenya. Your money is safe and your transaction is legal.</div></div>
+      <div class="why-point"><div class="why-point-n">Zero<br>Hidden<br>Fees</div><div class="why-point-l">The rate you see is the rate you get. No surprise charges at the counter.</div></div>
+      <div class="why-point"><div class="why-point-n">Fast &amp;<br>Secure</div><div class="why-point-l">Most transactions completed in under 5 minutes. Your funds and data stay private.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact">
+  <div class="contact-left">
+    <h2>Visit us<br><span>in the CBD</span></h2>
+    <p>We're conveniently located in the heart of Nairobi's central business district. Walk in during business hours — no appointment needed.</p>
+    <div class="contact-detail"><svg viewBox="0 0 16 16"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.3 4 8 4 8s4-4.7 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>2nd Floor, Kimathi House, Kimathi Street, Nairobi</div>
+    <div class="contact-detail"><svg viewBox="0 0 16 16"><path d="M3 3h2l1 3-1.5 1.5c1 2 2.5 3.5 4.5 4.5L10.5 10l3 1v2c0 1.1-1 2-2 1.5C5 12 2 6 2 5c-.5-1 .5-2 1-2z"/></svg>0712 345 678</div>
+    <div class="contact-detail"><svg viewBox="0 0 16 16"><path d="M2 4l6 5 6-5M2 4h12v9H2z"/></svg>sterling@email.com</div>
+  </div>
+  <div class="contact-panel">
+    <h3>Get in touch</h3>
+    <p>WhatsApp us for today's rates before you travel to us.</p>
+    <a href="https://wa.me/254712345678?text=Hi%20Sterling%2C%20what%20is%20your%20USD%20rate%20today?" class="big-wa">WhatsApp for Rates</a>
+    <a href="tel:0712345678" class="big-call">Call 0712 345 678</a>
+    <div class="hours">
+      <div class="hr"><span>Monday – Friday</span><span class="hr-t">8:00 AM – 5:30 PM</span></div>
+      <div class="hr"><span>Saturday</span><span class="hr-t">9:00 AM – 1:00 PM</span></div>
+      <div class="hr"><span>Sunday</span><span style="color:var(--dim)">Closed</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Sterling Bureau</div>
+  <span>Kimathi House, Nairobi CBD · 0712 345 678 · CBK Licensed</span>
+  <span>© 2026 Sterling Bureau. Powered by <a href="#">SiteSawa</a></span>
+</footer>
+</body>
+</html>

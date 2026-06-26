@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Summit Institute — Skills That Get You Hired</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#faf6ef;--cream2:#f4ece0;--cream3:#ede0cc;
+  --maroon:#7b1b1b;--maroon-h:#6b1717;--maroon-light:rgba(123,27,27,.08);--maroon-mid:rgba(123,27,27,.15);
+  --edge:#ddd0bb;--text:#1e1008;--body:#3d2a18;--muted:#7a6250;--dim:#b09880;
+  --gold-ink:#6b4c10;
+}
+html{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:none}
+
+/* NAV */
+nav{background:var(--maroon);padding:0 40px;height:66px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.nav-brand{display:flex;flex-direction:column}
+.nav-name{font-family:'Libre Baskerville',Georgia,serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:.02em}
+.nav-sub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);font-weight:500;margin-top:2px}
+.nav-links{display:flex;gap:24px;font-size:13px;font-weight:500;color:rgba(255,255,255,.65)}
+.nav-links a:hover{color:#fff}
+.nav-apply{padding:9px 20px;border-radius:4px;background:#fff;color:var(--maroon);font-size:13px;font-weight:700;transition:all .15s}
+.nav-apply:hover{background:var(--cream2)}
+
+/* HERO */
+.hero{background:var(--cream2);border-bottom:1px solid var(--edge);padding:0 40px}
+.hero-inner{max-width:1100px;margin:0 auto;padding:80px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end}
+.hero-crest{width:52px;height:52px;border-radius:50%;background:var(--maroon);display:flex;align-items:center;justify-content:center;margin-bottom:20px;box-shadow:0 4px 16px rgba(123,27,27,.2)}
+.hero-crest svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round}
+.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--maroon);margin-bottom:14px}
+h1{font-family:'Libre Baskerville',Georgia,serif;font-size:54px;font-weight:700;line-height:1.08;letter-spacing:-.01em;color:var(--text);margin-bottom:16px}
+h1 em{color:var(--maroon);font-style:italic}
+.hero-sub{font-size:15px;line-height:1.7;color:var(--muted);margin-bottom:32px;max-width:440px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:0}
+.btn-maroon{padding:13px 28px;border-radius:4px;background:var(--maroon);color:#fff;font-size:14px;font-weight:700;box-shadow:0 4px 16px rgba(123,27,27,.2);transition:all .15s}
+.btn-maroon:hover{background:var(--maroon-h);transform:translateY(-1px)}
+.btn-outline{padding:13px 28px;border-radius:4px;border:2px solid var(--edge);background:transparent;color:var(--text);font-size:14px;font-weight:600;transition:all .15s}
+.btn-outline:hover{border-color:var(--maroon);color:var(--maroon)}
+.hero-right{padding-bottom:0;position:relative}
+.hero-stats-card{background:var(--maroon);border-radius:16px 16px 0 0;padding:36px;color:#fff;position:relative;overflow:hidden}
+.hero-stats-card::before{content:'';position:absolute;top:-30px;right:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05)}
+.hsc-title{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.5;margin-bottom:24px}
+.hsc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.hsc-item .n{font-family:'Libre Baskerville',serif;font-size:32px;font-weight:700;line-height:1;margin-bottom:4px}
+.hsc-item .l{font-size:12px;opacity:.55;font-weight:500}
+
+/* TRUST BANNER */
+.trust{background:var(--maroon);padding:0;overflow:hidden}
+.trust-scroll{display:flex;gap:0;white-space:nowrap;animation:tscroll 20s linear infinite;padding:14px 0}
+.trust-item{padding:0 32px;font-size:12px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.06em;display:flex;align-items:center;gap:12px;border-right:1px solid rgba(255,255,255,.1);flex-shrink:0}
+.trust-item strong{color:#fff}
+@keyframes tscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* COURSES */
+.courses{padding:80px 40px;max-width:1100px;margin:0 auto}
+.section-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:16px}
+.section-header h2{font-family:'Libre Baskerville',serif;font-size:36px;font-weight:700;letter-spacing:-.01em}
+.section-header h2 em{color:var(--maroon);font-style:italic}
+.view-all{font-size:13px;font-weight:700;color:var(--maroon);border-bottom:2px solid var(--maroon);padding-bottom:2px}
+.filter-bar{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+.filter{padding:8px 18px;border-radius:4px;border:1px solid var(--edge);background:#fff;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+.filter.active,.filter:hover{background:var(--maroon);border-color:var(--maroon);color:#fff}
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.course-card{background:#fff;border:1px solid var(--edge);border-radius:8px;overflow:hidden;transition:all .2s;cursor:pointer}
+.course-card:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(30,16,8,.08);border-color:rgba(123,27,27,.2)}
+.course-bar{height:5px;background:var(--maroon)}
+.course-body{padding:24px}
+.course-dept{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--maroon);margin-bottom:10px}
+.course-name{font-family:'Libre Baskerville',serif;font-size:18px;font-weight:700;line-height:1.25;margin-bottom:8px;color:var(--text)}
+.course-desc{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:16px}
+.course-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.course-meta-item{font-size:12px;color:var(--dim);font-weight:500;display:flex;align-items:center;gap:5px}
+.course-meta-item svg{width:13px;height:13px;fill:none;stroke:var(--maroon);stroke-width:2;stroke-linecap:round;flex-shrink:0}
+.course-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--edge);padding-top:16px}
+.course-fee{font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;color:var(--maroon)}
+.course-fee-label{font-size:11px;color:var(--dim);font-weight:500}
+.btn-apply{padding:9px 18px;border-radius:4px;background:var(--maroon);color:#fff;font-size:12px;font-weight:700;transition:background .15s}
+.btn-apply:hover{background:var(--maroon-h)}
+
+/* WHY */
+.why{background:var(--cream2);border-top:1px solid var(--edge);padding:72px 40px}
+.why-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 2fr;gap:60px;align-items:start}
+.why-left h2{font-family:'Libre Baskerville',serif;font-size:36px;font-weight:700;line-height:1.2;margin-bottom:12px}
+.why-left h2 em{color:var(--maroon);font-style:italic}
+.why-left p{font-size:14px;color:var(--muted);line-height:1.65}
+.why-right{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.why-item{background:#fff;border:1px solid var(--edge);border-radius:8px;padding:24px}
+.why-item-num{font-family:'Libre Baskerville',serif;font-size:28px;font-weight:700;color:var(--maroon);opacity:.25;margin-bottom:10px}
+.why-item-title{font-size:15px;font-weight:700;margin-bottom:6px}
+.why-item-text{font-size:13px;color:var(--muted);line-height:1.55}
+
+/* CONTACT */
+.contact{background:var(--maroon);padding:72px 40px}
+.contact-inner{max-width:900px;margin:0 auto;text-align:center}
+.contact-inner h2{font-family:'Libre Baskerville',serif;font-size:44px;font-weight:700;color:#fff;margin-bottom:12px}
+.contact-inner h2 em{font-style:italic;opacity:.75}
+.contact-inner p{font-size:15px;color:rgba(255,255,255,.6);margin-bottom:36px;line-height:1.6}
+.contact-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+.cta-wa{padding:15px 36px;border-radius:4px;background:#25d366;color:#fff;font-size:15px;font-weight:700;display:inline-block;transition:all .15s}
+.cta-wa:hover{background:#1fb855}
+.cta-call{padding:15px 36px;border-radius:4px;border:2px solid rgba(255,255,255,.2);color:#fff;font-size:15px;font-weight:700;display:inline-block;transition:all .15s}
+.cta-call:hover{border-color:rgba(255,255,255,.5)}
+.contact-info{display:flex;gap:0;justify-content:center;flex-wrap:wrap;background:rgba(255,255,255,.07);border-radius:8px;overflow:hidden}
+.ci-item{padding:20px 28px;border-right:1px solid rgba(255,255,255,.08);text-align:center}
+.ci-item:last-child{border-right:none}
+.ci-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:600;margin-bottom:6px}
+.ci-value{font-size:14px;font-weight:600;color:#fff}
+
+/* FOOTER */
+footer{background:#1e0808;padding:24px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-brand{font-family:'Libre Baskerville',serif;font-size:18px;font-weight:700;color:rgba(255,255,255,.7)}
+footer span{font-size:12px;color:rgba(255,255,255,.3)}
+footer a{color:rgba(255,180,100,.8)}
+
+@media(max-width:768px){.hero-inner,.why-inner{grid-template-columns:1fr}.why-right{grid-template-columns:1fr}h1{font-size:36px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-name">Summit Institute</div>
+    <div class="nav-sub">Technical &amp; Vocational Training</div>
+  </div>
+  <div class="nav-links">
+    <a href="#courses">Courses</a>
+    <a href="#contact">Apply</a>
+  </div>
+  <a href="https://wa.me/254712345678?text=Hi%20Summit%20Institute%2C%20I%20want%20to%20apply" class="nav-apply">Apply Now</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div style="padding-bottom:64px">
+      <div class="hero-crest"><svg viewBox="0 0 24 24"><path d="M12 3L2 8l10 5 10-5-10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 17l10 5 10-5"/></svg></div>
+      <div class="hero-eyebrow">Est. 2008 · Nairobi CBD</div>
+      <h1>Skills that<br>get you <em>hired.</em></h1>
+      <p class="hero-sub">Government-certified courses in ICT, business, catering, hairdressing, and more. Affordable fees, experienced tutors, job-ready graduates.</p>
+      <div class="hero-btns">
+        <a href="https://wa.me/254712345678?text=Hi%20Summit%20Institute%2C%20I%20want%20to%20enroll" class="btn-maroon">Enroll on WhatsApp</a>
+        <a href="tel:0712345678" class="btn-outline">Call for enquiries</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stats-card">
+        <div class="hsc-title">By the numbers</div>
+        <div class="hsc-grid">
+          <div class="hsc-item"><div class="n">3,500+</div><div class="l">Graduates</div></div>
+          <div class="hsc-item"><div class="n">18</div><div class="l">Courses</div></div>
+          <div class="hsc-item"><div class="n">15yr</div><div class="l">Experience</div></div>
+          <div class="hsc-item"><div class="n">KNEC</div><div class="l">Certified</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trust">
+  <div class="trust-scroll">
+    <div class="trust-item"><strong>KNEC</strong> Certified Courses</div>
+    <div class="trust-item"><strong>Government</strong> Accredited</div>
+    <div class="trust-item"><strong>Affordable</strong> Fees · Pay in Instalments</div>
+    <div class="trust-item"><strong>M-Pesa</strong> Fee Payment</div>
+    <div class="trust-item"><strong>Job Placement</strong> Support</div>
+    <div class="trust-item"><strong>Evening</strong> Classes Available</div>
+    <div class="trust-item"><strong>KNEC</strong> Certified Courses</div>
+    <div class="trust-item"><strong>Government</strong> Accredited</div>
+    <div class="trust-item"><strong>Affordable</strong> Fees · Pay in Instalments</div>
+    <div class="trust-item"><strong>M-Pesa</strong> Fee Payment</div>
+    <div class="trust-item"><strong>Job Placement</strong> Support</div>
+    <div class="trust-item"><strong>Evening</strong> Classes Available</div>
+  </div>
+</div>
+
+<section id="courses" class="courses">
+  <div class="section-header">
+    <h2>Our <em>courses</em></h2>
+    <a href="https://wa.me/254712345678?text=Hi%20Summit%2C%20please%20send%20me%20the%20full%20course%20list" class="view-all">View all →</a>
+  </div>
+  <div class="filter-bar">
+    <div class="filter active">All</div>
+    <div class="filter">ICT</div>
+    <div class="filter">Business</div>
+    <div class="filter">Hospitality</div>
+    <div class="filter">Beauty</div>
+    <div class="filter">Technical</div>
+  </div>
+  <div class="course-grid">
+    <div class="course-card">
+      <div class="course-bar"></div>
+      <div class="course-body">
+        <div class="course-dept">ICT</div>
+        <div class="course-name">Computer Packages &amp; Office Applications</div>
+        <p class="course-desc">MS Word, Excel, PowerPoint, email, internet. The essential computer skills every employer expects.</p>
+        <div class="course-meta">
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 2"/></svg>3 months</div>
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><path d="M2 7l3 3 7-7"/></svg>Certificate</div>
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><path d="M1 7h12M7 1v12"/></svg>Day &amp; evening</div>
+        </div>
+        <div class="course-footer">
+          <div><div class="course-fee">KES 8,500</div><div class="course-fee-label">full course</div></div>
+          <button class="btn-apply" onclick="window.open('https://wa.me/254712345678?text=Hi%20Summit%2C%20I%20want%20to%20enroll%20for%20Computer%20Packages')">Apply →</button>
+        </div>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="course-bar"></div>
+      <div class="course-body">
+        <div class="course-dept">Business</div>
+        <div class="course-name">Accounting &amp; Bookkeeping</div>
+        <p class="course-desc">Double-entry bookkeeping, payroll, VAT, and QuickBooks. Ideal for small business owners and aspiring accountants.</p>
+        <div class="course-meta">
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 2"/></svg>6 months</div>
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><path d="M2 7l3 3 7-7"/></svg>KNEC Cert.</div>
+        </div>
+        <div class="course-footer">
+          <div><div class="course-fee">KES 15,000</div><div class="course-fee-label">full course</div></div>
+          <button class="btn-apply" onclick="window.open('https://wa.me/254712345678?text=Hi%20Summit%2C%20I%20want%20to%20enroll%20for%20Accounting')">Apply →</button>
+        </div>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="course-bar"></div>
+      <div class="course-body">
+        <div class="course-dept">Hospitality</div>
+        <div class="course-name">Catering &amp; Food Production</div>
+        <p class="course-desc">Professional cooking, food hygiene, menu planning. Graduate ready for hotel, restaurant or your own catering business.</p>
+        <div class="course-meta">
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 2"/></svg>6 months</div>
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><path d="M2 7l3 3 7-7"/></svg>KNEC Cert.</div>
+        </div>
+        <div class="course-footer">
+          <div><div class="course-fee">KES 12,000</div><div class="course-fee-label">full course</div></div>
+          <button class="btn-apply" onclick="window.open('https://wa.me/254712345678?text=Hi%20Summit%2C%20I%20want%20to%20enroll%20for%20Catering')">Apply →</button>
+        </div>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="course-bar"></div>
+      <div class="course-body">
+        <div class="course-dept">Beauty</div>
+        <div class="course-name">Hairdressing &amp; Beauty Therapy</div>
+        <p class="course-desc">Hair cutting, styling, braiding, colouring, skincare and makeup. Open your own salon or work in leading parlours.</p>
+        <div class="course-meta">
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 2"/></svg>6 months</div>
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><path d="M2 7l3 3 7-7"/></svg>Certificate</div>
+        </div>
+        <div class="course-footer">
+          <div><div class="course-fee">KES 14,000</div><div class="course-fee-label">full course</div></div>
+          <button class="btn-apply" onclick="window.open('https://wa.me/254712345678?text=Hi%20Summit%2C%20I%20want%20to%20enroll%20for%20Hairdressing')">Apply →</button>
+        </div>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="course-bar"></div>
+      <div class="course-body">
+        <div class="course-dept">ICT</div>
+        <div class="course-name">Graphic Design</div>
+        <p class="course-desc">Photoshop, Illustrator, Canva, logo design, printing prep. Build a freelance career in design.</p>
+        <div class="course-meta">
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 2"/></svg>4 months</div>
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><path d="M2 7l3 3 7-7"/></svg>Certificate</div>
+        </div>
+        <div class="course-footer">
+          <div><div class="course-fee">KES 10,000</div><div class="course-fee-label">full course</div></div>
+          <button class="btn-apply" onclick="window.open('https://wa.me/254712345678?text=Hi%20Summit%2C%20I%20want%20to%20enroll%20for%20Graphic%20Design')">Apply →</button>
+        </div>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="course-bar"></div>
+      <div class="course-body">
+        <div class="course-dept">Business</div>
+        <div class="course-name">Sales &amp; Marketing</div>
+        <p class="course-desc">Customer service, sales techniques, digital marketing basics. Ideal for anyone in business or retail.</p>
+        <div class="course-meta">
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 2"/></svg>3 months</div>
+          <div class="course-meta-item"><svg viewBox="0 0 14 14"><path d="M2 7l3 3 7-7"/></svg>Certificate</div>
+        </div>
+        <div class="course-footer">
+          <div><div class="course-fee">KES 9,000</div><div class="course-fee-label">full course</div></div>
+          <button class="btn-apply" onclick="window.open('https://wa.me/254712345678?text=Hi%20Summit%2C%20I%20want%20to%20enroll%20for%20Sales%20and%20Marketing')">Apply →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="why">
+  <div class="why-inner">
+    <div class="why-left">
+      <h2>Why <em>Summit?</em></h2>
+      <p>We've been training job-ready graduates in Nairobi since 2008. Our reputation is built on one thing: our students get hired.</p>
+    </div>
+    <div class="why-right">
+      <div class="why-item"><div class="why-item-num">01</div><div class="why-item-title">Government certified</div><div class="why-item-text">All courses are KNEC-certified and government-accredited. Your certificate is recognised everywhere in Kenya.</div></div>
+      <div class="why-item"><div class="why-item-num">02</div><div class="why-item-title">Affordable & flexible</div><div class="why-item-text">Pay fees in instalments via M-Pesa. Day and evening classes — we fit around your schedule.</div></div>
+      <div class="why-item"><div class="why-item-num">03</div><div class="why-item-title">Experienced tutors</div><div class="why-item-text">All tutors are industry practitioners with 5+ years of real-world experience in their field.</div></div>
+      <div class="why-item"><div class="why-item-num">04</div><div class="why-item-title">Job placement support</div><div class="why-item-text">Our network of partner employers means we actively help graduates find jobs on completion.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="contact-inner">
+    <h2>Ready to <em>enroll?</em></h2>
+    <p>WhatsApp us with your preferred course and we'll confirm intake dates, fees and next steps within minutes.</p>
+    <div class="contact-btns">
+      <a href="https://wa.me/254712345678?text=Hi%20Summit%20Institute%2C%20I%20want%20to%20enroll" class="cta-wa">Enroll on WhatsApp</a>
+      <a href="tel:0712345678" class="cta-call">Call 0712 345 678</a>
+    </div>
+    <div class="contact-info">
+      <div class="ci-item"><div class="ci-label">Location</div><div class="ci-value">Anniversary Towers, CBD</div></div>
+      <div class="ci-item"><div class="ci-label">Hours</div><div class="ci-value">Mon – Sat, 8am – 6pm</div></div>
+      <div class="ci-item"><div class="ci-label">Email</div><div class="ci-value">summit@email.com</div></div>
+      <div class="ci-item"><div class="ci-label">Payment</div><div class="ci-value">M-Pesa accepted</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">Summit Institute</div>
+  <span>Anniversary Towers, Nairobi CBD · 0712 345 678</span>
+  <span>© 2026 Summit Institute. Powered by <a href="#">SiteSawa</a></span>
+</footer>
+
+<script>
+document.querySelectorAll('.filter').forEach(function(f){
+  f.addEventListener('click',function(){
+    document.querySelectorAll('.filter').forEach(function(x){x.classList.remove('active')});
+    f.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

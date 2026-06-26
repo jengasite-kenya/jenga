@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Afya Point Chemist — Your Trusted Neighbourhood Pharmacy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--green:#008a5e;--green-h:#007a52;--green-light:rgba(0,138,94,.08);--green-mid:rgba(0,138,94,.15);--white:#ffffff;--snow:#f7faf9;--fog:#f0f5f3;--edge:#d9e8e3;--text:#0d1f1a;--body:#2a4038;--muted:#5a7a70;--dim:#94b0a6}
+html{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--white);color:var(--text);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:none}
+
+/* NAV */
+nav{background:#fff;border-bottom:1px solid var(--edge);height:64px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.nav-left{display:flex;align-items:center;gap:12px}
+.nav-cross{width:36px;height:36px;border-radius:8px;background:var(--green);display:flex;align-items:center;justify-content:center}
+.nav-cross svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round}
+.nav-info{display:flex;flex-direction:column}
+.nav-name{font-weight:800;font-size:15px;letter-spacing:-.02em;line-height:1.2}
+.nav-tagline{font-size:11px;color:var(--muted);font-weight:500}
+.nav-badge{padding:5px 12px;border-radius:99px;background:var(--green-light);color:var(--green);font-size:12px;font-weight:700;border:1px solid rgba(0,138,94,.2)}
+.nav-badge::before{content:'● ';font-size:8px}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-phone{font-size:14px;font-weight:700;color:var(--text)}
+.nav-wa{padding:8px 18px;border-radius:99px;background:var(--green);color:#fff;font-size:13px;font-weight:700;transition:background .15s}
+.nav-wa:hover{background:var(--green-h)}
+
+/* HERO */
+.hero{background:var(--snow);padding:72px 32px;text-align:center;position:relative;overflow:hidden}
+.hero-ring1{position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:700px;height:700px;border-radius:50%;border:1px solid rgba(0,138,94,.08)}
+.hero-ring2{position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:500px;height:500px;border-radius:50%;border:1px solid rgba(0,138,94,.1)}
+.hero-inner{position:relative;max-width:680px;margin:0 auto}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:99px;background:var(--green-mid);color:var(--green);font-size:12px;font-weight:700;margin-bottom:20px;border:1px solid rgba(0,138,94,.2)}
+.hero-pill svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5}
+h1{font-size:52px;font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--text);margin-bottom:16px}
+h1 em{color:var(--green);font-style:normal}
+.hero-sub{font-size:16px;line-height:1.65;color:var(--muted);margin-bottom:36px;max-width:520px;margin-left:auto;margin-right:auto}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.btn-green{padding:13px 28px;border-radius:99px;background:var(--green);color:#fff;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(0,138,94,.25);transition:all .15s}
+.btn-green:hover{background:var(--green-h);transform:translateY(-2px)}
+.btn-call{padding:13px 28px;border-radius:99px;border:2px solid var(--edge);background:#fff;color:var(--text);font-size:14px;font-weight:700;transition:all .15s}
+.btn-call:hover{border-color:var(--green)}
+
+/* TRUST STRIP */
+.trust{display:flex;justify-content:center;gap:0;background:#fff;border:1px solid var(--edge);border-radius:16px;max-width:720px;margin:0 auto;overflow:hidden}
+.trust-item{flex:1;padding:20px 16px;text-align:center;border-right:1px solid var(--edge)}
+.trust-item:last-child{border-right:none}
+.trust-icon{width:36px;height:36px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.trust-icon svg{width:18px;height:18px;fill:none;stroke:var(--green);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.trust-label{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.trust-sub{font-size:11px;color:var(--dim)}
+
+/* CATEGORIES */
+.categories{padding:64px 32px;max-width:1100px;margin:0 auto}
+.sec-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:10px}
+.sec-title{font-size:32px;font-weight:800;letter-spacing:-.02em;margin-bottom:32px}
+.cat-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
+.cat-scroll::-webkit-scrollbar{display:none}
+.cat-chip{padding:10px 20px;border-radius:99px;border:2px solid var(--edge);background:#fff;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer;transition:all .15s;flex-shrink:0}
+.cat-chip.active,.cat-chip:hover{background:var(--green);border-color:var(--green);color:#fff}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:24px}
+.prod-card{background:var(--snow);border:1px solid var(--edge);border-radius:16px;padding:24px 20px;transition:all .2s;cursor:pointer}
+.prod-card:hover{background:#fff;box-shadow:0 8px 32px rgba(0,138,94,.1);transform:translateY(-3px);border-color:rgba(0,138,94,.25)}
+.prod-icon{width:48px;height:48px;border-radius:12px;background:var(--green-light);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.prod-icon svg{width:24px;height:24px;fill:none;stroke:var(--green);stroke-width:1.8;stroke-linecap:round}
+.prod-name{font-weight:700;font-size:14px;margin-bottom:4px}
+.prod-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.prod-price{font-size:14px;font-weight:700;color:var(--green);margin-bottom:14px}
+.prod-wa{width:100%;padding:9px;border-radius:99px;background:var(--green-mid);border:none;color:var(--green);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.prod-wa:hover{background:var(--green);color:#fff}
+
+/* NOTE */
+.note{background:var(--fog);border-top:1px solid var(--edge);padding:16px 32px;text-align:center;font-size:13px;color:var(--muted)}
+.note strong{color:var(--green)}
+
+/* ABOUT */
+.about{padding:72px 32px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.about-text .sec-title{margin-bottom:16px}
+.about-text p{font-size:15px;line-height:1.7;color:var(--body);margin-bottom:24px}
+.about-detail{display:flex;align-items:flex-start;gap:12px;font-size:14px;margin-bottom:14px}
+.about-detail svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;fill:none;stroke:var(--green);stroke-width:2;stroke-linecap:round}
+.about-card{background:var(--green);color:#fff;border-radius:20px;padding:40px;position:relative;overflow:hidden}
+.about-card::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.06)}
+.about-card-title{font-size:14px;font-weight:700;opacity:.7;margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase}
+.about-big{font-size:48px;font-weight:800;line-height:1.1;margin-bottom:20px}
+.about-card p{font-size:14px;line-height:1.6;opacity:.8}
+.about-card .lic{display:inline-block;margin-top:20px;padding:8px 16px;border-radius:99px;background:rgba(255,255,255,.15);font-size:12px;font-weight:700}
+
+/* CONTACT */
+.contact{background:var(--snow);padding:72px 32px;border-top:1px solid var(--edge)}
+.contact-inner{max-width:800px;margin:0 auto;text-align:center}
+.contact-inner .sec-title{margin-bottom:8px}
+.contact-inner p{font-size:15px;color:var(--muted);margin-bottom:36px}
+.cta-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+.big-wa{padding:16px 36px;border-radius:99px;background:#25d366;color:#fff;font-size:16px;font-weight:700;box-shadow:0 6px 20px rgba(37,211,102,.25);transition:all .15s;display:inline-block}
+.big-wa:hover{background:#1fb855;transform:translateY(-2px)}
+.big-call{padding:16px 36px;border-radius:99px;border:2px solid var(--edge);background:#fff;color:var(--text);font-size:16px;font-weight:700;display:inline-block;transition:all .15s}
+.big-call:hover{border-color:var(--green)}
+.info-pills{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.info-pill{padding:10px 18px;border-radius:99px;border:1px solid var(--edge);background:#fff;font-size:13px;color:var(--body);font-weight:500;display:flex;align-items:center;gap:8px}
+.info-pill svg{width:14px;height:14px;fill:none;stroke:var(--green);stroke-width:2;stroke-linecap:round}
+
+/* FOOTER */
+footer{background:var(--text);color:rgba(255,255,255,.5);padding:24px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px}
+.footer-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:15px}
+footer a{color:rgba(0,220,120,.8)}
+
+@media(max-width:768px){.about,.trust{grid-template-columns:1fr}.trust{flex-direction:column}.h1{font-size:36px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <div class="nav-cross"><svg viewBox="0 0 18 18"><path d="M9 2v14M2 9h14"/></svg></div>
+    <div class="nav-info">
+      <div class="nav-name">Afya Point Chemist</div>
+      <div class="nav-tagline">Licensed Pharmacy</div>
+    </div>
+  </div>
+  <div class="nav-badge">Open now</div>
+  <div class="nav-right">
+    <div class="nav-phone">0712 345 678</div>
+    <a href="https://wa.me/254712345678?text=Hi%20Afya%20Point%2C%20I%20need%20medicine" class="nav-wa">WhatsApp Us</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-ring1"></div>
+  <div class="hero-ring2"></div>
+  <div class="hero-inner">
+    <div class="hero-pill"><svg viewBox="0 0 12 12"><path d="M6 1v10M1 6h10"/></svg>Licensed pharmacy</div>
+    <h1>Your trusted<br>neighbourhood<br><em>chemist</em></h1>
+    <p class="hero-sub">Prescription medicines, over-the-counter drugs, baby care, first aid, and wellness products — all in one licensed, trusted pharmacy near you.</p>
+    <div class="hero-btns">
+      <a href="https://wa.me/254712345678?text=Hi%20Afya%20Point%2C%20I%20need%20medicine%20or%20advice" class="btn-green">WhatsApp Us</a>
+      <a href="tel:0712345678" class="btn-call">Call 0712 345 678</a>
+    </div>
+    <div class="trust">
+      <div class="trust-item">
+        <div class="trust-icon"><svg viewBox="0 0 20 20"><path d="M10 2l2.5 5H18l-4.5 4 2 5.5L10 14l-5.5 2.5 2-5.5L2 7h5.5z"/></svg></div>
+        <div class="trust-label">Licensed pharmacist</div>
+        <div class="trust-sub">On-site always</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><svg viewBox="0 0 20 20"><path d="M4 10l4 4 8-8"/></svg></div>
+        <div class="trust-label">Genuine medicines</div>
+        <div class="trust-sub">KEBS certified</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg></div>
+        <div class="trust-label">Open 7 days</div>
+        <div class="trust-sub">8am – 9pm</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><svg viewBox="0 0 20 20"><path d="M10 3v4M10 13v4M3 10h4M13 10h4"/></svg></div>
+        <div class="trust-label">Free BP check</div>
+        <div class="trust-sub">Walk in anytime</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="categories">
+  <div class="sec-eyebrow">Products &amp; services</div>
+  <div class="sec-title">What we stock</div>
+  <div class="cat-scroll">
+    <div class="cat-chip active">All</div>
+    <div class="cat-chip">Prescription</div>
+    <div class="cat-chip">OTC Medicines</div>
+    <div class="cat-chip">Baby & Mother</div>
+    <div class="cat-chip">Wellness</div>
+    <div class="cat-chip">First Aid</div>
+    <div class="cat-chip">Services</div>
+  </div>
+  <div class="prod-grid">
+    <div class="prod-card">
+      <div class="prod-icon"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="3"/><path d="M7 8h10"/></svg></div>
+      <div class="prod-name">Prescription Medicines</div>
+      <div class="prod-desc">Bring your doctor's prescription — we stock a wide range of prescribed medications.</div>
+      <div class="prod-price">As prescribed</div>
+      <button class="prod-wa" onclick="window.open('https://wa.me/254712345678?text=Hi%20Afya%20Point%2C%20I%20need%20prescription%20medicine')">Ask Pharmacist →</button>
+    </div>
+    <div class="prod-card">
+      <div class="prod-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 6 5 6 8v2H4v12h16V10h-2V8c0-3-2-6-6-6z"/></svg></div>
+      <div class="prod-name">Painkillers & Fever</div>
+      <div class="prod-desc">Panadol, Ibuprofen, Aspirin, Diclofenac — full range for pain and fever relief.</div>
+      <div class="prod-price">From KES 20</div>
+      <button class="prod-wa" onclick="window.open('https://wa.me/254712345678?text=Hi%20Afya%20Point%2C%20I%20need%20painkillers')">Order on WhatsApp →</button>
+    </div>
+    <div class="prod-card">
+      <div class="prod-icon"><svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9c0 3 1.5 5.6 3.8 7.2L8 22h8l1.2-3.8A9 9 0 0 0 21 11 9 9 0 0 0 12 2z"/></svg></div>
+      <div class="prod-name">Baby Care</div>
+      <div class="prod-desc">Diapers, baby lotion, formula, teething gel, gripe water, vitamin drops.</div>
+      <div class="prod-price">From KES 180</div>
+      <button class="prod-wa" onclick="window.open('https://wa.me/254712345678?text=Hi%20Afya%20Point%2C%20I%20need%20baby%20care%20products')">Order on WhatsApp →</button>
+    </div>
+    <div class="prod-card">
+      <div class="prod-icon"><svg viewBox="0 0 24 24"><path d="M4.5 6.5L8 10m7.5-3.5L12 10m4.5 3.5L13 10M4.5 17.5L8 14"/><path d="M12 2v20"/></svg></div>
+      <div class="prod-name">First Aid</div>
+      <div class="prod-desc">Bandages, antiseptics, gloves, syringes, thermometers — full first aid supplies.</div>
+      <div class="prod-price">From KES 50</div>
+      <button class="prod-wa" onclick="window.open('https://wa.me/254712345678?text=Hi%20Afya%20Point%2C%20I%20need%20first%20aid%20supplies')">Order on WhatsApp →</button>
+    </div>
+    <div class="prod-card">
+      <div class="prod-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6 2 2 6 2 12s4 10 10 10 10-4 10-10S18 2 12 2z"/><path d="M12 8v4l3 3"/></svg></div>
+      <div class="prod-name">Free BP Check</div>
+      <div class="prod-desc">Walk in any time for a free blood pressure check — no appointment needed.</div>
+      <div class="prod-price">Free</div>
+      <button class="prod-wa" onclick="window.open('https://wa.me/254712345678?text=Hi%20Afya%20Point%2C%20I%20want%20a%20BP%20check')">Book on WhatsApp →</button>
+    </div>
+    <div class="prod-card">
+      <div class="prod-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5 2 7-6.5-4-6.5 4 2-7L2 9h7z"/></svg></div>
+      <div class="prod-name">Vitamins & Wellness</div>
+      <div class="prod-desc">Multivitamins, Omega-3, Zinc, Vitamin C, Vitamin D, and supplements.</div>
+      <div class="prod-price">From KES 350</div>
+      <button class="prod-wa" onclick="window.open('https://wa.me/254712345678?text=Hi%20Afya%20Point%2C%20I%20need%20vitamins')">Order on WhatsApp →</button>
+    </div>
+  </div>
+</section>
+
+<div class="note"><strong>Important:</strong> Always consult a licensed pharmacist before taking any medication. Our pharmacist is available in-store 7 days a week.</div>
+
+<section class="about" style="padding:72px 32px;max-width:1100px;margin:0 auto">
+  <div class="about-text">
+    <div class="sec-eyebrow">About us</div>
+    <div class="sec-title">Serving this community since 2010</div>
+    <p>Afya Point has been the go-to pharmacy for families in this neighbourhood for over a decade. We're a fully licensed pharmacy with a qualified pharmacist on site every day.</p>
+    <p>We stock genuine, KEBS-certified medicines — and we're proud that our customers keep coming back because they trust us.</p>
+    <div class="about-detail"><svg viewBox="0 0 16 16"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.3 4 8 4 8s4-4.7 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>Ground Floor, Odeon Cinema Building, Nairobi CBD</div>
+    <div class="about-detail"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>Open 7 days — Monday to Sunday, 8am to 9pm</div>
+    <div class="about-detail"><svg viewBox="0 0 16 16"><path d="M3 3h2l1 3-1.5 1.5c1 2 2.5 3.5 4.5 4.5L10.5 10l3 1v2c0 1.1-1 2-2 1.5C5 12 2 6 2 5c-.5-1 .5-2 1-2z"/></svg>0712 345 678</div>
+  </div>
+  <div class="about-card">
+    <div class="about-card-title">Our promise</div>
+    <div class="about-big">Genuine.<br>Licensed.<br>Trusted.</div>
+    <p>Every medicine we sell is sourced directly from licensed distributors. We will never compromise your health with counterfeits.</p>
+    <span class="lic">✓ Licensed by PPB Kenya</span>
+  </div>
+</section>
+
+<section class="contact">
+  <div class="contact-inner">
+    <div class="sec-eyebrow" style="text-align:center">Contact us</div>
+    <div class="sec-title">Visit us or WhatsApp first</div>
+    <p>WhatsApp us with your prescription or question — we'll confirm if we have it in stock before you travel.</p>
+    <div class="cta-row">
+      <a href="https://wa.me/254712345678?text=Hi%20Afya%20Point%2C%20I%20need%20medicine" class="big-wa">WhatsApp Us</a>
+      <a href="tel:0712345678" class="big-call">Call 0712 345 678</a>
+    </div>
+    <div class="info-pills">
+      <div class="info-pill"><svg viewBox="0 0 16 16"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.3 4 8 4 8s4-4.7 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>Odeon Building, Nairobi CBD</div>
+      <div class="info-pill"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>Open daily 8am – 9pm</div>
+      <div class="info-pill"><svg viewBox="0 0 16 16"><path d="M2 4l6 5 6-5M2 4h12v9H2z"/></svg>afyapoint@email.com</div>
+      <div class="info-pill"><svg viewBox="0 0 16 16"><path d="M3 3h2l1 3-1.5 1.5c1 2 2.5 3.5 4.5 4.5L10.5 10l3 1v2c0 1.1-1 2-2 1.5C5 12 2 6 2 5c-.5-1 .5-2 1-2z"/></svg>M-Pesa accepted</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">
+    <div class="nav-cross" style="width:28px;height:28px;border-radius:6px"><svg style="width:14px;height:14px" viewBox="0 0 18 18"><path d="M9 2v14M2 9h14"/></svg></div>
+    Afya Point Chemist
+  </div>
+  <span>Odeon Building, Nairobi CBD · 0712 345 678</span>
+  <span>© 2026 Afya Point. Powered by <a href="#">SiteSawa</a></span>
+</footer>
+
+<script>
+document.querySelectorAll('.cat-chip').forEach(function(c){
+  c.addEventListener('click',function(){
+    document.querySelectorAll('.cat-chip').forEach(function(x){x.classList.remove('active')});
+    c.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
