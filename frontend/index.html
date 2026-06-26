@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="SiteSawa">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="/site.webmanifest">
-  <meta name="theme-color" content="#0a0a0a">
+  <meta name="theme-color" content="#1c1c1e">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SiteSawa — Get Your Business Online Today</title>
 <meta name="description" content="Professional websites for Kenyan businesses. 10 designs per category. Live in minutes. From KES 7,000. M-Pesa checkout.">
@@ -22,7 +22,7 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --black:#0a0a0a;--white:#f5f5f0;--grey:#111;--border:#222;
+  --black:#1c1c1e;--white:#f5f5f0;--grey:#26262a;--border:#34343a;
   --lime:#bef264;--lime2:#a3d45a;
   --ff:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'JetBrains Mono',monospace;
 }
@@ -117,7 +117,7 @@ nav{
 .hero-pill::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--lime)}
 
 /* LEAD CAPTURE */
-.leadcap{background:linear-gradient(135deg,#11160a,#0a0a0a);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:64px 24px}
+.leadcap{background:linear-gradient(135deg,#23271b,#1c1c1e);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:64px 24px}
 .leadcap-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}
 .leadcap-eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--fm);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--lime);margin-bottom:18px}
 .leadcap-eyebrow::before{content:'';width:24px;height:1px;background:var(--lime)}
@@ -130,7 +130,7 @@ nav{
 .leadcap-formwrap{background:#141414;border:1px solid var(--border);border-radius:20px;padding:28px}
 .leadcap-form{display:flex;flex-direction:column;gap:14px}
 .lf-field label{display:block;font-size:13px;font-weight:600;color:#999;margin-bottom:7px}
-.lf-field input{width:100%;padding:15px 16px;border-radius:11px;border:1px solid #2a2a2a;background:#0d0d0d;color:var(--white);font-family:inherit;font-size:16px;outline:none;transition:border-color .15s}
+.lf-field input{width:100%;padding:15px 16px;border-radius:11px;border:1px solid #3a3a40;background:#1c1c1e;color:var(--white);font-family:inherit;font-size:16px;outline:none;transition:border-color .15s}
 .lf-field input::placeholder{color:#555}
 .lf-field input:focus{border-color:var(--lime)}
 .lf-submit{margin-top:4px;border:none;cursor:pointer;background:var(--lime);color:var(--black);font-weight:800;font-size:17px;padding:16px;border-radius:11px;transition:transform .12s,background .15s}
@@ -150,7 +150,7 @@ nav{
 /* hero right — template showcase */
 .hero-right{
   display:flex;flex-direction:column;justify-content:center;align-items:center;
-  padding:40px 32px;gap:12px;background:#0d0d0d;position:relative;overflow:hidden;
+  padding:40px 32px;gap:12px;background:#222226;position:relative;overflow:hidden;
 }
 .hero-preview-label{font-family:var(--fm);font-size:10px;letter-spacing:.15em;color:#444;text-transform:uppercase;margin-bottom:4px;align-self:flex-start;padding-left:4px}
 .hero-screens{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
@@ -176,7 +176,7 @@ nav{
 }
 
 /* ─── TICKER ─── */
-.ticker{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:#0d0d0d;overflow:hidden;padding:11px 0}
+.ticker{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:#222226;overflow:hidden;padding:11px 0}
 .ticker-track{display:flex;width:max-content;animation:tick 30s linear infinite}
 @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .ticker-item{font-family:var(--fm);font-size:11px;color:#444;padding:0 28px;white-space:nowrap;display:flex;align-items:center;gap:12px}
@@ -202,7 +202,7 @@ nav{
 /* template grid */
 .template-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
 .t-card{
-  background:#0f0f0f;border:1px solid var(--border);border-radius:12px;
+  background:#252529;border:1px solid var(--border);border-radius:12px;
   overflow:hidden;cursor:pointer;transition:all .25s;position:relative;
 }
 .t-card:hover{border-color:#444;transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.5)}
@@ -254,7 +254,7 @@ nav{
 .preview-frame-wrap{flex:1;position:relative;overflow:hidden;background:#0a0a0a}
 .preview-iframe{width:100%;height:100%;border:none}
 /* device toggle */
-.device-btns{display:flex;gap:4px;background:#0d0d0d;border:1px solid var(--border);border-radius:6px;padding:3px}
+.device-btns{display:flex;gap:4px;background:#222226;border:1px solid var(--border);border-radius:6px;padding:3px}
 .dev-btn{padding:5px 10px;border-radius:4px;background:transparent;border:none;color:#555;cursor:pointer;font-size:12px;transition:all .15s}
 .dev-btn.active{background:#222;color:var(--white)}
 .preview-frame-wrap.mobile .preview-iframe{width:375px;height:100%;position:absolute;left:50%;transform:translateX(-50%);border-left:1px solid var(--border);border-right:1px solid var(--border)}
@@ -295,8 +295,8 @@ nav{
 .plans-inner{max-width:1100px;margin:0 auto;padding:0 40px}
 .plans-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:48px}
 .plan{background:var(--black);padding:28px 24px;transition:background .2s;position:relative}
-.plan:hover{background:#0d0d0d}
-.plan.featured{background:#0d0d0d}
+.plan:hover{background:#222226}
+.plan.featured{background:#222226}
 .plan.featured::after{content:'Best value';position:absolute;top:0;right:20px;background:var(--lime);color:var(--black);font-family:var(--fm);font-size:9px;font-weight:700;padding:3px 10px;border-radius:0 0 6px 6px;letter-spacing:.06em}
 .plan-badge{font-family:var(--fm);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:99px;margin-bottom:16px;display:inline-flex}
 .pb-personal{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
@@ -331,7 +331,7 @@ nav{
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
 .field label{font-family:var(--fm);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#555}
 .field input{
-  padding:12px 14px;background:#0d0d0d;border:1px solid #222;
+  padding:12px 14px;background:#222226;border:1px solid #222;
   border-radius:8px;color:var(--white);font-size:14px;font-family:var(--fb);transition:border .15s;
 }
 .field input::placeholder{color:#333}
@@ -349,7 +349,7 @@ nav{
 @keyframes pspin{to{transform:rotate(360deg)}}
 .checkout-note{text-align:center;font-size:11px;color:#444;margin-top:10px}
 /* step boxes */
-.sbox{background:#0d0d0d;border:1px solid #222;border-radius:10px;padding:28px;display:none}
+.sbox{background:#222226;border:1px solid #222;border-radius:10px;padding:28px;display:none}
 .sbox.on{display:block}
 .sbox-spin{width:40px;height:40px;border:2px solid #222;border-top-color:var(--lime);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -517,7 +517,7 @@ async function ttIdentify(email, phoneE164){
     </h1>
     <p class="hero-sub"><strong>80% of Kenyan businesses have no website.</strong> SiteSawa gives you a professional site in minutes — dozens of professional designs, live preview before you buy, M-Pesa checkout.</p>
     <div class="hero-btns">
-      <a href="#getstarted" class="btn-big btn-big-lime">Get my website →</a>
+      <a href="#templates" class="btn-big btn-big-lime">Get my website →</a>
       <a href="#templates" class="btn-big btn-big-ghost">Browse designs</a>
     </div>
     <div class="hero-pills">
@@ -550,42 +550,6 @@ async function ttIdentify(email, phoneE164){
         <span class="hero-screen-label">Personal · Dark</span>
         <span class="hero-screen-badge">Personal</span>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- LEAD CAPTURE -->
-<section class="leadcap" id="getstarted">
-  <div class="leadcap-inner">
-    <div class="leadcap-copy">
-      <div class="leadcap-eyebrow">Two easy ways to get online</div>
-      <h2 class="leadcap-h">Build it yourself,<br>or <span>we build it for you.</span></h2>
-      <p class="leadcap-sub">Prefer to do it yourself? Pick a design and go live in minutes. Want us to build it for you? Contact us on WhatsApp and we'll set it up.</p>
-      <ul class="leadcap-points">
-        <li>A professional website from KES 7,000</li>
-        <li>One payment · no monthly fees · M-Pesa</li>
-        <li>Do it yourself, or we build it for you</li>
-      </ul>
-    </div>
-    <div class="leadcap-formwrap">
-      <form id="leadForm" class="leadcap-form" novalidate>
-        <div class="lf-field">
-          <label for="lf-name">Your name</label>
-          <input id="lf-name" name="name" type="text" placeholder="e.g. Mary Wanjiru" required>
-        </div>
-        <div class="lf-field">
-          <label for="lf-phone">Phone number</label>
-          <input id="lf-phone" name="phone" type="tel" inputmode="tel" placeholder="07XX XXX XXX" required>
-        </div>
-        <div class="lf-field">
-          <label for="lf-biz">What's your business?</label>
-          <input id="lf-biz" name="biz" type="text" placeholder="e.g. salon, gas shop, electronics" required>
-        </div>
-        <button type="submit" class="lf-submit lf-wa" aria-label="Contact us on WhatsApp">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.01c-.24.68-1.4 1.3-1.93 1.38-.49.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.8-4.17-4.94-4.36-.15-.19-1.19-1.58-1.19-3.01s.75-2.14 1.02-2.43c.27-.29.58-.36.78-.36.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.59.82 2.03.89 2.18.07.15.12.32.02.51-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.16.27.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.21 1.37.27.14.43.12.59-.07.16-.19.68-.79.86-1.06.18-.27.36-.23.61-.14.25.09 1.6.75 1.87.89.27.14.46.21.53.32.07.12.07.68-.17 1.36z"/></svg>
-        </button>
-        <p class="lf-note" id="lf-note">Want us to build it for you? Send your details and we'll set it up.</p>
-      </form>
     </div>
   </div>
 </section>
@@ -805,7 +769,7 @@ async function ttIdentify(email, phoneE164){
       <div class="sbox-title" style="color:var(--lime)">Check your phone!</div>
       <div class="sbox-sub">M-Pesa prompt sent to <strong id="stkPh" style="color:var(--white)"></strong></div>
       <div class="sbox-info"><div class="sbox-lbl">Amount</div><div class="sbox-val" id="stkAmt"></div></div>
-      <div style="font-size:11px;color:#444;text-align:center">Key sent to <span id="stkEmail" style="color:#666"></span></div>
+      <div style="font-size:11px;color:#444;text-align:center">Key will be shown here and emailed to <span id="stkEmail" style="color:#666"></span> after payment</div>
     </div>
     <!-- MANUAL -->
     <div class="sbox" id="stepManual" style="text-align:center">
@@ -823,10 +787,21 @@ async function ttIdentify(email, phoneE164){
     <!-- SUCCESS -->
     <div class="sbox" id="stepSuccess" style="text-align:center">
       <div style="font-size:52px;margin-bottom:14px">🎉</div>
-      <div class="sbox-title" style="color:var(--lime)">Your website is live!</div>
-      <div class="sbox-sub">Secret key sent to <strong id="sucEmail" style="color:var(--white)"></strong></div>
-      <div class="key-box" id="sucKey">--------</div>
-      <p style="font-size:11px;color:#444;margin-bottom:16px">Save this — it's your password to edit your website</p>
+      <div class="sbox-title" style="color:var(--lime)">Your website is live — free for 7 days!</div>
+      <div class="sbox-sub">No payment needed yet. Explore your dashboard and show your site to customers.</div>
+      <div style="background:#0a1a00;border:1px solid #bef26440;border-radius:10px;padding:16px;margin:16px 0">
+        <div style="font-family:var(--fm);font-size:11px;color:#bef264;letter-spacing:.1em;margin-bottom:8px">⚠️ YOUR SECRET KEY — SAVE THIS NOW</div>
+        <div class="key-box" id="sucKey" style="font-size:2rem;letter-spacing:8px">--------</div>
+        <div style="font-size:12px;color:#888;margin-top:8px">This is your dashboard password. Screenshot it now — also sent to <strong id="sucEmail" style="color:#aaa"></strong></div>
+      </div>
+      <div style="background:#13130f;border:1px solid #34343a;border-radius:10px;padding:16px;margin:16px 0;text-align:left">
+        <div style="font-family:var(--fm);font-size:11px;color:#bef264;letter-spacing:.1em;margin-bottom:8px">🔗 YOUR LINK-IN-BIO — SHARE IT NOW</div>
+        <div style="font-size:13px;color:#aaa;margin-bottom:10px">Paste this one link into your Instagram, TikTok &amp; Facebook bio. Customers tap it to reach you everywhere.</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="text" id="sucBioLink" readonly style="flex:1;min-width:0;font-family:var(--fm);font-size:13px;background:#0a0a0a;border:1px solid #34343a;border-radius:8px;padding:11px 12px;color:#bef264">
+          <button type="button" id="sucCopyBtn" onclick="copySucBio()" style="flex:none;background:#bef264;color:#1a1712;border:none;font-weight:800;padding:11px 16px;border-radius:8px;cursor:pointer">Copy</button>
+        </div>
+      </div>
       <a href="/login.html" class="btn-block">Go to dashboard →</a>
     </div>
     <!-- ERROR -->
@@ -895,6 +870,11 @@ const TEMPLATES = {
     {id:'biz-politician',   name:'Politician',     style:'Bold & civic · Great for campaigns, leaders, causes',            thumb:'https://images.unsplash.com/photo-1555848962-6e79363ec58f?w=500&q=80', file:'/biz-politician.html'},
     {id:'biz-logistics',    name:'Logistics',    style:'Navy & sharp · Great for logistics, delivery, transport',           thumb:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&q=80', file:'/biz-logistics.html'},
     {id:'biz-salon',        name:'Salon',        style:'Elegant rose · Great for salons, beauty, barbers',              thumb:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80', file:'/biz-salon.html'},
+    {id:'biz-phonerepair',  name:'Phone Repair', style:'Techy blue · Great for phone repairs, accessories, gadgets',     thumb:'https://images.unsplash.com/photo-1512054502232-10a0a035d672?w=500&q=80', file:'/biz-phonerepair.html'},
+    {id:'biz-printing',     name:'Printing & Cyber', style:'Bold orange · Great for printing, branding, cyber cafés',    thumb:'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=500&q=80', file:'/biz-printing.html'},
+    {id:'biz-chemist',      name:'Chemist',      style:'Clean clinical · Great for chemists, pharmacies, clinics',       thumb:'https://images.unsplash.com/photo-1576602976047-174e57a47881?w=500&q=80', file:'/biz-chemist.html'},
+    {id:'biz-forex',        name:'Forex Bureau', style:'Navy & gold · Great for forex, money transfer, M-Pesa agents',   thumb:'https://images.unsplash.com/photo-1580519542036-c47de6196ba5?w=500&q=80', file:'/biz-forex.html'},
+    {id:'biz-college',      name:'College',      style:'Academic indigo · Great for colleges, training, institutes',    thumb:'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=500&q=80', file:'/biz-college.html'},
   ],
   ecommerce: [
     {id:'shop-fashion',     name:'Fashion',     style:'Editorial black · Great for fashion, clothing, style',       thumb:'https://images.unsplash.com/photo-1445205170230-053b83016050?w=500&q=80', file:'/shop-fashion.html'},
@@ -903,6 +883,7 @@ const TEMPLATES = {
     {id:'shop-food',        name:'Food & Grocery',        style:'Warm & appetising · Great for food, groceries, delivery',           thumb:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80', file:'/shop-food.html'},
     {id:'shop-furniture',   name:'Furniture',   style:'Natural clay · Great for furniture, décor, interiors',         thumb:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80', file:'/shop-furniture.html'},
     {id:'shop-bookstore',   name:'Bookstore',   style:'Literary green · Great for books, stationery, gifts',           thumb:'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=500&q=80', file:'/shop-bookstore.html'},
+    {id:'shop-retail',      name:'General Retail', style:'Fresh teal · Great for general shops, retail, everyday goods', thumb:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=500&q=80', file:'/shop-retail.html'},
   ],
 };
 let activeCat = 'personal';
@@ -1128,6 +1109,16 @@ function selectPlan(t) {
 // ── CHECKOUT ──
 const STEPS = ['stepForm','stepProcessing','stepStk','stepManual','stepSuccess','stepError'];
 function show(id) { STEPS.forEach(s => { const el = document.getElementById(s); el.style.display = s===id?'block':'none'; el.classList.toggle('on', s===id); }); }
+function copySucBio() {
+  var input = document.getElementById('sucBioLink');
+  var btn = document.getElementById('sucCopyBtn');
+  if (!input || !input.value) return;
+  input.select(); input.setSelectionRange(0, 99999);
+  var done = function(){ if(btn){ var t=btn.textContent; btn.textContent='Copied ✓'; setTimeout(function(){btn.textContent=t;},1800);} };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(input.value).then(done).catch(function(){ try{document.execCommand('copy');done();}catch(e){} });
+  } else { try { document.execCommand('copy'); done(); } catch(e){} }
+}
 function resetCO() { show('stepForm'); const b=document.getElementById('payBtn'); b.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5L2.5 5.5v5l5.5 3.5 5.5-3.5v-5L8 1.5z"/></svg> Pay with M-Pesa'; b.disabled=false; }
 
 async function doPay() {
@@ -1174,59 +1165,26 @@ async function doPay() {
       return;
     }
 
-    const { checkoutId, secretKey } = d;
+    const { checkoutId, secretKey, subdomain } = d;
 
-    // Show STK push step
-    document.getElementById('stkPh').textContent  = phone;
-    document.getElementById('stkAmt').textContent = 'KES ' + amount.toLocaleString();
-    document.getElementById('stkEmail').textContent = email;
-    show('stepStk');
-
-    // Poll /api/checkout/status/:checkoutId until paid, failed, or 2 min timeout
-    let polls = 0;
-    const MAX  = 60; // 60 × 5s = 5 min
-    const poll = setInterval(async () => {
-      try {
-        polls++;
-        const sr   = await fetch('/api/checkout/status/' + checkoutId);
-        const sd   = await sr.json();
-
-        if (sd.status === 'paid') {
-          clearInterval(poll);
-          document.getElementById('sucEmail').textContent = email;
-          document.getElementById('sucKey').textContent   = secretKey;
-          fireConversion(amount, checkoutId);
-          show('stepSuccess');
-          if(window.ttq){ ttq.track('CompletePayment', { contents:[{ content_id: tier, content_type:'product', content_name: PLANS[tier]?.name || 'website' }], value: PLANS[tier]?.price || 0, currency: 'KES' }); }
-
-        } else if (sd.status === 'failed') {
-          clearInterval(poll);
-          document.getElementById('errMsg').textContent = 'M-Pesa payment was cancelled. Please try again.';
-          show('stepError');
-
-        } else if (polls >= MAX) {
-          // Timeout — key was emailed, show manual fallback
-          clearInterval(poll);
-          document.getElementById('manPh').textContent      = phone;
-          document.getElementById('manAmt').textContent     = 'KES ' + amount.toLocaleString();
-          document.getElementById('manPhInstr').textContent = phone;
-          document.getElementById('manAmtInstr').textContent= 'KES ' + amount.toLocaleString();
-          show('stepManual');
-          // After 30 more seconds on manual step, go to success anyway (key was emailed)
-          setTimeout(() => {
-            document.getElementById('sucEmail').textContent = email;
-            document.getElementById('sucKey').textContent   = secretKey;
-            show('stepSuccess');
-            if(window.ttq){ ttq.track('CompletePayment', { contents:[{ content_id: tier, content_type:'product', content_name: PLANS[tier]?.name || 'website' }], value: PLANS[tier]?.price || 0, currency: 'KES' }); }
-          }, 30000);
-        }
-      } catch (e) { /* ignore poll errors, keep trying */ }
-    }, 5000);
+    // FREE TRIAL: account is created live for 7 days — no payment needed at signup.
+    // Go straight to the success screen with the key.
+    document.getElementById('sucEmail').textContent = email;
+    document.getElementById('sucKey').textContent   = secretKey;
+    if (subdomain) {
+      var bioUrl = 'https://' + subdomain + '.sitesawa.com/links';
+      var sb = document.getElementById('sucBioLink');
+      if (sb) sb.value = bioUrl;
+    }
+    fireConversion(amount, checkoutId);
+    show('stepSuccess');
+    if(window.ttq){ ttq.track('CompleteRegistration', { contents:[{ content_id: tier, content_type:'product', content_name: PLANS[tier]?.name || 'website' }], value: PLANS[tier]?.price || 0, currency: 'KES' }); }
+    return;
 
   } catch (e) {
     document.getElementById('errMsg').textContent = 'Network error. Check your connection and try again.';
     show('stepError');
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5L2.5 5.5v5l5.5 3.5 5.5-3.5v-5L8 1.5z"/></svg> Pay with M-Pesa';
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5L2.5 5.5v5l5.5 3.5 5.5-3.5v-5L8 1.5z"/></svg> Get my free website';
     btn.disabled = false;
   }
 }
