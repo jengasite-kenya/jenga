@@ -489,11 +489,11 @@ async function ttIdentify(email, phoneE164){
   <div class="nav-mid">
     <a href="#templates">Templates</a>
     <a href="#pricing">Pricing</a>
-    <a href="#checkout">Get started</a>
+    <a href="/login.html?signup=1">Get started</a>
   </div>
   <div class="nav-end">
     <a href="/login.html" class="btn-ghost">Sign in</a>
-    <a href="#checkout" class="btn-lime">Get your website →</a>
+    <a href="/login.html?signup=1" class="btn-lime">Get your website →</a>
     <button id="burger" data-burger="1" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h14M2 9h14M2 14h14"/></svg></button>
   </div>
 </nav>
@@ -501,7 +501,7 @@ async function ttIdentify(email, phoneE164){
   <button id="mob-x" data-mobclose="1" aria-label="Close"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3l12 12M15 3L3 15"/></svg></button>
   <a href="#templates" data-mobclose="1">Templates</a>
   <a href="#pricing" data-mobclose="1">Pricing</a>
-  <a href="#checkout" data-mobclose="1">Get started</a>
+  <a href="/login.html?signup=1" data-mobclose="1">Get started</a>
   <a href="/login.html" style="color:var(--lime)">Sign in →</a>
 </div>
 
@@ -736,7 +736,8 @@ async function ttIdentify(email, phoneE164){
 </section>
 
 <!-- CHECKOUT -->
-<section class="checkout-section" id="checkout">
+<section class="checkout-section" id="checkout" style="display:none">
+  <!-- Payment-at-signup removed: free-trial model sends users to /login.html?signup=1 to create an account. This section is hidden but kept so any leftover JS references don't break. -->
   <div class="checkout-inner">
     <div class="checkout-center">
       <div class="section-tag" style="text-align:center">Get started</div>
@@ -828,7 +829,7 @@ async function ttIdentify(email, phoneE164){
   <div class="ft-col">
     <h4>Account</h4>
     <a href="/login.html">Sign in</a>
-    <a href="#checkout">Get started</a>
+    <a href="/login.html?signup=1">Get started</a>
     <a href="https://mail.google.com/mail/?view=cm&to=info@sitesawa.com" target="_blank" rel="noopener">info@sitesawa.com</a>
   </div>
 </footer>
@@ -992,12 +993,8 @@ function selectTemplate() {
   // Map cat to plan type
   const planMap = { personal: 'PERSONAL', business: 'BUSINESS', ecommerce: 'ECOMMERCE' };
   const plan = planMap[previewCat] || 'PERSONAL';
+  // selectPlan redirects to signup (free-trial model) with this template pre-selected
   selectPlan(plan);
-  closePreview();
-  renderGrids();
-  const co = document.getElementById('checkout'); if(co) co.scrollIntoView({ behavior: 'smooth' });
-  // Update selected plan name to show template
-  document.getElementById('planName').textContent = `${plan} · ${t.name}`;
 }
 
 function setDevice(mode, btn) {
@@ -1094,16 +1091,12 @@ const PLANS = {
 let tier = 'PERSONAL';
 function selectPlan(t) {
   tier = t;
-  document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
-  const planMap = {'PERSONAL':0,'BUSINESS':1,'ECOMMERCE':2};
-  const planEls = document.querySelectorAll('.plan');
-  if (planEls[planMap[t]]) planEls[planMap[t]].classList.add('selected');
-  document.getElementById('planName').textContent = selectedTemplate?.cat === t.toLowerCase().replace('ecommerce','ecommerce')
-    ? `${t} · ${selectedTemplate.name}`
-    : PLANS[t].name;
-  document.getElementById('planPrice').textContent = 'KES ' + PLANS[t].price.toLocaleString();
-  const co = document.getElementById('checkout'); if(co) co.scrollIntoView({ behavior: 'smooth' });
+  // Free-trial model: choosing a plan sends them to sign up (no payment here).
+  // The plan + chosen template are passed so signup can pre-select them.
   if(window.ttq) ttq.track('InitiateCheckout', { contents:[{ content_id: t, content_type:'product', content_name: PLANS[t].name }], value: PLANS[t].price, currency: 'KES' });
+  var url = '/login.html?signup=1&plan=' + encodeURIComponent(t);
+  if (selectedTemplate && selectedTemplate.id) url += '&template=' + encodeURIComponent(selectedTemplate.id);
+  window.location.href = url;
 }
 
 // ── CHECKOUT ──
