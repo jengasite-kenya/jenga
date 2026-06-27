@@ -2069,10 +2069,15 @@ app.post('/api/seo/setup', auth, async (req, res) => {
 // ============================================
 app.post('/api/recover-key', authLimiter, async (req, res) => {
     try {
-        const { phone } = req.body;
-        if (!phone) return res.status(400).json({ error: 'Phone required' });
-        const customer = await Customer.findOne({ phone: { $eq: String(phone).slice(0, 20) } });
-        if (!customer) return res.json({ success: true, message: 'If that number is registered, a code has been sent.' });
+        // Accept email (preferred, matches login) or phone (legacy fallback)
+        const email = (req.body.email || '').toLowerCase().trim();
+        const phone = req.body.phone ? String(req.body.phone).slice(0, 20) : '';
+        if (!email && !phone) return res.status(400).json({ error: 'Email required' });
+
+        const query = email ? { email: { $eq: email } } : { phone: { $eq: phone } };
+        const customer = await Customer.findOne(query);
+        // Always return success (don't reveal whether an account exists)
+        if (!customer || !customer.email) return res.json({ success: true, message: 'If that email is registered, a code has been sent.' });
 
         const otp = String(crypto.randomInt(100000, 999999));
         customer.recoveryOTP = {
@@ -2081,24 +2086,26 @@ app.post('/api/recover-key', authLimiter, async (req, res) => {
         };
         await customer.save();
 
-        const dest = customer.email || phone + '@sitesawa.com';
-        await sendEmail(dest, 'SiteSawa — Key Recovery Code',
+        await sendEmail(customer.email, 'SiteSawa — Key Recovery Code',
             `<h2>Key Recovery</h2><p>Your 6-digit code:</p>
              <h1 style="letter-spacing:8px;font-size:36px;color:#111">${otp}</h1>
              <p>Expires in <strong>15 minutes</strong>. If you didn't request this, ignore this email.</p>`
         );
-        console.log(`[RECOVERY] OTP for ${phone}: ${otp}`);
-        res.json({ success: true, message: 'If that number is registered, a code has been sent.' });
+        console.log(`[RECOVERY] OTP for ${customer.email}: ${otp}`);
+        res.json({ success: true, message: 'If that email is registered, a code has been sent.' });
     } catch (err) { res.status(500).json({ error: 'Internal server error', requestId: req.requestId }); }
 });
 
 app.post('/api/reset-key', authLimiter, async (req, res) => {
     try {
-        const { phone, code, newKey } = req.body;
-        if (!phone || !code || !newKey) return res.status(400).json({ error: 'phone, code and newKey required' });
+        const { code, newKey } = req.body;
+        const email = (req.body.email || '').toLowerCase().trim();
+        const phone = req.body.phone ? String(req.body.phone).slice(0, 20) : '';
+        if ((!email && !phone) || !code || !newKey) return res.status(400).json({ error: 'email, code and newKey required' });
         if (newKey.length < 6) return res.status(400).json({ error: 'New key must be at least 6 characters' });
 
-        const customer = await Customer.findOne({ phone: { $eq: String(phone).slice(0, 20) } });
+        const query = email ? { email: { $eq: email } } : { phone: { $eq: phone } };
+        const customer = await Customer.findOne(query);
         if (!customer?.recoveryOTP?.code) return res.status(400).json({ error: 'Invalid or expired code' });
 
         if (new Date() > customer.recoveryOTP.expires) {
