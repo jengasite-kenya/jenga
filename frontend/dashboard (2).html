@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — SiteSawa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+/* ── DARK / LIGHT MODES ────────── */
+:root[data-theme="light"]{
+  --bg:#f8f8fc;--surface:#ffffff;--surface2:#f0f0f8;--surface3:#e8e8f0;
+  --border:#d8d8e8;--border2:#c0c0d8;
+  --text:#0a0a14;--muted:#606080;--dim:#a0a0b8;
+  --lime:#1a8c3a;--lime2:#157030;--lime-dim:rgba(26,140,58,.08);--lime-glow:rgba(26,140,58,.12);
+}
+
+:root{
+  --bg:#040407;--surface:#0c0c12;--surface2:#13131c;--surface3:#1a1a24;
+  --border:#1e1e2a;--border2:#2e2e40;
+  --text:#f0f0f5;--muted:#787890;--dim:#44445a;
+  --lime:#bef264;--lime2:#a3d45a;--lime-dim:rgba(190,242,100,.08);--lime-glow:rgba(190,242,100,.15);
+  --red:#ff4d4d;--red-dim:rgba(255,77,77,.1);
+  --amber:#f5b942;--amber-dim:rgba(245,185,66,.1);
+  --green:#22d46e;--green-dim:rgba(34,212,110,.1);
+  --blue:#4d9fff;--blue-dim:rgba(77,159,255,.1);
+  --r:8px;--r2:12px;--r3:16px;
+  --fd:'Syne',sans-serif;
+  --fb:'DM Sans',system-ui,sans-serif;
+  --topbar-h:56px;
+  --sidebar-w:224px;
+}
+html{font-family:var(--fb);font-size:14px;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+body{min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+/* ── TOPBAR ─────────────────────────── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topbar-h);
+  background:rgba(4,4,7,.9);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;z-index:200;gap:12px;
+}
+.tb-left{display:flex;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-mark{width:28px;height:28px;border-radius:7px;background:var(--lime);display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:14px;height:14px;fill:var(--bg)}
+.logo-name{font-family:var(--fd);font-size:15px;font-weight:800;letter-spacing:-.02em}
+.tb-sep{width:1px;height:16px;background:var(--border)}
+.tb-url{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;transition:color .15s;padding:4px 8px;border-radius:6px}
+.tb-url:hover{color:var(--text);background:var(--surface2)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s ease infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-right{display:flex;align-items:center;gap:6px}
+.ico-btn{
+  width:32px;height:32px;border-radius:var(--r);border:1px solid var(--border);
+  background:var(--surface);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--muted);transition:all .15s;position:relative;
+}
+.ico-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--border2)}
+.ico-btn.danger:hover{background:var(--red-dim);border-color:rgba(255,77,77,.3);color:var(--red)}
+.ico-btn .tt{
+  position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);
+  background:var(--surface3);border:1px solid var(--border);
+  padding:3px 8px;border-radius:5px;font-size:11px;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .15s;z-index:10;
+}
+.ico-btn:hover .tt{opacity:1}
+.save-btn{
+  height:32px;padding:0 14px;border-radius:var(--r);
+  background:var(--lime);color:var(--bg);font-weight:700;font-size:12px;
+  border:none;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;
+}
+.save-btn:hover:not(:disabled){background:#d4f57a}
+.save-btn:disabled{opacity:.5;cursor:not-allowed}
+#hamburger{display:none}
+/* unsaved dot on save button */
+.save-btn.dirty::after{content:'';width:6px;height:6px;background:var(--amber);border-radius:50%;margin-left:2px}
+
+/* ── LAYOUT ──────────────────────────── */
+.layout{display:flex;padding-top:var(--topbar-h);min-height:100vh}
+
+/* ── SIDEBAR ─────────────────────────── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:140;backdrop-filter:blur(2px)}
+.sidebar-overlay.open{display:block}
+.sidebar{
+  width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);
+  padding:14px 8px;position:fixed;top:var(--topbar-h);bottom:0;left:0;
+  overflow-y:auto;z-index:150;display:flex;flex-direction:column;gap:2px;
+  transition:transform .3s cubic-bezier(.22,1,.36,1);
+}
+.su{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:12px;margin-bottom:10px}
+.su-av{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--lime-dim);border:1.5px solid rgba(190,242,100,.3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--lime);margin-bottom:8px;
+}
+.su-name{font-family:var(--fd);font-size:13px;font-weight:800;margin-bottom:1px}
+.su-phone{font-size:11px;color:var(--muted)}
+.plan-chip{
+  display:inline-flex;align-items:center;gap:4px;margin-top:8px;
+  padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.05em;
+  background:var(--lime-dim);color:var(--lime);border:1px solid rgba(190,242,100,.15);
+}
+.nl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:0 10px;margin-top:8px;margin-bottom:3px}
+.ni{
+  display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);
+  color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;
+  border:1px solid transparent;
+}
+.ni:hover{background:var(--surface2);color:var(--text)}
+.ni.active{background:var(--lime-dim);color:var(--lime);border-color:rgba(190,242,100,.15)}
+.ni svg{width:15px;height:15px;flex-shrink:0;opacity:.75}
+.ni.active svg{opacity:1}
+.nd{height:1px;background:var(--border);margin:4px 0}
+
+/* ── MAIN ────────────────────────────── */
+.main{flex:1;margin-left:var(--sidebar-w);padding:24px 28px;max-width:1060px}
+.sec{display:none;animation:si .2s ease}
+.sec.active{display:block}
+@keyframes si{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ph{margin-bottom:22px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.pt{font-family:var(--fd);font-size:21px;font-weight:800;letter-spacing:-.02em;margin-bottom:3px}
+.ps{font-size:12px;color:var(--muted)}
+
+/* ── CARDS ──────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r3);padding:20px;margin-bottom:14px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.ct{font-family:var(--fd);font-size:13px;font-weight:800;letter-spacing:-.01em}
+.ca{font-size:12px;color:var(--lime);cursor:pointer;font-weight:600;transition:opacity .15s}
+.ca:hover{opacity:.7}
+
+/* ── OVERVIEW ───────────────────────── */
+.hero-card{
+  border:1px solid var(--border);border-radius:var(--r3);padding:22px;margin-bottom:14px;
+  background:linear-gradient(135deg,var(--surface2) 0%,var(--surface) 100%);
+  position:relative;overflow:hidden;
+}
+.hero-card::before{
+  content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;
+  border-radius:50%;background:var(--lime-glow);filter:blur(60px);pointer-events:none;
+}
+.hc-inner{position:relative;z-index:1}
+.hc-status{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.hc-status span{font-size:12px;color:var(--green);font-weight:600}
+.url-row{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:var(--r);
+  padding:8px 12px;margin-bottom:14px;width:fit-content;max-width:100%;
+}
+.url-row span{font-size:12px;color:var(--lime);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px}
+.url-row button{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:2px;transition:color .15s;flex-shrink:0}
+.url-row button:hover{color:var(--lime)}
+.hc-btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* STATS — template-aware grid */
+.stats-row{display:grid;gap:10px;margin-bottom:14px}
+.stats-row.cols-2{grid-template-columns:1fr 1fr}
+.stats-row.cols-3{grid-template-columns:1fr 1fr 1fr}
+.stats-row.cols-4{grid-template-columns:repeat(4,1fr)}
+.sc{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);
+  padding:16px;transition:border-color .15s,transform .15s;position:relative;overflow:hidden;cursor:pointer;
+}
+.sc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--lime);transform:scaleX(0);transition:transform .25s;transform-origin:left}
+.sc:hover{border-color:var(--border2);transform:translateY(-2px)}
+.sc:hover::after{transform:scaleX(1)}
+.sl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.sv{font-family:var(--fd);font-size:22px;font-weight:800;color:var(--lime);letter-spacing:-.02em}
+.ss{font-size:11px;color:var(--dim);margin-top:3px}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:6px}
+.cl-item{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border:1px solid var(--border);border-radius:var(--r);cursor:pointer;
+  transition:all .15s;background:var(--surface);
+}
+.cl-item:hover{border-color:var(--border2);background:var(--surface2)}
+.cl-item.done{opacity:.5}
+.cl-item.done .cl-check{background:var(--green);border-color:var(--green)}
+.cl-check{
+  width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border2);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.cl-check svg{display:none}
+.cl-item.done .cl-check svg{display:block}
+.cl-label{font-size:13px;font-weight:500}
+.cl-label.done-label{text-decoration:line-through}
+.cl-arrow{margin-left:auto;color:var(--dim);font-size:12px}
+
+/* ── BUTTONS ────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:var(--r);font-size:13px;font-weight:600;
+  cursor:pointer;border:none;transition:all .15s;
+}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.btn-lime{background:var(--lime);color:var(--bg)}
+.btn-lime:hover:not(:disabled){background:#d4f57a;transform:translateY(-1px)}
+.btn-ghost{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover:not(:disabled){color:var(--text);border-color:var(--border2)}
+.plan-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.plan-card{position:relative;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:20px 18px;transition:border-color .15s}
+.plan-card.current{border-color:var(--lime);box-shadow:0 0 0 2px var(--lime-glow)}
+.plan-card .pc-badge{position:absolute;top:-10px;right:14px;background:var(--lime);color:var(--bg);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px}
+.plan-card .pc-name{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.plan-card .pc-price{font-size:30px;font-weight:800;color:var(--text);margin:6px 0 12px}
+.plan-card .pc-feats{list-style:none;padding:0;margin:0 0 16px;display:flex;flex-direction:column;gap:7px}
+.plan-card .pc-feats li{font-size:13px;color:var(--dim);padding-left:18px;position:relative}
+.plan-card .pc-feats li::before{content:'✓';position:absolute;left:0;color:var(--lime);font-weight:800}
+.plan-card .pc-btn{width:100%}
+.plan-card.current .pc-btn{background:var(--lime);color:var(--bg);border-color:var(--lime);pointer-events:none}
+@media(max-width:760px){.plan-cards{grid-template-columns:1fr}}
+.trial-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,var(--lime-dim),var(--surface2));border:1px solid var(--lime);border-radius:14px;padding:16px 20px;margin-bottom:18px;flex-wrap:wrap}
+.trial-banner.urgent{border-color:#e8954a;background:linear-gradient(135deg,rgba(232,149,74,.12),var(--surface2))}
+.trial-banner .tb-title{font-weight:800;font-size:17px;color:var(--text)}
+.trial-banner .tb-sub{font-size:13px;color:var(--dim);margin-top:2px}
+.trial-banner .btn{flex:none}
+.btn-danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,77,77,.2)}
+.btn-danger:hover:not(:disabled){background:rgba(255,77,77,.18)}
+.btn-sm{padding:5px 11px;font-size:11px;border-radius:7px}
+/* Loading spinner inside button */
+.btn .spin,.save-btn .spin{
+  width:12px;height:12px;border:2px solid rgba(0,0,0,.2);border-top-color:var(--bg);
+  border-radius:50%;animation:sp .5s linear infinite;flex-shrink:0;
+}
+.btn-ghost .spin{border-color:rgba(255,255,255,.1);border-top-color:var(--muted)}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── FORMS ──────────────────────────── */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.f{display:flex;flex-direction:column;gap:6px}
+.f.full{grid-column:1/-1}
+.f label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.f input,.f textarea,.f select{
+  padding:10px 12px;background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--r);font-size:13px;color:var(--text);transition:border .15s,box-shadow .15s;
+}
+.f input:hover,.f textarea:hover,.f select:hover{border-color:var(--border2)}
+.f input:focus,.f textarea:focus,.f select:focus{
+  outline:none;border-color:var(--lime);box-shadow:0 0 0 3px var(--lime-dim);
+}
+.f textarea{resize:vertical;min-height:80px}
+.fhint{font-size:11px;color:var(--dim);margin-top:-2px}
+.iw{position:relative;display:flex;align-items:center}
+.iw input{width:100%;padding-right:38px}
+.iw button{position:absolute;right:10px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;transition:color .15s}
+.iw button:hover{color:var(--text)}
+.suffix{position:absolute;right:10px;font-size:11px;color:var(--dim);pointer-events:none}
+
+/* ── IMAGE UPLOAD ───────────────────── */
+.iu{
+  border:1.5px dashed var(--border2);border-radius:var(--r2);padding:18px;
+  text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.iu:hover{border-color:var(--lime);background:var(--lime-dim);border-style:solid}
+.iu.has-img{border-style:solid;border-color:rgba(190,242,100,.3)}
+.iu p{font-size:11px;color:var(--muted)}
+.ip{width:64px;height:64px;border-radius:9px;object-fit:cover}
+input[type=file]{display:none}
+
+/* ── TOGGLE ─────────────────────────── */
+.tr{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.tr:last-child{border-bottom:none}
+.ti h4{font-size:13px;font-weight:600;margin-bottom:2px}
+.ti p{font-size:11px;color:var(--dim)}
+.sw-wrap{position:relative;width:40px;height:22px;flex-shrink:0}
+.sw-wrap input{opacity:0;width:0;height:0}
+.sw{position:absolute;inset:0;background:var(--border2);border-radius:22px;cursor:pointer;transition:.2s}
+.sw::before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw-wrap input:checked+.sw{background:var(--lime)}
+.sw-wrap input:checked+.sw::before{transform:translateX(18px)}
+
+/* ── PRODUCTS ───────────────────────── */
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:12px}
+.pc{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;transition:all .15s}
+.pc:hover{border-color:var(--border2);transform:translateY(-2px)}
+.piw{aspect-ratio:1;background:var(--surface2);overflow:hidden;position:relative}
+.piw img{width:100%;height:100%;object-fit:cover}
+.pout{position:absolute;top:6px;left:6px;background:var(--red-dim);color:var(--red);border:1px solid rgba(255,77,77,.3);font-size:9px;font-weight:700;letter-spacing:.05em;padding:2px 6px;border-radius:4px;text-transform:uppercase}
+.plow{position:absolute;top:6px;left:6px;background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,185,66,.3);font-size:9px;font-weight:700;letter-spacing:.05em;padding:2px 6px;border-radius:4px;text-transform:uppercase}
+.pb{padding:10px}
+.pn{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.pd{font-size:10px;color:var(--muted);margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pp{font-family:var(--fd);font-size:14px;font-weight:800;color:var(--lime);margin-bottom:6px}
+.pstock-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.pstock-row label{font-size:10px;color:var(--muted);white-space:nowrap}
+.pstock-row input{width:60px;padding:3px 7px;font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);text-align:center}
+.pstock-row input:focus{outline:none;border-color:var(--lime)}
+.pa{display:flex;gap:5px}
+/* product form */
+.apf{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:14px}
+
+/* ── ORDERS ─────────────────────────── */
+/* Mobile-first order cards instead of table */
+.order-list{display:flex;flex-direction:column;gap:8px}
+.oc{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:14px;transition:border-color .15s}
+.oc:hover{border-color:var(--border2)}
+.oc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+.oc-id{font-family:monospace;font-size:11px;color:var(--dim)}
+.oc-date{font-size:11px;color:var(--dim)}
+.oc-mid{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.oc-who{font-size:13px;font-weight:600}
+.oc-total{font-family:var(--fd);font-size:16px;font-weight:800;color:var(--lime)}
+.oc-items{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+.oc-bot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px;flex-wrap:wrap}
+.schip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
+.sp{background:var(--amber-dim);color:var(--amber)}
+.spd{background:var(--green-dim);color:var(--green)}
+.spr{background:var(--blue-dim);color:var(--blue)}
+.ssh{background:var(--lime-dim);color:var(--lime)}
+.sdv{background:var(--green-dim);color:var(--green)}
+.scn{background:var(--red-dim);color:var(--red)}
+.ssel{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--text)}
+
+/* ── SUPPORT ────────────────────────── */
+.tick{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:13px;margin-bottom:8px;transition:border-color .15s}
+.tick:hover{border-color:var(--border2)}
+.tick-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;gap:10px}
+.tick-subj{font-size:13px;font-weight:700}
+.tick-date{font-size:10px;color:var(--dim);flex-shrink:0}
+.tick-msg{font-size:12px;color:var(--muted);line-height:1.6}
+.tschip{padding:2px 7px;border-radius:99px;font-size:10px;font-weight:700;flex-shrink:0}
+.ts-open{background:var(--amber-dim);color:var(--amber)}
+.ts-in-progress{background:var(--blue-dim);color:var(--blue)}
+.ts-resolved{background:var(--green-dim);color:var(--green)}
+.reps{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px}
+.rep{padding:8px 11px;border-radius:var(--r);font-size:12px;line-height:1.6}
+.rep.admin{background:var(--lime-dim);color:var(--text);align-self:flex-start;max-width:90%;border:1px solid rgba(190,242,100,.15)}
+.rep.customer{background:var(--surface2);color:var(--muted);align-self:flex-end;max-width:90%;border:1px solid var(--border)}
+
+/* ── TOAST ──────────────────────────── */
+.tw{position:fixed;bottom:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{
+  display:flex;align-items:center;gap:9px;padding:11px 14px;border-radius:11px;
+  font-size:13px;font-weight:500;max-width:320px;pointer-events:all;
+  box-shadow:0 6px 24px rgba(0,0,0,.5);animation:tin .2s ease;
+}
+.toast.success{background:var(--surface3);border:1px solid rgba(34,212,110,.25);color:#86efac}
+.toast.error{background:var(--surface3);border:1px solid rgba(255,77,77,.25);color:#fca5a5}
+.toast.info{background:var(--surface3);border:1px solid rgba(77,159,255,.25);color:#93c5fd}
+@keyframes tin{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+
+/* ── MODAL ──────────────────────────── */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:500;align-items:center;justify-content:center;padding:20px}
+.mbg.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r3);padding:24px;width:100%;max-width:400px;animation:min .2s ease}
+@keyframes min{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1)}}
+.modal h3{font-family:var(--fd);font-size:17px;font-weight:800;margin-bottom:7px}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6}
+.ma{display:flex;gap:8px;justify-content:flex-end}
+
+/* ── LOADING ────────────────────────── */
+.ls{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:14px}
+.ll{width:48px;height:48px;border-radius:13px;background:var(--lime);display:flex;align-items:center;justify-content:center;animation:lp 1.4s ease infinite}
+.ll svg{width:24px;height:24px;fill:var(--bg)}
+@keyframes lp{0%,100%{box-shadow:0 0 0 0 var(--lime-glow)}50%{box-shadow:0 0 0 12px transparent}}
+.lb{width:140px;height:2px;background:var(--border);border-radius:2px;overflow:hidden}
+.lbf{height:100%;background:var(--lime);border-radius:2px;animation:lbr 1.3s ease forwards}
+@keyframes lbr{from{width:0}to{width:100%}}
+.ls p{font-size:12px;color:var(--muted)}
+.ls.gone{opacity:0;pointer-events:none;transition:opacity .2s}
+
+/* ── EMPTY STATES ───────────────────── */
+.es{text-align:center;padding:44px 20px;color:var(--muted)}
+.es svg{opacity:.2;margin-bottom:12px}
+.es h4{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px}
+.es p{font-size:12px;margin-bottom:16px}
+
+/* ── SECTION LABELS ─────────────────── */
+.sec-sep{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:10px 0 6px;border-top:1px solid var(--border);margin-top:8px}
+
+/* ── RESPONSIVE ─────────────────────── */
+@media(max-width:900px){.fg{grid-template-columns:1fr}.f.full{grid-column:1}.stats-row.cols-4{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){
+  #hamburger{display:flex}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:18px 14px}
+  .tb-sep,.tb-url{display:none}
+  .stats-row.cols-4,.stats-row.cols-3{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  .main{padding:12px 10px}
+  .card{padding:18px 14px}
+  .fg{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .tb-name{font-size:14px}
+  .btn-sm{padding:6px 10px;font-size:12px}
+}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="ls" id="ls">
+  <div class="ll"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v7l7 4 7-4V7L10 2zm0 2.5l5 3.33v5.34L10 16.5 5 13.17V7.83L10 4.5z"/></svg></div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="mbg" id="confirmModal">
+  <div class="modal">
+    <h3 id="confirmTitle">Are you sure?</h3>
+    <p id="confirmMsg">This cannot be undone.</p>
+    <div class="ma">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" id="confirmBtn" onclick="doConfirm()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="tw" id="tw"></div>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tb-left">
+    <div class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v7l7 4 7-4V7L10 2zm0 2.5l5 3.33v5.34L10 16.5 5 13.17V7.83L10 4.5z"/></svg></div>
+      <span class="logo-name">SiteSawa</span>
+    </div>
+    <div class="tb-sep"></div>
+    <div class="tb-url" onclick="openSite()" title="Open live site">
+      <span class="live-dot"></span>
+      <span id="tbUrl">Loading...</span>
+    </div>
+  </div>
+  <div class="tb-right">
+    <button class="ico-btn" onclick="openSite()" title="View site">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H3a1 1 0 00-1 1v9a1 1 0 001 1h9a1 1 0 001-1V9"/><path d="M13 3h-4m4 0v4M7.5 8.5l5-5"/></svg>
+      <span class="tt">View site</span>
+    </button>
+    <button class="save-btn" id="saveBtn" onclick="saveCurrent()">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3a1 1 0 011-1h8.5L14 4.5V13a1 1 0 01-1 1H3a1 1 0 01-1-1V3z"/><rect x="5" y="2" width="5" height="3.5" rx=".5"/><rect x="4" y="9" width="8" height="4" rx="1"/></svg>
+      <span id="saveBtnText">Save</span>
+    </button>
+    <button class="ico-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/><circle cx="8" cy="8" r="3"/></svg>
+      <span class="tt">Toggle theme</span>
+    </button>
+    <button class="ico-btn danger" onclick="logout()"  title="Logout">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H3a1 1 0 00-1 1v8a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6"/></svg>
+      <span class="tt">Logout</span>
+    </button>
+    <button class="ico-btn" id="hamburger" onclick="toggleSidebar()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="su">
+      <div class="su-av"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.31 2.69-6 6-6s6 2.69 6 6"/></svg></div>
+      <div class="su-name" id="suName">—</div>
+      <div class="su-phone" id="suPhone">—</div>
+      <div class="plan-chip" id="suPlan">Personal Plan</div>
+    </div>
+
+    <div class="nl">Main</div>
+    <div class="ni active" data-s="overview" onclick="nav(this,'overview')">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg>Overview
+    </div>
+    <div class="ni" data-s="design" onclick="nav(this,'design')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+      <span>Design</span>
+    </div>
+    <div class="ni" data-s="content" onclick="nav(this,'content')">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11 2.5l2.5 2.5-8 8L3 14l.5-2.5 7.5-9z"/><path d="M9.5 4l2.5 2.5"/></svg>Edit Content
+    </div>
+    <div class="ni hidden" id="navProducts" data-s="products" onclick="nav(this,'products')">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 4h10l-1 9H4L3 4z"/><path d="M6 4a2 2 0 014 0"/></svg>Products
+    </div>
+    <div class="ni hidden" id="navOrders" data-s="orders" onclick="nav(this,'orders')">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 2v12l2-1.5 2 1.5 2-1.5 2 1.5 2-1.5V2H3z"/><path d="M6 6h4M6 9h4"/></svg>Orders
+    </div>
+    <div class="nd"></div>
+    <div class="nl">Settings</div>
+    <div class="ni" data-s="settings" onclick="nav(this,'settings')">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>Settings
+    </div>
+    <div class="ni" data-s="plan" onclick="nav(this,'plan')">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 1l2 4 4.5.5-3.3 3.1.9 4.4L8 11l-4.1 2 .9-4.4L1.5 5.5 6 5z"/></svg>Change Plan
+    </div>
+    <div class="ni" data-s="support" onclick="nav(this,'support')">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 10V8a6 6 0 0112 0v2"/><rect x="1.5" y="10" width="2" height="4" rx="1"/><rect x="12.5" y="10" width="2" height="4" rx="1"/><path d="M14.5 14a3 3 0 01-3 2h-2"/></svg>Support
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="sec active" id="s-overview">
+      <div class="ph">
+        <div><div class="pt">Overview</div><div class="ps">Your website at a glance</div></div>
+      </div>
+      <div id="trialBanner" class="trial-banner hidden">
+        <div class="tb-left">
+          <div class="tb-title" id="tbTitle">Free trial</div>
+          <div class="tb-sub" id="tbSub">Your site is live free during your trial.</div>
+        </div>
+        <button class="btn btn-lime" onclick="nav(document.querySelector('[data-s=plan]'),'plan')">Pay to keep my site →</button>
+      </div>
+      <div class="hero-card">
+        <div class="hc-inner">
+          <div class="hc-status"><span class="live-dot"></span><span>Live</span></div>
+          <div class="url-row">
+            <span id="siteUrl">Loading...</span>
+            <button onclick="copyUrl()" title="Copy link"><svg id="copyIco" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M11 5V3a1 1 0 00-1-1H3a1 1 0 00-1 1v7a1 1 0 001 1h2"/></svg></button>
+          </div>
+          <div class="hc-btns">
+            <button class="btn btn-lime" onclick="openSite()"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 3H3a1 1 0 00-1 1v9a1 1 0 001 1h9a1 1 0 001-1V9"/><path d="M13 3h-4m4 0v4M7.5 8.5l5-5"/></svg>Open site</button>
+            <button class="btn btn-ghost" onclick="copyUrl()"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M11 5V3a1 1 0 00-1-1H3a1 1 0 00-1 1v7a1 1 0 001 1h2"/></svg>Copy link</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats — cols set dynamically by JS -->
+      <div class="stats-row cols-2" id="statsRow">
+        <div class="sc" onclick="nav(document.querySelector('[data-s=content]'),'content')"><div class="sl">Template</div><div class="sv" id="stPlan">—</div><div class="ss">Your website type</div></div>
+        <div class="sc" id="stDomainCard" onclick="nav(document.querySelector('[data-s=settings]'),'settings')"><div class="sl">Domain</div><div class="sv" id="stDomain" style="font-size:14px">—</div><div class="ss">Click to manage</div></div>
+        <div class="sc hidden" id="stProductsCard" onclick="nav(document.querySelector('[data-s=products]'),'products')"><div class="sl">Products</div><div class="sv" id="stProducts">0</div><div class="ss">In your store</div></div>
+        <div class="sc hidden" id="stOrdersCard" onclick="nav(document.querySelector('[data-s=orders]'),'orders')"><div class="sl">Orders</div><div class="sv" id="stOrders">0</div><div class="ss">Total received</div></div>
+        <div class="sc hidden" id="stRevenueCard"><div class="sl">Revenue</div><div class="sv" id="stRevenue">—</div><div class="ss">From paid orders</div></div>
+      </div>
+
+      <!-- Getting started checklist -->
+      <div class="card" id="checklistCard">
+        <div class="card-head"><div class="ct">Getting started</div><span class="ca" onclick="document.getElementById('checklistCard').style.display='none'">Dismiss</span></div>
+        <div class="checklist">
+          <div class="cl-item" id="cl1" onclick="nav(document.querySelector('[data-s=content]'),'content')">
+            <div class="cl-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M2 5l2 2 4-4"/></svg></div>
+            <span class="cl-label" id="cl1l">Add your business name &amp; tagline</span>
+            <span class="cl-arrow">→</span>
+          </div>
+          <div class="cl-item" id="cl2" onclick="nav(document.querySelector('[data-s=content]'),'content')">
+            <div class="cl-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M2 5l2 2 4-4"/></svg></div>
+            <span class="cl-label" id="cl2l">Upload your logo or profile photo</span>
+            <span class="cl-arrow">→</span>
+          </div>
+          <div class="cl-item" id="cl3" onclick="nav(document.querySelector('[data-s=settings]'),'settings')">
+            <div class="cl-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M2 5l2 2 4-4"/></svg></div>
+            <span class="cl-label" id="cl3l">Connect your WhatsApp number</span>
+            <span class="cl-arrow">→</span>
+          </div>
+          <div class="cl-item" id="cl4" onclick="nav(document.querySelector('[data-s=settings]'),'settings')">
+            <div class="cl-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M2 5l2 2 4-4"/></svg></div>
+            <span class="cl-label" id="cl4l">Set your subdomain or custom domain</span>
+            <span class="cl-arrow">→</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <!-- DESIGN SECTION -->
+    <div class="sec hidden" id="s-design">
+      <div class="card">
+        <div class="card-head"><div class="ct">Choose your template</div></div>
+        <p style="color:var(--dim);font-size:14px;margin-bottom:20px">Pick a design from your plan. Your content carries over automatically.</p>
+        <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap" id="designTabs">
+          <button class="btn btn-ghost" id="dtPersonal" onclick="filterDesigns('personal')">Personal</button>
+          <button class="btn btn-ghost" id="dtBusiness" onclick="filterDesigns('business')">Business</button>
+          <button class="btn btn-ghost" id="dtEcommerce" onclick="filterDesigns('ecommerce')">E-Commerce</button>
+        </div>
+        <div id="designGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px"></div>
+      </div>
+    </div>
+
+    <div class="sec hidden" id="s-content">
+      <div class="ph">
+        <div><div class="pt">Edit Content</div><div class="ps">Changes go live when you save</div></div>
+        <button class="btn btn-lime" onclick="saveContent()" id="saveContentBtn">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 3a1 1 0 011-1h8.5L14 4.5V13a1 1 0 01-1 1H3a1 1 0 01-1-1V3z"/><rect x="5" y="2" width="5" height="3.5" rx=".5"/><rect x="4" y="9" width="8" height="4" rx="1"/></svg>
+          Save changes
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="ct">Theme colour 🎨</div></div>
+        <p style="color:var(--dim);font-size:14px;margin-bottom:14px">Pick your brand colour — it changes buttons, headings and accents on your website, so your site looks unique even on a popular design.</p>
+        <div id="themeSwatches" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px"></div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <label style="font-size:13px;color:var(--dim)">Or pick your own:</label>
+          <input type="color" id="themeColorInput" value="#1e3a2f" style="width:52px;height:40px;border:1px solid var(--border);border-radius:8px;background:none;cursor:pointer" oninput="setThemeColor(this.value)">
+          <span id="themeColorHex" style="font-family:var(--mono,monospace);font-size:13px;color:var(--lime)">#1e3a2f</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="ct">Logo / Profile photo</div></div>
+        <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+          <div class="iu" id="logoUp" onclick="document.getElementById('logoFile').click()">
+            <img class="ip hidden" id="logoPrev" alt="">
+            <svg id="logoIco" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <p id="logoTip">Click to upload</p>
+          </div>
+          <input type="file" id="logoFile" accept="image/*" onchange="handleLogoUpload(event)">
+          <div style="flex:1;min-width:180px">
+            <div class="f"><label>Or paste image URL</label><input type="text" id="logoUrl" placeholder="https://..." oninput="previewLogo(this.value)"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="ct">Basic info</div></div>
+        <div class="fg">
+          <div class="f full"><label>Business / Profile name *</label><input type="text" id="editName" placeholder="Your name or business name" oninput="markDirty()"></div>
+          <div class="f full"><label>Tagline / Headline</label><input type="text" id="editTagline" placeholder="A short catchy description" oninput="markDirty()"></div>
+          <div class="f full"><label>About text</label><textarea id="editAbout" placeholder="Tell your story..." oninput="markDirty()"></textarea></div>
+          <div class="f"><label>Location</label><input type="text" id="editLoc" placeholder="Nairobi, Kenya" oninput="markDirty()"></div>
+          <div class="f"><label>Email address</label><input type="email" id="editEmail" placeholder="you@example.com" oninput="markDirty()"></div>
+        </div>
+      </div>
+
+      <div class="card" id="svcCard">
+        <div class="card-head"><div class="ct">Services</div><span class="ca" onclick="addSvcField()">+ Add service</span></div>
+        <div id="svcEd"></div>
+        <div class="fhint" style="margin-top:8px">These appear as your service offerings on your website</div>
+      </div>
+
+      <div class="card hidden" id="skillCard">
+        <div class="card-head"><div class="ct">Skills</div><span class="ca" onclick="addSkillField()">+ Add skill</span></div>
+        <div id="skillEd"></div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="sec hidden" id="s-products">
+      <div class="ph">
+        <div><div class="pt">Products</div><div class="ps">Manage your store inventory</div></div>
+      </div>
+
+      <div class="apf">
+        <div class="card-head" style="margin-bottom:14px"><div class="ct">Add new product</div></div>
+        <div class="fg">
+          <div class="f"><label>Product name *</label><input type="text" id="pName" placeholder="e.g. Classic T-Shirt"></div>
+          <div class="f"><label>Price (KES) *</label><input type="number" id="pPrice" placeholder="1500" min="0"></div>
+          <div class="f"><label>Stock <span style="font-weight:400;opacity:.5">(blank = unlimited)</span></label><input type="number" id="pStock" placeholder="e.g. 50" min="0"></div>
+          <div class="f full"><label>Description</label><input type="text" id="pDesc" placeholder="Short description for customers"></div>
+          <div class="f full">
+            <label>Product image</label>
+            <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">
+              <div class="iu" style="min-width:80px" onclick="document.getElementById('pImgFile').click()">
+                <img class="ip hidden" id="pImgPrev" alt="">
+                <svg id="pImgIco" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <p>Upload</p>
+              </div>
+              <input type="file" id="pImgFile" accept="image/*" onchange="handlePImgUpload(event)">
+              <div class="f" style="flex:1;min-width:150px;margin-bottom:0">
+                <label>Or paste URL</label>
+                <input type="text" id="pImgUrl" placeholder="https://..." oninput="previewPImg(this.value)">
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-lime" style="margin-top:12px" onclick="addProduct()" id="addProdBtn">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>Add product
+        </button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap" id="prodFilters">
+        <input type="search" id="prodSearch" placeholder="Search products…"
+          style="flex:1;min-width:160px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-size:13px"
+          oninput="renderProducts()" aria-label="Search products">
+        <select id="stockFilter" onchange="renderProducts()"
+          style="padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-size:13px">
+          <option value="">All stock</option>
+          <option value="low">Low stock (≤5)</option>
+          <option value="out">Out of stock</option>
+          <option value="ok">In stock</option>
+        </select>
+      </div>
+      <div id="productList"></div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="sec hidden" id="s-orders">
+      <div class="ph"><div><div class="pt">Orders</div><div class="ps">Incoming orders from your shop</div></div></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <input type="search" id="orderSearch" placeholder="Search by customer or ID…"
+          style="flex:1;min-width:180px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-size:13px"
+          oninput="filterOrders()" aria-label="Search orders">
+        <select id="orderStatusFilter" onchange="filterOrders()"
+          style="padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-size:13px">
+          <option value="">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="paid">Paid</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div id="orderList">
+        <div class="es">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M3 3l18 18M3 8v10a1 1 0 001 1h12M7 3h11a1 1 0 011 1v9M8 9h1M8 12h5"/></svg>
+          <h4>No orders yet</h4>
+          <p>Orders will appear here once customers start buying</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="sec hidden" id="s-settings">
+      <div class="ph">
+        <div><div class="pt">Settings</div><div class="ps">Payments, domain, analytics, social</div></div>
+        <button class="btn btn-lime" onclick="saveSettings()" id="saveSettingsBtn">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 3a1 1 0 011-1h8.5L14 4.5V13a1 1 0 01-1 1H3a1 1 0 01-1-1V3z"/><rect x="5" y="2" width="5" height="3.5" rx=".5"/><rect x="4" y="9" width="8" height="4" rx="1"/></svg>Save settings
+        </button>
+      </div>
+
+      <!-- Domain -->
+      <div class="card">
+        <div class="card-head"><div class="ct">Domain</div></div>
+        <div class="fg">
+          <div class="f">
+            <label>Subdomain</label>
+            <div class="iw"><input type="text" id="editSub" placeholder="yourname"><span class="suffix">.sitesawa.com</span></div>
+          </div>
+          <div class="f"><label>Custom domain <span style="font-weight:400;opacity:.5">(optional)</span></label><input type="text" id="editCustom" placeholder="yourbusiness.co.ke"></div>
+        </div>
+        <div id="dnsHelp" style="margin-top:14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:8px">📡 Connecting your own domain</div>
+          <p style="font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:10px">After you save your domain above, you must point it to SiteSawa at the company where you bought it (e.g. Truehost, Safaricom, GoDaddy). Log in there, open <strong>DNS settings</strong>, and add these two records:</p>
+          <div style="font-family:var(--mono,monospace);font-size:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;line-height:1.8;overflow-x:auto">
+            <div><span style="color:var(--dim)">Type:</span> CNAME &nbsp; <span style="color:var(--dim)">Name:</span> www &nbsp; <span style="color:var(--dim)">Value:</span> <span style="color:var(--lime)">sitesawa.com</span></div>
+            <div><span style="color:var(--dim)">Type:</span> A &nbsp;&nbsp;&nbsp;&nbsp; <span style="color:var(--dim)">Name:</span> @ &nbsp;&nbsp;&nbsp; <span style="color:var(--dim)">Value:</span> <span style="color:var(--lime)" id="dnsIp">(ask SiteSawa for the IP)</span></div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6">⏱️ Changes can take a few minutes up to 24 hours to work. Your <strong>yourname.sitesawa.com</strong> address works instantly in the meantime. Stuck? Message us on support and we'll help you set it up.</p>
+        </div>
+      </div>
+
+      <!-- M-Pesa -->
+      <div class="card">
+        <div class="card-head"><div class="ct">M-Pesa payment</div></div>
+        <div class="tr">
+          <div class="ti"><h4>Daraja STK Push</h4><p>Auto-prompt payment to customer's phone</p></div>
+          <label class="sw-wrap"><input type="checkbox" id="mpesaToggle" onchange="toggleMpesa()"><span class="sw"></span></label>
+        </div>
+        <div id="mpesaFields" class="hidden" style="padding-top:14px">
+          <div class="fg">
+            <div class="f"><label>Consumer Key</label><input type="text" id="mpesaKey" placeholder="Daraja consumer key"></div>
+            <div class="f"><label>Consumer Secret</label><div class="iw"><input type="password" id="mpesaSecret" placeholder="Consumer secret"><button onclick="toggleVis('mpesaSecret',this)" type="button"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg></button></div></div>
+            <div class="f"><label>Shortcode</label><input type="text" id="mpesaShortcode" placeholder="e.g. 174379"></div>
+            <div class="f"><label>Passkey</label><div class="iw"><input type="password" id="mpesaPasskey" placeholder="Passkey"><button onclick="toggleVis('mpesaPasskey',this)" type="button"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg></button></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping (E-Commerce only) -->
+      <div class="card hidden" id="shippingCard">
+        <div class="card-head"><div class="ct">Shipping</div></div>
+        <div class="tr">
+          <div class="ti"><h4>Enable shipping options</h4><p>Let customers choose delivery method</p></div>
+          <label class="sw-wrap"><input type="checkbox" id="shippingToggle" onchange="toggleShipping()"><span class="sw"></span></label>
+        </div>
+        <div id="shippingOpts" class="hidden" style="padding-top:4px">
+          <div class="tr"><div class="ti"><h4>Pickup (free)</h4><p>Customer collects from you</p></div><label class="sw-wrap"><input type="checkbox" id="pickupToggle" checked><span class="sw"></span></label></div>
+          <div class="tr"><div class="ti"><h4>Local delivery — KES 200</h4><p>Same city</p></div><label class="sw-wrap"><input type="checkbox" id="localToggle"><span class="sw"></span></label></div>
+          <div class="tr"><div class="ti"><h4>Nationwide — KES 500</h4><p>Anywhere in Kenya</p></div><label class="sw-wrap"><input type="checkbox" id="nationwideToggle"><span class="sw"></span></label></div>
+        </div>
+      </div>
+
+      <!-- Analytics -->
+      <div class="card">
+        <div class="card-head"><div class="ct">Analytics</div></div>
+        <div class="fg">
+          <div class="f"><label>Google Analytics ID</label><input type="text" id="gaId" placeholder="G-XXXXXXXXXX"><div class="fhint">Starts with G-</div></div>
+          <div class="f"><label>TikTok Pixel ID</label><input type="text" id="ttPixel" placeholder="Your TikTok Pixel ID"></div>
+        </div>
+      </div>
+
+      <!-- Link-in-bio hub -->
+      <div class="card">
+        <div class="card-head"><div class="ct">Your link-in-bio 🔗</div></div>
+        <p style="color:var(--dim);font-size:14px;margin-bottom:14px">One link for all your socials. Paste it into your Instagram, TikTok and Facebook bio — customers tap it to reach you everywhere.</p>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <input type="text" id="bioLink" readonly style="flex:1;min-width:220px;font-family:var(--mono,monospace);background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;color:var(--lime)">
+          <button class="btn btn-lime" onclick="copyBioLink()" id="copyBioBtn">Copy link</button>
+        </div>
+        <div style="margin-top:10px"><a id="bioPreview" href="#" target="_blank" rel="noopener" style="color:var(--dim);font-size:13px;text-decoration:underline">Preview your link page →</a></div>
+      </div>
+
+      <!-- Social -->
+      <div class="card">
+        <div class="card-head"><div class="ct">Social links</div></div>
+        <p style="color:var(--dim);font-size:13px;margin-bottom:12px">Add your social profiles — they appear on your website <strong>and</strong> your link-in-bio page above.</p>
+        <div class="fg">
+          <div class="f"><label>WhatsApp number</label><input type="text" id="socialWA" placeholder="254712345678"></div>
+          <div class="f"><label>Instagram</label><input type="text" id="socialIG" placeholder="https://instagram.com/..."></div>
+          <div class="f"><label>Facebook</label><input type="text" id="socialFB" placeholder="https://facebook.com/..."></div>
+          <div class="f"><label>Twitter / X</label><input type="text" id="socialTW" placeholder="https://twitter.com/..."></div>
+          <div class="f"><label>LinkedIn</label><input type="text" id="socialLI" placeholder="https://linkedin.com/..."></div>
+          <div class="f"><label>TikTok</label><input type="text" id="socialTT" placeholder="https://tiktok.com/@..."></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUPPORT -->
+    <div class="sec hidden" id="s-support">
+      <div class="ph"><div><div class="pt">Support</div><div class="ps">Get help from our team</div></div></div>
+      <div class="card">
+        <div class="card-head"><div class="ct">New ticket</div></div>
+        <div class="f full" style="margin-bottom:10px"><label>Subject</label><input type="text" id="ticketSubj" placeholder="What do you need help with?"></div>
+        <div class="f full" style="margin-bottom:12px"><label>Message</label><textarea id="ticketMsg" placeholder="Describe your issue..." rows="4" maxlength="1000" oninput="updateCharCount(this,'ticketCount',1000)"></textarea>
+        <div style="text-align:right;font-size:11px;color:var(--muted);margin-top:4px"><span id="ticketCount">0</span>/1000</div></div>
+        <button class="btn btn-lime" onclick="createTicket()" id="ticketBtn">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2L2 7l4 3 2 4 6-12z"/><path d="M6 10l3-3"/></svg>Send ticket
+        </button>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="ct">Your tickets</div><span class="ca" onclick="loadTickets()">Refresh</span></div>
+        <div id="ticketList">
+          <div class="es"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><rect x="2" y="7" width="20" height="10" rx="1"/><path d="M2 12h2M20 12h2" stroke-dasharray="2 2"/></svg><h4>No tickets yet</h4><p>Submit a ticket above if you need help</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHANGE PLAN -->
+    <div class="sec hidden" id="s-plan">
+      <div class="ph"><div><div class="pt">Change Plan</div><div class="ps">Upgrade or switch your plan anytime</div></div></div>
+      <div class="card">
+        <div class="card-head"><div class="ct">Your current plan: <span id="curPlanName" style="color:var(--lime)">—</span></div></div>
+        <p style="color:var(--dim);font-size:14px;margin-bottom:18px">Pick a new plan below. You'll get an M-Pesa prompt on your phone for the full plan price. Your new features unlock as soon as payment is confirmed, and your content carries over.</p>
+        <div class="plan-cards" id="planCards">
+          <div class="plan-card" data-plan="PERSONAL">
+            <div class="pc-name">Personal</div>
+            <div class="pc-price">KES 7,000</div>
+            <ul class="pc-feats">
+              <li>12 designs</li><li>Portfolio + services</li><li>WhatsApp, Call, SMS</li><li>Google + SEO</li>
+            </ul>
+            <button class="btn btn-ghost pc-btn" onclick="changePlan('PERSONAL')">Switch to Personal</button>
+          </div>
+          <div class="plan-card" data-plan="BUSINESS">
+            <div class="pc-badge">Popular</div>
+            <div class="pc-name">Business</div>
+            <div class="pc-price">KES 8,000</div>
+            <ul class="pc-feats">
+              <li>15 designs</li><li>Services + team</li><li>WhatsApp booking</li><li>TikTok Pixel + SEO</li>
+            </ul>
+            <button class="btn btn-ghost pc-btn" onclick="changePlan('BUSINESS')">Switch to Business</button>
+          </div>
+          <div class="plan-card" data-plan="ECOMMERCE">
+            <div class="pc-name">E-Commerce</div>
+            <div class="pc-price">KES 9,000</div>
+            <ul class="pc-feats">
+              <li>Online shop</li><li>Unlimited products</li><li>M-Pesa STK Push</li><li>Order dashboard</li>
+            </ul>
+            <button class="btn btn-ghost pc-btn" onclick="changePlan('ECOMMERCE')">Switch to E-Commerce</button>
+          </div>
+        </div>
+        <div id="planMsg" style="margin-top:16px;font-size:14px;color:var(--dim)"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const API = window.location.origin;
+const token = localStorage.getItem('sitesawa_token') || sessionStorage.getItem('sitesawa_token');
+if (!token) { location.href = '/login.html'; throw new Error('No token'); }
+let cust = null, confirmCb = null, pendingLogo = null, pendingPImg = null, isDirty = false;
+const DRAFT_KEY = 'sitesawa_content_draft';
+
+window.saveDraft = function() {
+  if(!isDirty) return;
+  const draft = {
+    name: document.getElementById('editName')?.value,
+    tagline: document.getElementById('editTagline')?.value,
+    about: document.getElementById('editAbout')?.value,
+    loc: document.getElementById('editLoc')?.value,
+    email: document.getElementById('editEmail')?.value,
+    ts: Date.now()
+  };
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch(e){}
+}
+
+window.loadDraft = function() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if(!raw) return;
+    const draft = JSON.parse(raw);
+    // Only restore if saved in last 24h
+    if(Date.now() - draft.ts > 86400000) { localStorage.removeItem(DRAFT_KEY); return; }
+    const age = Math.round((Date.now()-draft.ts)/60000);
+    toast(`Draft restored from ${age}m ago — save to keep changes`,'info');
+    if(draft.name) document.getElementById('editName').value = draft.name;
+    if(draft.tagline) document.getElementById('editTagline').value = draft.tagline;
+    if(draft.about) document.getElementById('editAbout').value = draft.about;
+    if(draft.loc) document.getElementById('editLoc').value = draft.loc;
+    if(draft.email) document.getElementById('editEmail').value = draft.email;
+  } catch(e){}
+}
+
+// Auto-save draft every 60s if there are unsaved changes
+setInterval(saveDraft, 60000);
+
+if (!token) location.href = '/login.html';
+
+// ── UNSAVED CHANGES WARNING ────────────────────────────
+window.markDirty = function(){ isDirty=true; document.getElementById('saveBtn').classList.add('dirty'); }
+window.addEventListener('beforeunload', e => { if(isDirty){ e.preventDefault(); e.returnValue=''; } });
+
+// ── INIT ───────────────────────────────────────────────
+window.init = async function() {
+  // Safety net: never let the loading screen hang forever (e.g. server waking up).
+  var loaderTimeout = setTimeout(function(){
+    showDashError('This is taking too long. The server may be waking up (free hosting sleeps after inactivity).');
+  }, 15000);
+  try {
+    cust = await apiFetch('/api/me');
+    populate();
+    document.getElementById('ls').classList.add('gone');  // hide as soon as core data is in
+    await loadOrders();
+    await loadTickets();
+  } catch(e) {
+    var msg = (e && e.message) ? e.message : 'Could not load your dashboard';
+    showDashError(msg);
+    console.error('Dashboard load failed:', msg);
+  } finally {
+    clearTimeout(loaderTimeout);
+  }
+}
+
+// Show a clear, permanent error in place of the loader (not a fading toast)
+window.showDashError = function(msg) {
+  var ls = document.getElementById('ls');
+  if (!ls) return;
+  ls.classList.remove('gone');
+  ls.innerHTML =
+    '<div style="max-width:340px;text-align:center;padding:24px">'
+    + '<div style="font-size:40px;margin-bottom:12px">⚠️</div>'
+    + '<div style="font-size:16px;font-weight:600;color:var(--text,#fff);margin-bottom:8px">Could not open your dashboard</div>'
+    + '<div style="font-size:13px;color:var(--muted,#888);margin-bottom:18px">' + msg + '</div>'
+    + '<button onclick="location.reload()" style="background:var(--lime,#bef264);color:#0a0a0a;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;margin-right:8px">Try again</button>'
+    + '<button onclick="localStorage.removeItem(\'sitesawa_token\');sessionStorage.removeItem(\'sitesawa_token\');location.href=\'/login.html\'" style="background:transparent;color:var(--muted,#888);border:1px solid var(--border,#333);padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer">Sign in again</button>'
+    + '</div>';
+}
+
+window.populate = function() {
+  // Show design tab always, load it with correct plan templates
+  const planCat = { PERSONAL:'personal', BUSINESS:'business', ECOMMERCE:'ecommerce' }[cust?.template] || 'personal';
+  filterDesigns(planCat);
+  if (!cust) return;
+  const domain = cust.customDomain || (cust.subdomain + '.sitesawa.com');
+  const isShop = cust.template === 'ECOMMERCE';
+
+  // Topbar + sidebar
+  document.getElementById('tbUrl').textContent = domain;
+  document.getElementById('suName').textContent = cust.name || 'User';
+  document.getElementById('suPhone').textContent = cust.phone || '';
+  document.getElementById('suPlan').textContent = ({'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[cust.template] || cust.template || 'Personal') + ' Plan';
+  // Mark current plan in the Change Plan section
+  var curName = document.getElementById('curPlanName');
+  if (curName) curName.textContent = ({'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[cust.template] || cust.template || 'Personal');
+  // Trial banner
+  var tb = document.getElementById('trialBanner');
+  if (tb) {
+    if (cust.paymentStatus !== 'paid' && typeof cust.trialDaysLeft === 'number') {
+      var dl = cust.trialDaysLeft;
+      tb.classList.remove('hidden');
+      var tbTitle = document.getElementById('tbTitle');
+      var tbSub = document.getElementById('tbSub');
+      if (cust.trialExpired || dl <= 0) {
+        tb.classList.add('urgent');
+        if (tbTitle) tbTitle.textContent = 'Your free trial has ended';
+        if (tbSub) tbSub.textContent = 'Your site is paused. Choose a plan to bring it back online.';
+      } else {
+        tb.classList.toggle('urgent', dl <= 2);
+        if (tbTitle) tbTitle.textContent = dl + (dl === 1 ? ' day' : ' days') + ' left in your free trial';
+        if (tbSub) tbSub.textContent = 'Your site is live free. Pay before the trial ends to keep it online.';
+      }
+    } else {
+      tb.classList.add('hidden');
+    }
+  }
+  document.querySelectorAll('.plan-card').forEach(function(card){
+    var isCur = card.getAttribute('data-plan') === cust.template;
+    card.classList.toggle('current', isCur);
+    var btn = card.querySelector('.pc-btn');
+    if (btn) btn.textContent = isCur ? 'Current plan' : ('Switch to ' + ({'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[card.getAttribute('data-plan')]));
+  });
+  document.getElementById('siteUrl').textContent = 'https://' + domain;
+  // Link-in-bio hub URL
+  var bioUrl = 'https://' + domain + '/links';
+  var bioInput = document.getElementById('bioLink');
+  if (bioInput) bioInput.value = bioUrl;
+  var bioPrev = document.getElementById('bioPreview');
+  if (bioPrev) bioPrev.href = bioUrl;
+
+  // Template-aware stats grid
+  const statsRow = document.getElementById('statsRow');
+  document.getElementById('stPlan').textContent = {'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[cust.template] || cust.template || 'Personal';
+  document.getElementById('stDomain').textContent = cust.subdomain || '—';
+
+  if (isShop) {
+    const prods = (cust.data?.products || []).length;
+    document.getElementById('stProducts').textContent = prods;
+    ['stProductsCard','stOrdersCard','stRevenueCard'].forEach(id => document.getElementById(id).classList.remove('hidden'));
+    statsRow.className = 'stats-row cols-4';
+  } else {
+    ['stProductsCard','stOrdersCard','stRevenueCard'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    statsRow.className = 'stats-row cols-2';
+  }
+
+  // Show/hide shop nav items
+  ['navProducts','navOrders'].forEach(id => {
+    const el = document.getElementById(id);
+    const sectionEl = document.getElementById('s-' + (id==='navProducts'?'products':'orders'));
+    el.classList.toggle('hidden', !isShop);
+    if (sectionEl) sectionEl.classList.toggle('hidden', !isShop);
+  });
+
+  // Show shipping card only for shop
+  document.getElementById('shippingCard').classList.toggle('hidden', !isShop);
+
+  // Content fields
+  document.getElementById('editName').value = cust.name || '';
+  document.getElementById('editTagline').value = cust.data?.tagline || cust.data?.heroText || '';
+  document.getElementById('editAbout').value = cust.data?.aboutText || '';
+  document.getElementById('editLoc').value = cust.data?.location || '';
+  document.getElementById('editEmail').value = cust.data?.email || cust.email || '';
+  document.getElementById('logoUrl').value = cust.data?.logo || '';
+  // Theme colour
+  var savedColor = cust.data?.accentColor || '#1e3a2f';
+  var tci = document.getElementById('themeColorInput');
+  var tch = document.getElementById('themeColorHex');
+  if (tci) tci.value = savedColor;
+  if (tch) tch.textContent = savedColor;
+  renderThemeSwatches(savedColor);
+  if (cust.data?.logo) previewLogo(cust.data.logo);
+
+  renderSvcEditor(cust.data?.services || []);
+  const showSkills = cust.template === 'PERSONAL';
+  document.getElementById('skillCard').classList.toggle('hidden', !showSkills);
+  renderSkillEditor(cust.data?.skills || []);
+
+  // Settings
+  document.getElementById('mpesaToggle').checked = cust.mpesaMode === 'api';
+  document.getElementById('mpesaKey').value = cust.mpesaConsumerKey || '';
+  document.getElementById('mpesaSecret').value = cust.mpesaConsumerSecret || '';
+  document.getElementById('mpesaShortcode').value = cust.mpesaShortcode || '';
+  document.getElementById('mpesaPasskey').value = cust.mpesaPasskey || '';
+  document.getElementById('editSub').value = cust.subdomain || '';
+  document.getElementById('editCustom').value = cust.customDomain || '';
+  document.getElementById('shippingToggle').checked = cust.data?.shippingEnabled !== false;
+  document.getElementById('gaId').value = cust.googleAnalyticsId || '';
+  document.getElementById('ttPixel').value = cust.tiktokPixelId || '';
+  const s = cust.social || {};
+  ['WA','IG','FB','TW','LI','TT'].forEach(k => {
+    const map = {WA:'whatsapp',IG:'instagram',FB:'facebook',TW:'twitter',LI:'linkedin',TT:'tiktok'};
+    document.getElementById('social'+k).value = s[map[k]] || '';
+  });
+  toggleMpesa(); toggleShipping();
+  renderProducts();
+  updateChecklist();
+  // Restore any autosaved draft
+  setTimeout(loadDraft, 800);
+}
+
+// ── CHECKLIST ──────────────────────────────────────────
+window.updateChecklist = function() {
+  if (!cust) return;
+  const checks = [
+    cust.name?.trim().length > 0,
+    !!(cust.data?.logo),
+    !!(cust.social?.whatsapp),
+    !!(cust.subdomain || cust.customDomain)
+  ];
+  let allDone = true;
+  checks.forEach((done, i) => {
+    const item = document.getElementById('cl'+(i+1));
+    const label = document.getElementById('cl'+(i+1)+'l');
+    if (done) { item.classList.add('done'); label.classList.add('done-label'); }
+    else { item.classList.remove('done'); label.classList.remove('done-label'); allDone=false; }
+  });
+  if (allDone) document.getElementById('checklistCard').style.display = 'none';
+}
+
+// ── NAV ────────────────────────────────────────────────
+window.nav = function(el, section) {
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sec').forEach(s => s.classList.add('hidden'));
+  const target = document.getElementById('s-' + section);
+  if (target) { target.classList.remove('hidden'); target.classList.add('active'); }
+  closeSidebar();
+}
+
+// ── SIDEBAR (mobile) ───────────────────────────────────
+window.toggleSidebar = function() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  const open = sb.classList.toggle('open');
+  ov.classList.toggle('open', open);
+}
+window.closeSidebar = function() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+// ── LOGO PREVIEW ───────────────────────────────────────
+window.previewLogo = function(url) {
+  const img=document.getElementById('logoPrev'), ico=document.getElementById('logoIco'), tip=document.getElementById('logoTip'), wrap=document.getElementById('logoUp');
+  if(url){ img.src=url; img.classList.remove('hidden'); ico.classList.add('hidden'); tip.textContent='Click to change'; wrap.classList.add('has-img'); }
+  else{ img.classList.add('hidden'); ico.classList.remove('hidden'); tip.textContent='Click to upload'; wrap.classList.remove('has-img'); }
+}
+window.handleLogoUpload = async function(e) {
+  const f=e.target.files[0]; if(!f) return;
+  if(!f.type.startsWith('image/')) { toast('Please upload an image file (JPG, PNG, WebP, etc.)','error'); e.target.value=''; return; }
+  if(f.size > 5*1024*1024) { toast('Image must be under 5 MB','error'); e.target.value=''; return; }
+  pendingLogo = await toB64(f);
+  previewLogo(pendingLogo);
+  document.getElementById('logoUrl').value='';
+  markDirty();
+  toast('Image selected — save to apply','info');
+}
+window.previewPImg = function(url) {
+  const img=document.getElementById('pImgPrev'), ico=document.getElementById('pImgIco');
+  if(url){ img.src=url; img.classList.remove('hidden'); ico.classList.add('hidden'); }
+  else{ img.classList.add('hidden'); ico.classList.remove('hidden'); }
+}
+window.handlePImgUpload = async function(e) {
+  const f=e.target.files[0]; if(!f) return;
+  if(!f.type.startsWith('image/')) { toast('Please upload an image file','error'); e.target.value=''; return; }
+  if(f.size > 5*1024*1024) { toast('Image must be under 5 MB','error'); e.target.value=''; return; }
+  pendingPImg = await toB64(f);
+  previewPImg(pendingPImg);
+  document.getElementById('pImgUrl').value='';
+}
+function toB64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
+
+// ── SERVICES EDITOR ────────────────────────────────────
+window.renderSvcEditor = function(services) {
+  document.getElementById('svcEd').innerHTML='';
+  services.forEach((s,i) => addSvcField(s.name, s.description||s.desc, i));
+}
+window.addSvcField = function(name='', desc='', idx) {
+  const el=document.getElementById('svcEd');
+  const i = idx!==undefined ? idx : el.children.length;
+  const div=document.createElement('div');
+  div.className='fg'; div.style.marginBottom='10px'; div.dataset.idx=i;
+  div.innerHTML=`<div class="f"><label>Service ${i+1}</label><input type="text" class="sn" value="${esc(name)}" placeholder="Service name" oninput="markDirty()"></div><div class="f"><label>Description</label><div class="iw"><input type="text" class="sd" value="${esc(desc)}" placeholder="Short description" oninput="markDirty()"><button onclick="this.closest('[data-idx]').remove()" type="button" title="Remove" style="color:var(--red)"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button></div></div>`;
+  el.appendChild(div);
+}
+
+// ── SKILLS EDITOR ──────────────────────────────────────
+window.renderSkillEditor = function(skills) {
+  document.getElementById('skillEd').innerHTML='';
+  skills.forEach(s => addSkillField(s.name, s.level));
+}
+window.addSkillField = function(name='', level=80) {
+  const el=document.getElementById('skillEd');
+  const div=document.createElement('div');
+  div.style.cssText='display:grid;grid-template-columns:1fr 72px auto;gap:10px;align-items:center;margin-bottom:8px';
+  div.innerHTML=`<input type="text" class="kn" value="${esc(name)}" placeholder="e.g. Graphic Design" style="padding:9px 11px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:inherit" oninput="markDirty()"><input type="number" class="kl" value="${level}" min="1" max="100" style="padding:9px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);text-align:center;font-family:inherit" oninput="markDirty()"><button onclick="this.parentElement.remove()" type="button" style="background:none;border:none;cursor:pointer;color:var(--dim);font-size:15px" title="Remove"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button>`;
+  el.appendChild(div);
+}
+
+// ── PRODUCTS ───────────────────────────────────────────
+window.renderProducts = function() {
+  const all = cust?.data?.products || [];
+  const q = document.getElementById('prodSearch')?.value.trim().toLowerCase() || '';
+  const sf = document.getElementById('stockFilter')?.value || '';
+  const products = all.filter(p => {
+    if(q && !p.name?.toLowerCase().includes(q) && !p.description?.toLowerCase().includes(q)) return false;
+    if(sf === 'low' && !(p.stock != null && p.stock > 0 && p.stock <= 5)) return false;
+    if(sf === 'out' && p.stock !== 0) return false;
+    if(sf === 'ok' && !(p.stock == null || p.stock > 0)) return false;
+    return true;
+  });
+  if(all.length > 0 && products.length === 0) {
+    document.getElementById('productList').innerHTML = '<div class="es" style="padding:24px"><p>No products match your search</p></div>';
+    return;
+  }
+  const el = document.getElementById('productList');
+  if (!products.length) {
+    el.innerHTML=`<div class="es"><svg width="36" height="36" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M3 4h10l-1 9H4L3 4z"/><path d="M6 4a2 2 0 014 0"/></svg><h4>No products yet</h4><p>Add your first product using the form above</p><button class="btn btn-lime" onclick="document.getElementById('pName').focus()"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>Add first product</button></div>`;
+    return;
+  }
+  el.innerHTML='<div class="pg">' + products.map(p => {
+    const outOfStock = p.stock === 0;
+    const lowStock = p.stock != null && p.stock > 0 && p.stock <= 5;
+    const badge = outOfStock ? '<div class="pout">Out of stock</div>' : lowStock ? `<div class="plow">${p.stock} left</div>` : '';
+    return `<div class="pc"><div class="piw">${badge}<img src="${esc(p.image||'')}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'80\\' height=\\'80\\'><rect fill=\\'%2313131c\\' width=\\'80\\' height=\\'80\\'/></svg>'" alt="${esc(p.name)}"></div><div class="pb"><div class="pn">${esc(p.name)}</div><div class="pd">${esc(p.description||'')}</div><div class="pp">KES ${Number(p.price).toLocaleString()}</div><div class="pstock-row"><label>Stock</label><input type="number" min="0" value="${p.stock??''}" placeholder="∞" onchange="updateStock('${p.id}',this.value)" title="Blank = unlimited"></div><div class="pa"><button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}','${esc(p.name)}')"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"/></svg>Delete</button></div></div></div>`;
+  }).join('') + '</div>';
+}
+
+window.updateStock = async function(productId, rawVal) {
+  const stock = rawVal.trim()==='' ? null : Math.max(0, parseInt(rawVal,10)||0);
+  const products = (cust.data?.products||[]).map(p => String(p.id)===String(productId) ? {...p,stock} : p);
+  try { await apiFetch('/api/me','PUT',{data:{...cust.data,products}}); await refreshData(); toast('Stock updated','success'); }
+  catch(e) { toast('Failed to update stock','error'); }
+}
+
+window.addProduct = async function() {
+  const name = document.getElementById('pName').value.trim();
+  const price = parseFloat(document.getElementById('pPrice').value);
+  const desc = document.getElementById('pDesc').value.trim();
+  const imgUrl = document.getElementById('pImgUrl').value.trim();
+  const image = pendingPImg || imgUrl;
+  const stockVal = document.getElementById('pStock').value.trim();
+  const stock = stockVal==='' ? null : Math.max(0, parseInt(stockVal,10)||0);
+
+  if (!name || !price) return toast('Name and price are required','error');
+
+  const btn = document.getElementById('addProdBtn');
+  setBtnLoading(btn, true, 'Adding...');
+  try {
+    await apiFetch('/api/products','POST',{name,price,description:desc,image,stock});
+    pendingPImg=null;
+    ['pName','pPrice','pStock','pDesc','pImgUrl'].forEach(id => document.getElementById(id).value='');
+    previewPImg('');
+    await refreshData();
+    toast('Product added!','success');
+  } catch(e) { toast(e.message||'Failed to add product','error'); }
+  finally { setBtnLoading(btn, false, 'Add product', '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>'); }
+}
+
+// ── ORDERS ─────────────────────────────────────────────
+async function loadOrders() {
+  if (cust?.template !== 'ECOMMERCE') return;
+  try {
+    const orders = await apiFetch('/api/orders');
+    _allOrders = orders;
+    document.getElementById('stOrders').textContent = orders.length;
+    const revenue = orders.filter(o=>o.status==='paid').reduce((s,o)=>s+(o.total||0),0);
+    document.getElementById('stRevenue').textContent = revenue ? 'KES '+revenue.toLocaleString() : '—';
+    renderOrders(orders);
+  } catch(e) {}
+}
+
+let _allOrders = [];
+window.filterOrders = function() {
+  const q = document.getElementById('orderSearch')?.value.trim().toLowerCase() || '';
+  const st = document.getElementById('orderStatusFilter')?.value || '';
+  const filtered = _allOrders.filter(o => {
+    if(st && o.status !== st) return false;
+    if(q) {
+      const text = (o.customerName||'') + (o.customerPhone||'') + o._id;
+      if(!text.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+  renderOrders(filtered);
+}
+
+window.renderOrders = function(orders) {
+  const el = document.getElementById('orderList');
+  if (!orders.length) {
+    el.innerHTML='<div class="es"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M3 3l18 18M3 8v10a1 1 0 001 1h12M7 3h11a1 1 0 011 1v9M8 9h1M8 12h5"/></svg><h4>No orders yet</h4><p>Orders will appear here once customers start buying</p></div>';
+    return;
+  }
+  const statusCls = {pending:'sp',paid:'spd',processing:'spr',shipped:'ssh',delivered:'sdv',cancelled:'scn'};
+  el.innerHTML = '<div class="order-list">' + orders.map(o => `
+    <div class="oc">
+      <div class="oc-top">
+        <span class="oc-id">#${o._id.slice(-6).toUpperCase()}</span>
+        <span class="schip ${statusCls[o.status]||'sp'}">${o.status}</span>
+        <span class="oc-date">${new Date(o.createdAt).toLocaleDateString('en-KE',{day:'numeric',month:'short'})}</span>
+      </div>
+      <div class="oc-mid">
+        <span class="oc-who">${esc(o.customerName||o.customerPhone||'—')}</span>
+        <span class="oc-total">KES ${(o.total||0).toLocaleString()}</span>
+      </div>
+      <div class="oc-items">${(o.items||[]).map(i=>esc(i.name)+' ×'+i.quantity).join(' · ')}</div>
+      <div class="oc-bot">
+        <select class="ssel" onchange="updateOrderStatus('${o._id}',this)">
+          ${['pending','paid','processing','shipped','delivered','cancelled'].map(s=>`<option value="${s}"${s===o.status?' selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+        </select>
+        ${o.mpesaCode ? `<span style="font-size:11px;color:var(--muted);font-family:monospace">M-Pesa: ${esc(o.mpesaCode)}</span>` : ''}
+      </div>
+    </div>`).join('') + '</div>';
+}
+
+window.updateOrderStatus = async function(id, sel) {
+  try { await apiFetch(`/api/orders/${id}/status`,'PUT',{status:sel.value}); toast('Order updated','success'); }
+  catch(e) { toast('Failed to update','error'); }
+}
+
+// ── SAVE CONTENT ───────────────────────────────────────
+window.saveContent = async function() {
+  const services = Array.from(document.querySelectorAll('#svcEd [data-idx]')).map(d=>({name:d.querySelector('.sn').value.trim(),description:d.querySelector('.sd').value.trim()})).filter(s=>s.name);
+  const skills = Array.from(document.querySelectorAll('#skillEd > div')).map(d=>({name:d.querySelector('.kn').value.trim(),level:parseInt(d.querySelector('.kl').value)||80})).filter(s=>s.name);
+  const logo = pendingLogo || document.getElementById('logoUrl').value.trim();
+  const btn = document.getElementById('saveContentBtn');
+  setBtnLoading(btn, true, 'Saving...');
+  try {
+    await apiFetch('/api/me','PUT',{
+      name: document.getElementById('editName').value.trim(),
+      data: {...cust.data,
+        tagline: document.getElementById('editTagline').value.trim(),
+        heroText: document.getElementById('editTagline').value.trim(),
+        aboutText: document.getElementById('editAbout').value.trim(),
+        location: document.getElementById('editLoc').value.trim(),
+        email: document.getElementById('editEmail').value.trim(),
+        accentColor: (document.getElementById('themeColorInput')?.value || cust.data?.accentColor || '#1e3a2f'),
+        logo, services, skills
+      }
+    });
+    pendingLogo=null; isDirty=false;
+    document.getElementById('saveBtn').classList.remove('dirty');
+    try { localStorage.removeItem(DRAFT_KEY); } catch(e){}
+    await refreshData();
+    toast('Content saved!','success');
+  } catch(e) { toast(e.message||'Save failed','error'); }
+  finally { setBtnLoading(btn, false, 'Save changes', '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 3a1 1 0 011-1h8.5L14 4.5V13a1 1 0 01-1 1H3a1 1 0 01-1-1V3z"/><rect x="5" y="2" width="5" height="3.5" rx=".5"/><rect x="4" y="9" width="8" height="4" rx="1"/></svg>'); }
+}
+
+// ── SAVE SETTINGS ──────────────────────────────────────
+window.saveSettings = async function() {
+  // Validate M-Pesa fields if STK mode is on
+  if(document.getElementById('mpesaToggle').checked) {
+    const sc = document.getElementById('mpesaShortcode').value.trim();
+    if(!sc || !/^\d{5,10}$/.test(sc)) { toast('Shortcode must be 5–10 digits','error'); document.getElementById('mpesaShortcode').focus(); return; }
+    const key = document.getElementById('mpesaKey').value.trim();
+    if(!key) { toast('Consumer Key is required for STK Push','error'); document.getElementById('mpesaKey').focus(); return; }
+  }
+  const waPhone = document.getElementById('socialWA').value.trim();
+  if(waPhone && !/^254\d{9}$/.test(waPhone)) { toast('WhatsApp number format: 254712345678','error'); document.getElementById('socialWA').focus(); return; }
+  const btn = document.getElementById('saveSettingsBtn');
+  setBtnLoading(btn, true, 'Saving...');
+  try {
+    await apiFetch('/api/me','PUT',{
+      mpesaMode: document.getElementById('mpesaToggle').checked?'api':'simple',
+      mpesaConsumerKey: document.getElementById('mpesaKey').value,
+      mpesaConsumerSecret: document.getElementById('mpesaSecret').value,
+      mpesaShortcode: document.getElementById('mpesaShortcode').value,
+      mpesaPasskey: document.getElementById('mpesaPasskey').value,
+      subdomain: document.getElementById('editSub').value.trim(),
+      customDomain: document.getElementById('editCustom').value.trim()||undefined,
+      googleAnalyticsId: document.getElementById('gaId').value.trim(),
+      tiktokPixelId: document.getElementById('ttPixel').value.trim(),
+      social:{
+        whatsapp:document.getElementById('socialWA').value.trim(),
+        instagram:document.getElementById('socialIG').value.trim(),
+        facebook:document.getElementById('socialFB').value.trim(),
+        twitter:document.getElementById('socialTW').value.trim(),
+        linkedin:document.getElementById('socialLI').value.trim(),
+        tiktok:document.getElementById('socialTT').value.trim()
+      },
+      data:{...cust.data, shippingEnabled:document.getElementById('shippingToggle').checked}
+    });
+    isDirty=false; document.getElementById('saveBtn').classList.remove('dirty');
+    await refreshData();
+    toast('Settings saved!','success');
+  } catch(e) { toast(e.message||'Save failed','error'); }
+  finally { setBtnLoading(btn, false, 'Save settings', '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 3a1 1 0 011-1h8.5L14 4.5V13a1 1 0 01-1 1H3a1 1 0 01-1-1V3z"/><rect x="5" y="2" width="5" height="3.5" rx=".5"/><rect x="4" y="9" width="8" height="4" rx="1"/></svg>'); }
+}
+
+// ── SUPPORT ────────────────────────────────────────────
+window.createTicket = async function() {
+  const subject = document.getElementById('ticketSubj').value.trim();
+  const message = document.getElementById('ticketMsg').value.trim();
+  if (!subject||!message) return toast('Subject and message required','error');
+  const btn = document.getElementById('ticketBtn');
+  setBtnLoading(btn, true, 'Sending...');
+  try {
+    await apiFetch('/api/support','POST',{subject,message});
+    document.getElementById('ticketSubj').value='';
+    document.getElementById('ticketMsg').value='';
+    await loadTickets();
+    // Scroll to ticket list
+    document.getElementById('ticketList').scrollIntoView({behavior:'smooth',block:'start'});
+    toast('Ticket submitted!','success');
+  } catch(e) { toast(e.message||'Failed to submit','error'); }
+  finally { setBtnLoading(btn, false, 'Send ticket', '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2L2 7l4 3 2 4 6-12z"/><path d="M6 10l3-3"/></svg>'); }
+}
+
+window.loadTickets = async function() {
+  try {
+    const tickets = await apiFetch('/api/support');
+    const el = document.getElementById('ticketList');
+    if (!tickets.length) { el.innerHTML='<div class="es"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><rect x="2" y="7" width="20" height="10" rx="1"/><path d="M2 12h2M20 12h2" stroke-dasharray="2 2"/></svg><h4>No tickets yet</h4><p>Submit a ticket above if you need help</p></div>'; return; }
+    el.innerHTML = tickets.map(t => `<div class="tick"><div class="tick-top"><span class="tick-subj">${esc(t.subject)}</span><span class="tschip ts-${t.status.replace('-','-')}">${t.status}</span><span class="tick-date">${new Date(t.createdAt).toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'})}</span></div><div class="tick-msg">${esc(t.message)}</div>${(t.replies||[]).length?`<div class="reps">${t.replies.map(r=>`<div class="rep ${r.from}">${esc(r.message)}</div>`).join('')}</div>`:''}</div>`).join('');
+  } catch(e) {}
+}
+
+// ── UTILITIES ──────────────────────────────────────────
+window.saveCurrent = function() {
+  const active = document.querySelector('.sec.active')?.id;
+  if (active==='s-content') saveContent();
+  else if (active==='s-settings') saveSettings();
+  else toast('Navigate to Content or Settings to save','info');
+}
+
+window.openSite = function() { const d=cust?.customDomain||(cust?.subdomain+'.sitesawa.com'); window.open('https://'+d,'_blank'); }
+
+window.copyUrl = function() {
+  const d = cust?.customDomain||(cust?.subdomain+'.sitesawa.com');
+  navigator.clipboard.writeText('https://'+d).then(()=>{
+    const ico=document.getElementById('copyIco');
+    ico.outerHTML='<svg id="copyIco" width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 7l3.5 3.5L12 3"/></svg>';
+    toast('Link copied!','success');
+    setTimeout(()=>{const e=document.getElementById('copyIco');if(e)e.outerHTML='<svg id="copyIco" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M11 5V3a1 1 0 00-1-1H3a1 1 0 00-1 1v7a1 1 0 001 1h2"/></svg>'},2200);
+  });
+}
+
+window.logout = function() { localStorage.removeItem('sitesawa_token'); localStorage.removeItem('sitesawa_user'); location.href='/login.html'; }
+window.toggleMpesa = function() { document.getElementById('mpesaFields').classList.toggle('hidden',!document.getElementById('mpesaToggle').checked); }
+window.toggleShipping = function() { document.getElementById('shippingOpts').classList.toggle('hidden',!document.getElementById('shippingToggle').checked); }
+window.toggleVis = function(id,btn) {
+  const el=document.getElementById(id); el.type=el.type==='password'?'text':'password';
+  const eye='<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>';
+  const eyeOff='<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l12 12M6.7 5.7a4 4 0 014.6 4.6M3 6.3C2.1 7 1.3 7.8 1 8.5c0 0 2.5 5 7 5 1.1 0 2-.2 2.9-.6"/><path d="M11.4 4.6C13.2 5.7 14.5 7.2 15 8.5c0 0-2.5 5-7 5"/></svg>';
+  btn.innerHTML=el.type==='password'?eye:eyeOff;
+}
+
+window.confirmDelete = function(id,name) {
+  document.getElementById('confirmTitle').textContent='Delete product?';
+  document.getElementById('confirmMsg').textContent=`"${name}" will be permanently removed from your store.`;
+  confirmCb=async()=>{ await apiFetch('/api/products/'+id,'DELETE'); await refreshData(); toast('Product deleted','success'); };
+  document.getElementById('confirmModal').classList.add('open');
+}
+window.closeModal = function() { document.getElementById('confirmModal').classList.remove('open'); confirmCb=null; }
+window.doConfirm = function() { if(confirmCb) confirmCb(); closeModal(); }
+document.getElementById('confirmModal').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
+
+window.refreshData = async function() { cust=await apiFetch('/api/me'); populate(); await loadOrders(); }
+
+// ── THEME COLOUR PICKER ────────────────────────────────
+var THEME_PRESETS = [
+  {name:'Forest',  c:'#1e3a2f'}, {name:'Emerald', c:'#1a8c3a'},
+  {name:'Ocean',   c:'#0a6fb5'}, {name:'Royal',   c:'#3b3b98'},
+  {name:'Berry',   c:'#a4248c'}, {name:'Coral',   c:'#e2563b'},
+  {name:'Sunset',  c:'#e8954a'}, {name:'Gold',    c:'#c79a2b'},
+  {name:'Charcoal',c:'#26262a'}, {name:'Crimson', c:'#b3243a'}
+];
+function renderThemeSwatches(active) {
+  var wrap = document.getElementById('themeSwatches');
+  if (!wrap) return;
+  wrap.innerHTML = THEME_PRESETS.map(function(p){
+    var on = (p.c.toLowerCase() === (active||'').toLowerCase());
+    return '<button type="button" title="'+p.name+'" onclick="setThemeColor(\''+p.c+'\')" '
+      + 'style="width:40px;height:40px;border-radius:10px;cursor:pointer;background:'+p.c+';'
+      + 'border:3px solid '+(on?'var(--lime)':'transparent')+';box-shadow:0 0 0 1px var(--border)"></button>';
+  }).join('');
+}
+window.setThemeColor = function(hex) {
+  var input = document.getElementById('themeColorInput');
+  var hexLbl = document.getElementById('themeColorHex');
+  if (input) input.value = hex;
+  if (hexLbl) hexLbl.textContent = hex;
+  renderThemeSwatches(hex);
+  // mark unsaved
+  isDirty = true;
+  var sb = document.getElementById('saveBtn'); if (sb) sb.classList.add('dirty');
+}
+
+window.copyBioLink = function() {
+  var input = document.getElementById('bioLink');
+  var btn = document.getElementById('copyBioBtn');
+  if (!input) return;
+  input.select();
+  input.setSelectionRange(0, 99999);
+  var done = function(){ if(btn){ var t=btn.textContent; btn.textContent='Copied ✓'; setTimeout(function(){btn.textContent=t;},1800);} };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(input.value).then(done).catch(function(){ try{document.execCommand('copy');done();}catch(e){} });
+  } else {
+    try { document.execCommand('copy'); done(); } catch(e){}
+  }
+}
+
+window.changePlan = async function(plan) {
+  var msg = document.getElementById('planMsg');
+  if (cust && cust.template === plan) { if(msg){msg.textContent='You are already on this plan.';} return; }
+  var label = {'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[plan];
+  var price = {'PERSONAL':'7,000','BUSINESS':'8,000','ECOMMERCE':'9,000'}[plan];
+  if (!confirm('Switch to the ' + label + ' plan for KES ' + price + '? You will get an M-Pesa prompt on your phone.')) return;
+  if (msg) { msg.style.color='var(--lime)'; msg.textContent='Sending M-Pesa prompt to your phone…'; }
+  try {
+    var res = await apiFetch('/api/change-plan','POST',{ plan: plan });
+    if (msg) msg.textContent = 'Check your phone — enter your M-Pesa PIN to pay KES ' + (res.amount ? res.amount.toLocaleString() : price) + '. Your plan updates automatically once paid.';
+    // Poll for the plan to update (payment confirmation happens via callback)
+    var tries = 0;
+    var poll = setInterval(async function(){
+      tries++;
+      try {
+        var me = await apiFetch('/api/me');
+        if (me.template === plan) {
+          clearInterval(poll);
+          cust = me; populate();
+          if (msg) { msg.style.color='var(--lime)'; msg.textContent='✓ Done! You are now on the ' + label + ' plan.'; }
+          toast('Plan changed to ' + label + '!','success');
+        }
+      } catch(e){}
+      if (tries > 40) { clearInterval(poll); if(msg){msg.style.color='var(--dim)';msg.textContent='If you completed payment, refresh in a moment to see your new plan.';} }
+    }, 3000);
+  } catch (err) {
+    if (msg) { msg.style.color='var(--rose,#e8546b)'; msg.textContent = err.message || 'Could not start the plan change. Try again.'; }
+  }
+}
+
+async function apiFetch(path,method='GET',body) {
+  const r=await fetch(API+path,{method,headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+  if(r.status===401){
+    // Session invalid/expired — clear token and send back to login with a notice.
+    localStorage.removeItem('sitesawa_token'); sessionStorage.removeItem('sitesawa_token');
+    location.href='/login.html?expired=1';
+    throw new Error('Your session expired. Please sign in again.');
+  }
+  if(!r.ok){ const d=await r.json().catch(()=>{}); throw new Error(d?.error||'Request failed'); }
+  return r.json();
+}
+
+function toast(msg,type='info') {
+  const el=document.createElement('div');
+  el.className='toast '+type;
+  const ico={success:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="flex-shrink:0"><circle cx="8" cy="8" r="6"/><path d="M5 8l2 2 4-4"/></svg>',error:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="flex-shrink:0"><circle cx="8" cy="8" r="6"/><path d="M6 6l4 4M10 6l-4 4"/></svg>',info:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="flex-shrink:0"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5.5v.4"/></svg>'};
+  el.innerHTML=(ico[type]||ico.info)+`<span>${msg}</span>`;
+  document.getElementById('tw').appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(16px)'; el.style.transition='all .2s'; setTimeout(()=>el.remove(),200); },3500);
+}
+
+// Button loading state helper
+function setBtnLoading(btn,loading,text,iconHtml='') {
+  btn.disabled=loading;
+  if(loading){
+    btn.innerHTML=`<span class="spin"></span>${text}`;
+  } else {
+    btn.innerHTML=(iconHtml?iconHtml+' ':'')+text;
+  }
+}
+
+function updateCharCount(el, counterId, max) {
+  const n = el.value.length;
+  const el2 = document.getElementById(counterId);
+  if(el2) { el2.textContent = n; el2.style.color = n > max*0.9 ? 'var(--amber)' : 'var(--muted)'; el2.style.fontWeight = n >= max ? '700' : ''; }
+}
+
+window.toggleTheme = function() {
+  const root = document.documentElement;
+  const isLight = root.getAttribute('data-theme') === 'light';
+  root.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  localStorage.setItem('sitesawa_theme', isLight ? 'dark' : 'light');
+  const btn = document.getElementById('themeBtn');
+  if(btn) btn.querySelector('svg').style.fill = isLight ? 'none' : 'currentColor';
+}
+// Apply saved theme on load
+(function(){
+  const t = localStorage.getItem('sitesawa_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+init();
+
+  // ── NAV WIRING ──────────────────────────────────────────────
+  document.querySelectorAll('.ni[data-s]').forEach(function(ni) {
+    ni.addEventListener('click', function() {
+      nav(this, this.getAttribute('data-s'));
+    });
+  });
+
+// ── DESIGN / TEMPLATE SWITCHING ──────────────────────────────────────
+const ALL_TEMPLATES = {
+  personal:  ['me-portfolio','me-developer','me-writer','me-music','me-resume','me-wedding','me-artist','me-doctor','me-linkbio','me-coach','me-speaker','me-travel'],
+  business:  ['biz-agency','biz-restaurant','biz-spa','biz-law','biz-realestate','biz-gym','biz-coffee','biz-construction','biz-startup','biz-auto','biz-safari','biz-bakery','biz-politician','biz-logistics','biz-salon'],
+  ecommerce: ['shop-fashion','shop-electronics','shop-beauty','shop-food','shop-furniture','shop-bookstore'],
+};
+const TMPL_NAMES = {
+  'me-portfolio':'Portfolio','me-developer':'Developer','me-writer':'Writer','me-music':'Musician',
+  'me-resume':'Resume','me-wedding':'Wedding','me-artist':'Artist','me-doctor':'Doctor',
+  'me-linkbio':'Link Bio','me-coach':'Coach','me-speaker':'Speaker','me-travel':'Travel',
+  'biz-agency':'Agency','biz-restaurant':'Restaurant','biz-spa':'Spa','biz-law':'Law Firm',
+  'biz-realestate':'Real Estate','biz-gym':'Gym','biz-coffee':'Cafe','biz-construction':'Construction',
+  'biz-startup':'Startup','biz-auto':'Auto','biz-safari':'Safari','biz-bakery':'Bakery',
+  'biz-politician':'Campaign','biz-logistics':'Logistics','biz-salon':'Salon',
+  'shop-fashion':'Fashion','shop-electronics':'Electronics','shop-beauty':'Beauty',
+  'shop-food':'Food','shop-furniture':'Furniture','shop-bookstore':'Bookstore',
+};
+
+window.filterDesigns = function(cat) {
+  document.querySelectorAll('#designTabs .btn').forEach(b => b.classList.remove('btn-lime'));
+  const btn = document.getElementById('dt' + cat.charAt(0).toUpperCase() + cat.slice(1));
+  if (btn) btn.classList.add('btn-lime');
+  const grid = document.getElementById('designGrid');
+  const planCat = { PERSONAL:'personal', BUSINESS:'business', ECOMMERCE:'ecommerce' }[cust?.template] || 'personal';
+  const templates = ALL_TEMPLATES[planCat] || [];
+  grid.innerHTML = templates.map(id => {
+    const active = (cust?.templateId || '') === id;
+    return `<div style="border:2px solid ${active?'var(--lime)':'var(--border)'};border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;background:var(--card)" onclick="applyTemplate('${id}')">
+      <div style="aspect-ratio:9/14;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--dim);position:relative">
+        <iframe src="/${id}.html" style="width:200%;height:200%;transform:scale(.5);transform-origin:top left;pointer-events:none;border:none" loading="lazy"></iframe>
+      </div>
+      <div style="padding:10px;font-size:13px;font-weight:600;color:var(--text)">${TMPL_NAMES[id]||id}${active?' <span style=\"color:var(--lime);font-size:11px\">✓ Active</span>':''}</div>
+    </div>`;
+  }).join('');
+};
+
+window.applyTemplate = async function(templateId) {
+  if (!confirm('Switch to this template? Your content will carry over.')) return;
+  try {
+    await apiFetch('/api/me','PUT',{ templateId });
+    cust.templateId = templateId;
+    toast('Template updated! Refresh your site to see changes.','success');
+    filterDesigns();
+  } catch(e) { toast('Failed to update template','error'); }
+};
+</script>
+</body>
+</html>
