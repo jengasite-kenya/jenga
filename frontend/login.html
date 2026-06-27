@@ -355,10 +355,10 @@ button{font-family:var(--ff-body);cursor:pointer}
 
     <!-- step 1 -->
     <div class="modal-step active" id="step1">
-      <div class="modal-sub">Enter your phone number. We'll send a recovery code to your email.</div>
+      <div class="modal-sub">Enter your email. We'll send a recovery code to your inbox.</div>
       <div class="field">
         <label>Gmail / Email address</label>
-        <div class="field-inner"><input type="tel" id="forgotPhone" placeholder="07XX XXX XXX"></div>
+        <div class="field-inner"><input type="email" id="forgotEmail" placeholder="you@gmail.com"></div>
       </div>
       <button class="submit-btn" id="sendCodeBtn" style="margin-top:4px">
         <span class="spinner hidden" id="forgotSpinner"></span>
@@ -542,8 +542,8 @@ document.getElementById('errorAlert').classList.remove('show');
 // FORGOT
 window.showForgot = function() {
   document.getElementById('forgotModal').classList.add('active');
-  document.getElementById('forgotPhone').value = document.getElementById('loginEmail').value;
-  setTimeout(() => document.getElementById('forgotPhone').focus(), 100);
+  document.getElementById('forgotEmail').value = document.getElementById('loginEmail').value;
+  setTimeout(() => document.getElementById('forgotEmail').focus(), 100);
 }
 window.hideForgot = function() { document.getElementById('forgotModal').classList.remove('active'); backToStep1(); }
 window.backToStep1 = function() { document.getElementById('step1').classList.add('active'); document.getElementById('step2').classList.remove('active'); }
@@ -552,11 +552,11 @@ window.sendCode = async function() {
   // Rate limit UI: prevent hammering the button
   const btn = document.getElementById('sendCodeBtn');
   if (btn._cooling) return;
-  const phone = document.getElementById('forgotPhone').value.trim().replace(/\s/g, '');
-  if (!phone || !validatePhone(phone)) { showError('Enter a valid phone number'); return; }
+  const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { showError('Enter a valid email address'); return; }
   setLoading('sendCodeBtn','forgotSpinner','sendCodeText',true);
   try {
-    const res = await fetch(`${API}/api/recover-key`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone: phone.startsWith('0') ? '254'+phone.slice(1) : phone}) });
+    const res = await fetch(`${API}/api/recover-key`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email}) });
     if (res.ok) {
       document.getElementById('step1').classList.remove('active');
       document.getElementById('step2').classList.add('active');
@@ -571,7 +571,7 @@ window.sendCode = async function() {
         if (secs <= 0) { clearInterval(t); btn._cooling = false; document.getElementById('sendCodeText').textContent = origText; }
       }, 1000);
     }
-    else { const data = await res.json(); showError(data.error || 'Phone not found'); }
+    else { const data = await res.json(); showError(data.error || 'Could not send code'); }
   } catch { showError('Network error'); }
   finally { setLoading('sendCodeBtn','forgotSpinner','sendCodeText',false); }
 }
@@ -602,15 +602,15 @@ document.getElementById('newKey').addEventListener('input', function() {
 window.resetKey = async function() {
   const code = Array.from(document.querySelectorAll('.code-digit')).map(i => i.value).join('');
   const newKey = document.getElementById('newKey').value;
-  const phone = document.getElementById('forgotPhone').value.trim().replace(/\s/g, '');
+  const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
   if (code.length !== 6) { showError('Enter the full 6-digit code'); return; }
   if (newKey.length < 6) { showError('New key must be at least 6 characters'); return; }
   setLoading('resetBtn','resetSpinner','resetText',true);
   try {
-    const res = await fetch(`${API}/api/reset-key`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone,code,newKey}) });
+    const res = await fetch(`${API}/api/reset-key`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email,code,newKey}) });
     if (res.ok) {
       showSuccess('Key reset! Sign in with your new key.');
-      setTimeout(() => { hideForgot(); document.getElementById('loginEmail').value = phone; document.getElementById('loginKey').focus(); }, 2000);
+      setTimeout(() => { hideForgot(); document.getElementById('loginEmail').value = email; document.getElementById('loginKey').focus(); }, 2000);
     } else { const data = await res.json(); showError(data.error || 'Invalid code'); }
   } catch { showError('Network error'); }
   finally { setLoading('resetBtn','resetSpinner','resetText',false); }
@@ -619,23 +619,10 @@ window.resetKey = async function() {
 document.getElementById('forgotModal').addEventListener('click', function(e) { if (e.target === this) hideForgot(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') hideForgot(); });
 
-const token = localStorage.getItem('sitesawa_token') || sessionStorage.getItem('sitesawa_token');
-if (token) {
-    fetch(`${API}/api/me`, { headers: { 'Authorization': `Bearer ${token}` } })
-        .then(r => {
-            if (r.ok) {
-                window.location.href = '/dashboard-customer.html';
-            } else if (r.status === 401) {
-                // Token expired or invalid — clear it so user gets a clean login screen
-                localStorage.removeItem('sitesawa_token');
-                sessionStorage.removeItem('sitesawa_token');
-                localStorage.removeItem('sitesawa_user');
-            }
-        })
-        .catch(() => {
-            // Network error — leave token in place, user may just be offline
-        });
-}
+// NOTE: We intentionally do NOT auto-redirect to the dashboard on page load,
+// even if a saved token exists. The user must press "Sign in" themselves.
+// (Saving the email/key in the browser just pre-fills the form, it does not
+//  log them in automatically.)
 
 document.getElementById('loginEmail').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('loginKey').focus(); });
 document.getElementById('loginKey').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('loginForm').dispatchEvent(new Event('submit')); });
