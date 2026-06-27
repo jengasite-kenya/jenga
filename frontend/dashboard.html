@@ -968,9 +968,16 @@ window.showDashError = function(msg) {
     + '<div style="font-size:40px;margin-bottom:12px">⚠️</div>'
     + '<div style="font-size:16px;font-weight:600;color:var(--text,#fff);margin-bottom:8px">Could not open your dashboard</div>'
     + '<div style="font-size:13px;color:var(--muted,#888);margin-bottom:18px">' + msg + '</div>'
-    + '<button onclick="location.reload()" style="background:var(--lime,#bef264);color:#0a0a0a;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;margin-right:8px">Try again</button>'
-    + '<button onclick="localStorage.removeItem(\'sitesawa_token\');sessionStorage.removeItem(\'sitesawa_token\');location.href=\'/login.html\'" style="background:transparent;color:var(--muted,#888);border:1px solid var(--border,#333);padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer">Sign in again</button>'
+    + '<button id="dashRetryBtn" style="background:var(--lime,#bef264);color:#0a0a0a;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;margin-right:8px">Try again</button>'
+    + '<button id="dashSignInBtn" style="background:transparent;color:var(--muted,#888);border:1px solid var(--border,#333);padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer">Sign in again</button>'
     + '</div>';
+  var rb = document.getElementById('dashRetryBtn');
+  if (rb) rb.addEventListener('click', function(){ location.reload(); });
+  var sb = document.getElementById('dashSignInBtn');
+  if (sb) sb.addEventListener('click', function(){
+    try { localStorage.removeItem('sitesawa_token'); sessionStorage.removeItem('sitesawa_token'); } catch(e){}
+    location.href='/login.html';
+  });
 }
 
 window.populate = function() {
@@ -1572,9 +1579,9 @@ window.toggleTheme = function() {
   try { localStorage.setItem('sitesawa_theme', isLight ? 'dark' : 'light'); } catch(e){}
   const btn = document.getElementById('themeBtn');
   if(btn) btn.querySelector('svg').style.fill = isLight ? 'none' : 'currentColor';
-}
+};
 // Apply saved theme on load
-(function(){
+;(function(){
   var t = 'dark';
   try { t = localStorage.getItem('sitesawa_theme') || 'dark'; } catch(e){}
   document.documentElement.setAttribute('data-theme', t);
