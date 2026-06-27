@@ -933,7 +933,10 @@ window.init = async function() {
     await loadTickets();
   } catch(e) {
     document.getElementById('ls').classList.add('gone');
-    toast('Failed to load dashboard', 'error');
+    // Show the real reason instead of a blank/looping screen
+    var msg = (e && e.message) ? e.message : 'Could not load your dashboard';
+    toast(msg, 'error');
+    console.error('Dashboard load failed:', msg);
   }
 }
 
@@ -1494,7 +1497,12 @@ window.changePlan = async function(plan) {
 
 async function apiFetch(path,method='GET',body) {
   const r=await fetch(API+path,{method,headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
-  if(r.status===401){ localStorage.removeItem('sitesawa_token'); sessionStorage.removeItem('sitesawa_token'); location.href='/login.html'; }
+  if(r.status===401){
+    // Session invalid/expired — clear token and send back to login with a notice.
+    localStorage.removeItem('sitesawa_token'); sessionStorage.removeItem('sitesawa_token');
+    location.href='/login.html?expired=1';
+    throw new Error('Your session expired. Please sign in again.');
+  }
   if(!r.ok){ const d=await r.json().catch(()=>{}); throw new Error(d?.error||'Request failed'); }
   return r.json();
 }
