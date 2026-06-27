@@ -375,7 +375,7 @@ input[type=file]{display:none}
 .lbf{height:100%;background:var(--lime);border-radius:2px;animation:lbr 1.3s ease forwards}
 @keyframes lbr{from{width:0}to{width:100%}}
 .ls p{font-size:12px;color:var(--muted)}
-.ls.gone{opacity:0;pointer-events:none;transition:opacity .3s}
+.ls.gone{opacity:0;pointer-events:none;transition:opacity .2s}
 
 /* ── EMPTY STATES ───────────────────── */
 .es{text-align:center;padding:44px 20px;color:var(--muted)}
@@ -412,8 +412,6 @@ input[type=file]{display:none}
 <!-- LOADING -->
 <div class="ls" id="ls">
   <div class="ll"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v7l7 4 7-4V7L10 2zm0 2.5l5 3.33v5.34L10 16.5 5 13.17V7.83L10 4.5z"/></svg></div>
-  <div class="lb"><div class="lbf"></div></div>
-  <p>Loading your dashboard...</p>
 </div>
 
 <!-- DELETE CONFIRM MODAL -->
@@ -930,10 +928,13 @@ window.init = async function() {
   try {
     cust = await apiFetch('/api/me');
     populate();
+    document.getElementById('ls').classList.add('gone');  // hide as soon as core data is in
     await loadOrders();
     await loadTickets();
-    setTimeout(() => document.getElementById('ls').classList.add('gone'), 500);
-  } catch(e) { toast('Failed to load dashboard', 'error'); }
+  } catch(e) {
+    document.getElementById('ls').classList.add('gone');
+    toast('Failed to load dashboard', 'error');
+  }
 }
 
 window.populate = function() {
