@@ -43,6 +43,7 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
+            scriptSrcAttr: ["'unsafe-inline'"],
             scriptSrc: [
                 "'self'", "'unsafe-inline'",
                 'https://www.googletagmanager.com',
