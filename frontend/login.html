@@ -648,6 +648,9 @@ document.getElementById('loginKey').addEventListener('keypress', e => { if (e.ke
   // tab with the chosen plan pre-selected (free-trial signup, no payment).
   try {
     var params = new URLSearchParams(window.location.search);
+    if (params.get('expired') === '1') {
+      showError('Your session expired or your sign-in was not accepted. Please sign in again.');
+    }
     if (params.get('signup') === '1' || params.get('plan')) {
       switchTab('register');
       var plan = (params.get('plan') || '').toUpperCase();
