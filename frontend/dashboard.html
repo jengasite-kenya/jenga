@@ -1433,7 +1433,7 @@ window.copyUrl = function() {
   });
 }
 
-window.logout = function() { localStorage.removeItem('sitesawa_token'); localStorage.removeItem('sitesawa_user'); location.href='/login.html'; }
+window.logout = function() { try { localStorage.removeItem('sitesawa_token'); localStorage.removeItem('sitesawa_user'); sessionStorage.removeItem('sitesawa_token'); } catch(e){} location.href='/login.html'; }
 window.toggleMpesa = function() { document.getElementById('mpesaFields').classList.toggle('hidden',!document.getElementById('mpesaToggle').checked); }
 window.toggleShipping = function() { document.getElementById('shippingOpts').classList.toggle('hidden',!document.getElementById('shippingToggle').checked); }
 window.toggleVis = function(id,btn) {
@@ -1569,13 +1569,14 @@ window.toggleTheme = function() {
   const root = document.documentElement;
   const isLight = root.getAttribute('data-theme') === 'light';
   root.setAttribute('data-theme', isLight ? 'dark' : 'light');
-  localStorage.setItem('sitesawa_theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('sitesawa_theme', isLight ? 'dark' : 'light'); } catch(e){}
   const btn = document.getElementById('themeBtn');
   if(btn) btn.querySelector('svg').style.fill = isLight ? 'none' : 'currentColor';
 }
 // Apply saved theme on load
 (function(){
-  const t = localStorage.getItem('sitesawa_theme') || 'dark';
+  var t = 'dark';
+  try { t = localStorage.getItem('sitesawa_theme') || 'dark'; } catch(e){}
   document.documentElement.setAttribute('data-theme', t);
 })();
 
