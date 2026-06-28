@@ -394,6 +394,11 @@ input[type=file]{display:none}
   .sidebar.open{transform:translateX(0)}
   .main{margin-left:0;padding:18px 14px}
   .tb-sep,.tb-url{display:none}
+  .tb-hide-mobile{display:none}
+  .topbar{padding:0 12px;gap:6px}
+  .tb-right{gap:4px}
+  .save-btn{padding:7px 12px}
+  .logo-name{font-size:14px}
   .stats-row.cols-4,.stats-row.cols-3{grid-template-columns:1fr 1fr}
 }
 @media(max-width:480px){
@@ -432,7 +437,7 @@ input[type=file]{display:none}
 <!-- TOPBAR -->
 <header class="topbar">
   <div class="tb-left">
-    <div class="logo">
+    <div class="logo" onclick="nav(document.querySelector('[data-s=overview]'),'overview')" style="cursor:pointer" title="Go to Overview">
       <div class="logo-mark"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v7l7 4 7-4V7L10 2zm0 2.5l5 3.33v5.34L10 16.5 5 13.17V7.83L10 4.5z"/></svg></div>
       <span class="logo-name">SiteSawa</span>
     </div>
@@ -443,7 +448,7 @@ input[type=file]{display:none}
     </div>
   </div>
   <div class="tb-right">
-    <button class="ico-btn" onclick="openSite()" title="View site">
+    <button class="ico-btn tb-hide-mobile" onclick="openSite()" title="View site">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H3a1 1 0 00-1 1v9a1 1 0 001 1h9a1 1 0 001-1V9"/><path d="M13 3h-4m4 0v4M7.5 8.5l5-5"/></svg>
       <span class="tt">View site</span>
     </button>
@@ -451,7 +456,7 @@ input[type=file]{display:none}
       <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3a1 1 0 011-1h8.5L14 4.5V13a1 1 0 01-1 1H3a1 1 0 01-1-1V3z"/><rect x="5" y="2" width="5" height="3.5" rx=".5"/><rect x="4" y="9" width="8" height="4" rx="1"/></svg>
       <span id="saveBtnText">Save</span>
     </button>
-    <button class="ico-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">
+    <button class="ico-btn tb-hide-mobile" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/><circle cx="8" cy="8" r="3"/></svg>
       <span class="tt">Toggle theme</span>
     </button>
@@ -619,6 +624,8 @@ input[type=file]{display:none}
           <input type="file" id="logoFile" accept="image/*" onchange="handleLogoUpload(event)">
           <div style="flex:1;min-width:180px">
             <div class="f"><label>Or paste image URL</label><input type="text" id="logoUrl" placeholder="https://..." oninput="previewLogo(this.value)"></div>
+            <p style="font-size:12px;color:var(--dim);margin:8px 0 6px">A logo is optional. Leave it blank and your business name shows as text instead.</p>
+            <button class="btn btn-ghost" style="font-size:13px;padding:7px 14px" onclick="clearLogo()">No logo — leave blank</button>
           </div>
         </div>
       </div>
@@ -842,7 +849,16 @@ input[type=file]{display:none}
       <div class="ph"><div><div class="pt">Change Plan</div><div class="ps">Upgrade or switch your plan anytime</div></div></div>
       <div class="card">
         <div class="card-head"><div class="ct">Your current plan: <span id="curPlanName" style="color:var(--lime)">—</span></div></div>
-        <p style="color:var(--dim);font-size:14px;margin-bottom:18px">Pick a new plan below. You'll get an M-Pesa prompt on your phone for the full plan price. Your new features unlock as soon as payment is confirmed, and your content carries over.</p>
+        <p style="color:var(--dim);font-size:14px;margin-bottom:14px">Pay to keep your site online, or switch plans. You'll get an M-Pesa prompt on the phone number below for the plan price. Your content carries over.</p>
+
+        <div style="background:var(--ink2,#16161c);border:1px solid var(--border,#26262e);border-radius:12px;padding:16px;margin-bottom:18px">
+          <label style="display:block;font-size:13px;color:var(--dim);margin-bottom:7px">M-Pesa phone number for the prompt</label>
+          <input id="payPhone" type="tel" placeholder="07XX XXX XXX" style="width:100%;padding:11px 13px;border:1px solid var(--border,#32323f);border-radius:9px;background:var(--ink,#0f0f14);color:var(--text,#fff);font-size:15px;outline:none">
+          <p style="font-size:12px;color:var(--dim);margin-top:7px">You can use any M-Pesa number — it doesn't have to match your login.</p>
+          <button class="btn btn-lime" style="margin-top:13px;width:100%" onclick="renewPlan()">Pay to keep my site online →</button>
+        </div>
+
+        <p style="color:var(--dim);font-size:13px;margin-bottom:12px">Or switch to a different plan:</p>
         <div class="plan-cards" id="planCards">
           <div class="plan-card" data-plan="PERSONAL">
             <div class="pc-name">Personal</div>
@@ -992,6 +1008,8 @@ window.populate = function() {
   document.getElementById('tbUrl').textContent = domain;
   document.getElementById('suName').textContent = cust.name || 'User';
   document.getElementById('suPhone').textContent = cust.phone || '';
+  var payPhoneEl = document.getElementById('payPhone');
+  if (payPhoneEl && !payPhoneEl.value) payPhoneEl.value = cust.phone || '';
   document.getElementById('suPlan').textContent = ({'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[cust.template] || cust.template || 'Personal') + ' Plan';
   // Mark current plan in the Change Plan section
   var curName = document.getElementById('curPlanName');
@@ -1148,6 +1166,16 @@ window.previewLogo = function(url) {
   const img=document.getElementById('logoPrev'), ico=document.getElementById('logoIco'), tip=document.getElementById('logoTip'), wrap=document.getElementById('logoUp');
   if(url){ img.src=url; img.classList.remove('hidden'); ico.classList.add('hidden'); tip.textContent='Click to change'; wrap.classList.add('has-img'); }
   else{ img.classList.add('hidden'); ico.classList.remove('hidden'); tip.textContent='Click to upload'; wrap.classList.remove('has-img'); }
+}
+window.clearLogo = function() {
+  pendingLogo = null;
+  var urlEl = document.getElementById('logoUrl'); if (urlEl) urlEl.value = '';
+  var fileEl = document.getElementById('logoFile'); if (fileEl) fileEl.value = '';
+  if (cust && cust.data) cust.data.logo = '';
+  previewLogo('');
+  isDirty = true;
+  var sb = document.getElementById('saveBtn'); if (sb) sb.classList.add('dirty');
+  toast('Logo cleared — your business name will show as text. Press Save to apply.','info');
 }
 window.handleLogoUpload = async function(e) {
   const f=e.target.files[0]; if(!f) return;
@@ -1505,34 +1533,64 @@ window.copyBioLink = function() {
   }
 }
 
-window.changePlan = async function(plan) {
+// Read + lightly validate the M-Pesa phone the user wants prompted
+function getPayPhone() {
+  var el = document.getElementById('payPhone');
+  var raw = (el && el.value ? el.value : (cust && cust.phone) || '').trim().replace(/\s+/g,'');
+  if (raw.startsWith('0')) raw = '254' + raw.slice(1);
+  if (raw.startsWith('+')) raw = raw.slice(1);
+  return raw;
+}
+function validPayPhone(p) { return /^254[17]\d{8}$/.test(p); }
+
+// Renew / pay for the CURRENT plan to keep the site online
+window.renewPlan = function() {
+  if (!cust) return;
+  renewOrChange(cust.template, true);
+}
+
+// Switch to a different plan
+window.changePlan = function(plan) {
+  renewOrChange(plan, false);
+}
+
+async function renewOrChange(plan, isRenew) {
   var msg = document.getElementById('planMsg');
-  if (cust && cust.template === plan) { if(msg){msg.textContent='You are already on this plan.';} return; }
-  var label = {'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[plan];
+  var phone = getPayPhone();
+  if (!validPayPhone(phone)) {
+    if (msg) { msg.style.color='var(--rose,#e8546b)'; msg.textContent='Enter a valid M-Pesa number (e.g. 0712 345 678) in the box above.'; }
+    var pe = document.getElementById('payPhone'); if (pe) pe.focus();
+    return;
+  }
+  var label = {'PERSONAL':'Personal','BUSINESS':'Business','ECOMMERCE':'E-Commerce'}[plan] || plan;
   var price = {'PERSONAL':'7,000','BUSINESS':'8,000','ECOMMERCE':'9,000'}[plan];
-  if (!confirm('Switch to the ' + label + ' plan for KES ' + price + '? You will get an M-Pesa prompt on your phone.')) return;
-  if (msg) { msg.style.color='var(--lime)'; msg.textContent='Sending M-Pesa prompt to your phone…'; }
+  var ask = isRenew
+    ? 'Pay KES ' + price + ' to keep your site on the ' + label + ' plan? An M-Pesa prompt goes to ' + phone + '.'
+    : 'Switch to the ' + label + ' plan for KES ' + price + '? An M-Pesa prompt goes to ' + phone + '.';
+  if (!confirm(ask)) return;
+  if (msg) { msg.style.color='var(--lime)'; msg.textContent='Sending M-Pesa prompt to ' + phone + '…'; }
   try {
-    var res = await apiFetch('/api/change-plan','POST',{ plan: plan });
-    if (msg) msg.textContent = 'Check your phone — enter your M-Pesa PIN to pay KES ' + (res.amount ? res.amount.toLocaleString() : price) + '. Your plan updates automatically once paid.';
-    // Poll for the plan to update (payment confirmation happens via callback)
+    var res = await apiFetch('/api/change-plan','POST',{ plan: plan, phone: phone, renew: isRenew });
+    if (msg) msg.textContent = 'Check your phone — enter your M-Pesa PIN to pay KES ' + (res.amount ? res.amount.toLocaleString() : price) + '. Your site stays online once paid.';
     var tries = 0;
     var poll = setInterval(async function(){
       tries++;
       try {
         var me = await apiFetch('/api/me');
-        if (me.template === plan) {
+        var paidNow = (me.paymentStatus === 'paid');
+        if (paidNow && (isRenew || me.template === plan)) {
           clearInterval(poll);
           cust = me; populate();
-          if (msg) { msg.style.color='var(--lime)'; msg.textContent='✓ Done! You are now on the ' + label + ' plan.'; }
-          toast('Plan changed to ' + label + '!','success');
+          if (msg) { msg.style.color='var(--lime)'; msg.textContent = isRenew ? '✓ Paid! Your site stays online.' : '✓ Done! You are now on the ' + label + ' plan.'; }
+          toast(isRenew ? 'Payment received — site active!' : 'Plan changed to ' + label + '!','success');
         }
       } catch(e){}
-      if (tries > 40) { clearInterval(poll); if(msg){msg.style.color='var(--dim)';msg.textContent='If you completed payment, refresh in a moment to see your new plan.';} }
+      if (tries > 40) { clearInterval(poll); if(msg){msg.style.color='var(--dim)';msg.textContent='If you completed payment, refresh in a moment.';} }
     }, 3000);
   } catch (err) {
-    if (msg) { msg.style.color='var(--rose,#e8546b)'; msg.textContent = err.message || 'Could not start the plan change. Try again.'; }
+    if (msg) { msg.style.color='var(--rose,#e8546b)'; msg.textContent = err.message || 'Could not start payment. Try again.'; }
   }
+}
 }
 
 async function apiFetch(path,method='GET',body) {
@@ -1626,8 +1684,8 @@ window.filterDesigns = function(cat) {
   grid.innerHTML = templates.map(id => {
     const active = (cust?.templateId || '') === id;
     return `<div style="border:2px solid ${active?'var(--lime)':'var(--border)'};border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;background:var(--card)" onclick="applyTemplate('${id}')">
-      <div style="aspect-ratio:9/14;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--dim);position:relative">
-        <iframe src="/${id}.html" style="width:200%;height:200%;transform:scale(.5);transform-origin:top left;pointer-events:none;border:none" loading="lazy"></iframe>
+      <div style="aspect-ratio:3/4;background:var(--bg2);position:relative;overflow:hidden">
+        <iframe src="/${id}.html" scrolling="no" style="width:1280px;height:1707px;border:none;pointer-events:none;transform:scale(.182);transform-origin:top left;position:absolute;top:0;left:0" loading="lazy"></iframe>
       </div>
       <div style="padding:10px;font-size:13px;font-weight:600;color:var(--text)">${TMPL_NAMES[id]||id}${active?' <span style=\"color:var(--lime);font-size:11px\">✓ Active</span>':''}</div>
     </div>`;
