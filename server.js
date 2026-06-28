@@ -2392,7 +2392,7 @@ app.post('/api/mpesa/checkout-callback/:checkoutId', async (req, res) => {
 // ============================================
 app.post('/api/change-plan', auth, async (req, res) => {
     try {
-        const { plan } = req.body;
+        const { plan, renew } = req.body;
         const newPlan = String(plan || '').toUpperCase();
 
         const planPrices = { PERSONAL: 7000, BUSINESS: 8000, ECOMMERCE: 9000 };
@@ -2401,12 +2401,21 @@ app.post('/api/change-plan', auth, async (req, res) => {
         const customer = await Customer.findById(req.user.id);
         if (!customer) return res.status(404).json({ error: 'Account not found' });
 
-        if (customer.template === newPlan) {
+        // Allow paying for the SAME plan when renewing/reactivating (renew=true).
+        // Only block same-plan when it's a non-renew "switch".
+        if (customer.template === newPlan && !renew) {
             return res.status(400).json({ error: `You are already on the ${newPlan} plan` });
         }
 
         const planPrice = planPrices[newPlan];
-        const normPhone = customer.phone;
+        // Use the phone the customer entered for the prompt (any valid M-Pesa number),
+        // falling back to their saved phone.
+        let normPhone = String(req.body.phone || customer.phone || '').trim().replace(/\s+/g, '');
+        if (normPhone.startsWith('0')) normPhone = '254' + normPhone.slice(1);
+        if (normPhone.startsWith('+')) normPhone = normPhone.slice(1);
+        if (!/^254[17]\d{8}$/.test(normPhone)) {
+            return res.status(400).json({ error: 'Enter a valid M-Pesa phone number (e.g. 0712 345 678)' });
+        }
         // Track the requested plan change until payment confirms
         await Customer.updateOne({ _id: customer._id }, { $set: { pendingPlan: newPlan } });
 
