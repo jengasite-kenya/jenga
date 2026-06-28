@@ -1591,7 +1591,6 @@ async function renewOrChange(plan, isRenew) {
     if (msg) { msg.style.color='var(--rose,#e8546b)'; msg.textContent = err.message || 'Could not start payment. Try again.'; }
   }
 }
-}
 
 async function apiFetch(path,method='GET',body) {
   const r=await fetch(API+path,{method,headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
