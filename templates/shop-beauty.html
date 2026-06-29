@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FLORA — Natural Beauty & Skincare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fdf6f3;--cream:#fffaf8;--ink:#3a2c2a;--mut:#9a8580;--rose:#c98a7d;--rose-d:#b06f61;--blush:#f3dcd4;--line:#efe1db}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font:300 16px/1.7 'Jost',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.fr{font-family:'Fraunces',serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+.bar{background:var(--ink);color:var(--cream);text-align:center;font-size:12px;letter-spacing:.16em;text-transform:uppercase;padding:8px}
+nav{position:sticky;top:0;z-index:40;background:rgba(253,246,243,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1180px;margin:0 auto;padding:18px 26px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Fraunces',serif;font-size:27px;letter-spacing:.22em;text-transform:uppercase}
+.nav-links{display:flex;gap:30px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.nav-links a:hover{color:var(--rose-d)}
+.nav-icons{display:flex;gap:18px;font-size:17px;color:var(--ink)}
+.nav-icons span{cursor:pointer;position:relative}
+.nav-icons .c{position:absolute;top:-7px;right:-9px;background:var(--rose);color:#fff;font-size:10px;font-weight:600;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Jost'}
+/* hero */
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:78vh}
+.hero-l{display:flex;flex-direction:column;justify-content:center;padding:70px 60px}
+.hero-l .pre{font-family:'Fraunces',serif;font-style:italic;color:var(--rose-d);font-size:21px;margin-bottom:14px}
+.hero-l h1{font-family:'Fraunces',serif;font-size:clamp(42px,6vw,76px);line-height:1.02;margin-bottom:20px}
+.hero-l p{color:var(--mut);font-size:17px;max-width:380px;margin-bottom:28px}
+.hero-l a{align-self:flex-start;background:var(--ink);color:var(--cream);letter-spacing:.16em;text-transform:uppercase;font-size:13px;padding:16px 38px;transition:.2s}
+.hero-l a:hover{background:var(--rose-d)}
+.hero-r{background:radial-gradient(circle at 50% 40%,#f6ddd4,#ecc7bb);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.bottle{font-size:150px;filter:drop-shadow(0 20px 30px rgba(176,111,97,.3));z-index:1}
+.ring{position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.5)}
+.r1{width:300px;height:300px;animation:spin 30s linear infinite}
+.r2{width:440px;height:440px;animation:spin 44s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* values strip */
+.vals{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+.val{background:var(--bg);padding:22px;text-align:center}
+.val .e{font-size:22px;margin-bottom:6px}
+.val b{font-family:'Fraunces',serif;font-size:15px;display:block}
+.val span{font-size:12px;color:var(--mut);letter-spacing:.04em}
+/* products */
+.sec{padding:84px 0}
+.sec-head{text-align:center;margin-bottom:46px}
+.sec-head .lab{font-family:'Fraunces',serif;font-style:italic;color:var(--rose-d);font-size:20px}
+.sec-head h2{font-family:'Fraunces',serif;font-size:clamp(30px,5vw,50px)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.prod{text-align:center;cursor:pointer}
+.prod-img{aspect-ratio:3/4;background:var(--cream);border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative;margin-bottom:14px}
+.prod-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.prod:hover .prod-img img{transform:scale(1.05)}
+.prod .badge{position:absolute;top:12px;left:12px;background:var(--rose);color:#fff;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border-radius:999px}
+.prod .add{position:absolute;left:14px;right:14px;bottom:14px;background:rgba(58,44,42,.94);color:var(--cream);font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:12px;border:none;cursor:pointer;opacity:0;transform:translateY(8px);transition:.25s;font-family:'Jost'}
+.prod:hover .add{opacity:1;transform:none}
+.prod .add:hover{background:var(--rose-d)}
+.prod .cat-l{font-size:11px;color:var(--mut);letter-spacing:.1em;text-transform:uppercase}
+.prod h3{font-family:'Fraunces',serif;font-size:18px;margin:5px 0 4px}
+.prod .price{color:var(--rose-d);font-weight:400;font-size:16px}
+/* quote */
+.quote{background:var(--blush);text-align:center;padding:90px 26px}
+.quote p{font-family:'Fraunces',serif;font-style:italic;font-size:clamp(24px,4vw,40px);line-height:1.4;max-width:760px;margin:0 auto;color:var(--ink)}
+.quote .src{letter-spacing:.2em;text-transform:uppercase;font-size:12px;color:var(--rose-d);margin-top:22px}
+/* newsletter */
+.news{text-align:center;padding:80px 0}
+.news h2{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);margin-bottom:10px}
+.news p{color:var(--mut);margin-bottom:24px}
+.news form{display:flex;max-width:420px;margin:0 auto;border:1px solid var(--ink)}
+.news input{flex:1;border:none;background:transparent;padding:15px;font-family:'Jost';outline:none}
+.news button{background:var(--ink);color:var(--cream);border:none;padding:0 26px;letter-spacing:.12em;text-transform:uppercase;font-size:12px;cursor:pointer}
+footer{background:var(--ink);color:#cdbcb6;padding:40px 0;text-align:center;font-size:13px;letter-spacing:.06em}
+.ribbon{position:fixed;bottom:0;left:0;right:0;background:#bef264;color:#0a0a0a;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;z-index:200}
+.ribbon a{font-weight:500;text-decoration:underline}
+.toast{position:fixed;top:90px;right:24px;background:var(--ink);color:var(--cream);font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:14px 22px;z-index:300;opacity:0;transform:translateX(30px);transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.reveal{opacity:0;transform:translateY(20px);transition:.7s cubic-bezier(.22,1,.36,1)}.reveal.in{opacity:1;transform:none}
+@media(max-width:900px){.grid{grid-template-columns:1fr 1fr}.vals{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.nav-links{display:none}.hero{grid-template-columns:1fr}.hero-r{min-height:320px}.hero-l{padding:50px 30px}}
+</style>
+</head>
+<body>
+<div class="bar">Free delivery over KES 3,000 · Pay with M-Pesa</div>
+<nav><div class="nav-in">
+  <div class="logo">Flora</div>
+  <div class="nav-links"><a href="#shop">Skincare</a><a href="#shop">Body</a><a href="#shop">Sets</a><a href="#">About</a></div>
+  <div class="nav-icons"><span>🔍</span><span>♡</span><span>🛍<span class="c" id="cc">0</span></span></div>
+</div></nav>
+
+<header class="hero">
+  <div class="hero-l">
+    <div class="pre fr">naturally radiant</div>
+    <h1 class="fr">Skincare,<br>rooted in nature.</h1>
+    <p>Clean, botanical formulas made in small batches with Kenyan-grown ingredients. Kind to skin, kinder to the planet.</p>
+    <a href="#shop">Shop the collection</a>
+  </div>
+  <div class="hero-r"><div class="ring r1"></div><div class="ring r2"></div><div class="bottle">🧴</div></div>
+</header>
+
+<div class="vals">
+  <div class="val"><div class="e">🌿</div><b class="fr">100% natural</b><span>No nasties, ever</span></div>
+  <div class="val"><div class="e">🐰</div><b class="fr">Cruelty-free</b><span>Never tested on animals</span></div>
+  <div class="val"><div class="e">🇰🇪</div><b class="fr">Made in Kenya</b><span>Locally sourced</span></div>
+  <div class="val"><div class="e">♻️</div><b class="fr">Refillable</b><span>Bring your bottle back</span></div>
+</div>
+
+<section class="sec wrap" id="shop">
+  <div class="sec-head"><div class="lab fr">our bestsellers</div><h2 class="fr">Loved by many</h2></div>
+  <div class="grid" id="grid">
+    <div class="prod reveal"><div class="prod-img"><span class="badge">Bestseller</span><img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80" alt=""><button class="add" data-id="rosewater-mist" data-n="Rosewater Mist" data-name="Rosewater Mist" data-price="1400">Add to bag</button></div><span class="cat-l">Toner</span><h3 class="fr">Rosewater Mist</h3><div class="price">KES 1,400</div></div>
+    <div class="prod reveal"><div class="prod-img"><img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&q=80" alt=""><button class="add" data-id="glow-serum" data-n="Glow Serum" data-name="Glow Serum" data-price="2800">Add to bag</button></div><span class="cat-l">Serum</span><h3 class="fr">Vitamin C Glow</h3><div class="price">KES 2,800</div></div>
+    <div class="prod reveal"><div class="prod-img"><span class="badge">New</span><img src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=600&q=80" alt=""><button class="add" data-id="shea-cream" data-n="Shea Cream" data-name="Shea Cream" data-price="2200">Add to bag</button></div><span class="cat-l">Moisturiser</span><h3 class="fr">Shea Day Cream</h3><div class="price">KES 2,200</div></div>
+    <div class="prod reveal"><div class="prod-img"><img src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600&q=80" alt=""><button class="add" data-id="clay-mask" data-n="Clay Mask" data-name="Clay Mask" data-price="1800">Add to bag</button></div><span class="cat-l">Mask</span><h3 class="fr">Clay Purifying Mask</h3><div class="price">KES 1,800</div></div>
+    <div class="prod reveal"><div class="prod-img"><img src="https://images.unsplash.com/photo-1612817288484-6f916006741a?w=600&q=80" alt=""><button class="add" data-id="body-oil" data-n="Body Oil" data-name="Body Oil" data-price="2400">Add to bag</button></div><span class="cat-l">Body</span><h3 class="fr">Marula Body Oil</h3><div class="price">KES 2,400</div></div>
+    <div class="prod reveal"><div class="prod-img"><span class="badge">Set</span><img src="https://images.unsplash.com/photo-1631730486784-732f2dd0c5b3?w=600&q=80" alt=""><button class="add" data-id="ritual-set" data-n="Ritual Set" data-name="Ritual Set" data-price="5900">Add to bag</button></div><span class="cat-l">Gift set</span><h3 class="fr">The Glow Ritual</h3><div class="price">KES 5,900</div></div>
+    <div class="prod reveal"><div class="prod-img"><img src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=600&q=80" alt=""><button class="add" data-id="lip-balm" data-n="Lip Balm" data-name="Lip Balm" data-price="700">Add to bag</button></div><span class="cat-l">Lips</span><h3 class="fr">Honey Lip Balm</h3><div class="price">KES 700</div></div>
+    <div class="prod reveal"><div class="prod-img"><img src="https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=600&q=80" alt=""><button class="add" data-id="cleanser" data-n="Cleanser" data-name="Cleanser" data-price="1600">Add to bag</button></div><span class="cat-l">Cleanser</span><h3 class="fr">Gentle Foam Wash</h3><div class="price">KES 1,600</div></div>
+  </div>
+</section>
+
+<section class="quote">
+  <p>"My skin has never felt so alive — and I love that every bottle comes back for a refill."</p>
+  <div class="src">— a Flora regular</div>
+</section>
+
+<section class="news wrap">
+  <h2 class="fr">Join the Flora circle</h2>
+  <p>10% off your first order, plus skincare notes worth reading.</p>
+  <form onsubmit="return false"><input placeholder="Your email"><button>Subscribe</button></form>
+</section>
+
+<footer>
+<div class="ss-socials" style="display:flex;gap:14px;justify-content:center;align-items:center;padding:18px 0 6px;flex-wrap:wrap">
+<a href="https://instagram.com/" aria-label="Instagram" target="_blank" rel="noopener" style="color:inherit;opacity:.75"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+<a href="https://facebook.com/" aria-label="Facebook" target="_blank" rel="noopener" style="color:inherit;opacity:.75"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v7h3v-7h3l1-3h-4v-2c0-.6.4-1 1-1z"/></svg></a>
+<a href="https://tiktok.com/" aria-label="TikTok" target="_blank" rel="noopener" style="color:inherit;opacity:.75"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16 3c.3 2 1.6 3.6 3.6 3.9v3c-1.4 0-2.7-.4-3.6-1.1V15a5.5 5.5 0 11-5.5-5.5c.3 0 .6 0 .9.1v3.1a2.5 2.5 0 102.6 2.5V3H16z"/></svg></a>
+<a href="https://twitter.com/" aria-label="Twitter" target="_blank" rel="noopener" style="color:inherit;opacity:.75"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18 3h3l-7 8 8 10h-6l-5-6-5 6H3l8-9L3 3h6l4 5z"/></svg></a>
+<a href="https://wa.me/" aria-label="WhatsApp" target="_blank" rel="noopener" style="color:inherit;opacity:.75"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15l-1.4 5 5.1-1.3A10 10 0 1012 2zm0 2a8 8 0 11-4.1 14.9l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 0112 4zm-3 4c-.2 0-.5.1-.7.4-.3.3-.9.9-.9 2.2 0 1.3.9 2.5 1 2.7.2.2 1.9 3 4.6 4 .7.3 1.2.5 1.6.4.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.6-.3-.3-.2-1.5-.8-1.7-.9-.2-.1-.4-.1-.6.1-.2.3-.6.9-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.5-.4-.5-.7-1.1-.8-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5 0-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4z"/></svg></a>
+</div>
+© 2026 Flora Natural Beauty · Nairobi, Kenya · hello@flora.co.ke</footer>
+<div class="toast" id="toast">Added to bag</div>
+<script>
+let cart=0; // counter only — full cart managed by sitesawa-connect.jsconst cc=document.getElementById('cc'),toast=document.getElementById('toast');
+// Cart delegated to sitesawa-connect.js
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.1});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4*.05)+'s';io.observe(el)});
+setTimeout(()=>document.querySelectorAll('.reveal:not(.in)').forEach(e=>{e.style.opacity=1;e.style.transform='none'}),5000);
+</script>
+</body>
+</html>
