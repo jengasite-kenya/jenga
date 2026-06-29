@@ -2257,6 +2257,7 @@ app.post('/api/checkout', async (req, res) => {
                     : 'https://sandbox.safaricom.co.ke';
                 const authRes = await axios.get(`${mpesaBase}/oauth/v1/generate?grant_type=client_credentials`, {
                     auth: { username: process.env.MPESA_CONSUMER_KEY, password: process.env.MPESA_CONSUMER_SECRET },
+                    timeout: 25000,
                 });
                 const token = authRes.data.access_token;
                 const shortcode = process.env.MPESA_SHORTCODE;
@@ -2277,7 +2278,7 @@ app.post('/api/checkout', async (req, res) => {
                     CallBackURL:       callbackURL,
                     AccountReference:  'SiteSawa',
                     TransactionDesc:   `${plan.toUpperCase()} Plan`,
-                }, { headers: { Authorization: `Bearer ${token}` } });
+                }, { headers: { Authorization: `Bearer ${token}` }, timeout: 25000 });
 
                 await Customer.updateOne({ _id: customer._id }, { $set: { mpesaCheckoutId: checkoutId } });
             } catch (mpesaErr) {
@@ -2429,6 +2430,7 @@ app.post('/api/change-plan', auth, async (req, res) => {
                     : 'https://sandbox.safaricom.co.ke';
                 const authRes = await axios.get(`${mpesaBase}/oauth/v1/generate?grant_type=client_credentials`, {
                     auth: { username: process.env.MPESA_CONSUMER_KEY, password: process.env.MPESA_CONSUMER_SECRET },
+                    timeout: 25000,
                 });
                 const token = authRes.data.access_token;
                 const shortcode = process.env.MPESA_SHORTCODE;
@@ -2449,7 +2451,7 @@ app.post('/api/change-plan', auth, async (req, res) => {
                     CallBackURL:       callbackURL,
                     AccountReference:  'SiteSawa',
                     TransactionDesc:   `${newPlan} Plan`,
-                }, { headers: { Authorization: `Bearer ${token}` } });
+                }, { headers: { Authorization: `Bearer ${token}` }, timeout: 25000 });
             } catch (mpesaErr) {
                 const safReason = mpesaErr.response && mpesaErr.response.data
                     ? JSON.stringify(mpesaErr.response.data) : mpesaErr.message;
