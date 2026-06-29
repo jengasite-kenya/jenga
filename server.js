@@ -2451,8 +2451,10 @@ app.post('/api/change-plan', auth, async (req, res) => {
                     TransactionDesc:   `${newPlan} Plan`,
                 }, { headers: { Authorization: `Bearer ${token}` } });
             } catch (mpesaErr) {
-                console.error('[PLAN CHANGE] M-Pesa STK error:', mpesaErr.message);
-                return res.status(502).json({ error: 'Could not start M-Pesa payment. Try again.' });
+                const safReason = mpesaErr.response && mpesaErr.response.data
+                    ? JSON.stringify(mpesaErr.response.data) : mpesaErr.message;
+                console.error('[PLAN CHANGE] M-Pesa STK error:', safReason);
+                return res.status(502).json({ error: 'Could not start M-Pesa payment: ' + safReason });
             }
         } else {
             // Dev mode: auto-apply after 5s
